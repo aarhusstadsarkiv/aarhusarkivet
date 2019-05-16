@@ -1,0 +1,54 @@
+{% extends '_base.html' %}
+{% set title = "Hjemmesider med billeder fra Aarhus" %}
+
+{% block content %}
+<div>
+    <img class="show-for-large" src="/static/img/Billder-fra-Aarhus_AA_header_1920px.jpg">
+</div>
+
+<div class="grid-x grid-padding-x grid-padding-y homepage-list" style="margin-top:2rem;font-size:90%">
+
+    <div class="cell smedium-6 large-4">
+        <div class="cart">
+            <a href="/search?content_types=61&availability=4&direction=asc&size=50&sort=date_from&view=gallery">
+                <img data-interchange="[static\img\Billder-fra-Aarhus_aarhusarkivet_420px.jpg, small], [static\img\Billder-fra-Aarhus_aarhusarkivet_420px.jpg, large]">
+            </a>
+            <div class="" style="padding-top:1em;">
+                <p>Her på AarhusArkivet kan du gå jagt blandt <a href="/search?content_types=61&availability=4&direction=asc&size=50&sort=date_from&view=gallery" target="blank">tusindvis af billeder fra Aarhus og omegn.</a></p>
+                <p>Her er både store og små begivenheder dokumenteret og du kan finde fotografier fra byens bedste pressefotografer, samt fotografier taget af byens private borgere.</p>
+                <p>Du kan via forskellige søgefiltre og links nemt klikke dig videre til andre billeder, som også kunne have din interesse.</p>
+                <p><a href="/search?content_types=61&availability=4&direction=asc&size=50&sort=date_from&view=gallery" target="blank">Klik her for at se AarhusArkivets billedsamling</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="cell smedium-6 large-4">
+        <div class="cart">
+            <a href="https://aarhusbilleder.dk" target="blank">
+                <img data-interchange="[static\img\Billder-fra-Aarhus_aarhusbilleder_420px.jpg, small], [static\img\Billder-fra-Aarhus_aarhusbilleder_420px.jpg, large]">
+            </a>
+            <div class="" style="padding-top:1em;">
+                <p>På aarhusbilleder.dk kan du finde kulturhistoriske fotografier fra Aarhus Stadsarkiv og Den Gamle Bys samlinger samt udvalgte kort, tegninger og malerier.</p>
+                <p>Aarhusbilleder.dk drives af Den Gamle By og Aarhus Stadsarkiv i regi af Aarhus Byhistoriske Fond. Aarhus Byhistoriske Fonds sigte er at formidle byens historie i bredeste forstand.</p>
+                <p>Samlingerne rummer hovedsageligt materiale fra Aarhus inden for ringgaden men vi arbejder på at få materiale fra hele Aarhus Kommune.</p>
+                <p><a href="https://aarhusbilleder.dk" target="blank">Klik her for at gå til aarhusbilleder.dk</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="cell smedium-6 large-4">
+        <div class="cart">
+            <a href="https://arkiv.dk" target="blank">
+                <img data-interchange="[static\img\Billder-fra-Aarhus_arkiv-dk_420px.jpg, small], [static\img\Billder-fra-Aarhus_arkiv-dk_420px.jpg, large]">
+            </a>
+            <div class="" style="padding-top:1em;">
+                <p>De fleste lokalarkiver i Aarhus er del af Arkiv.dk.</p>
+                <p>På Arkiv.dk kan man finde registreringer af alle typer arkivmateriale fra lokalarkiverne. Det primære er dog billeder, så leder man efter historiske fotografier fra områderne uden for midtbyen, er dette den oplagte søgeside.</p>
+                <p><a href="https://arkiv.dk" target="blank">Klik her for at se billeder på hjemmesiden Arkiv.dk</a></p>
+            </div>
+        </div>          
+    </div>
+
+</div>
+
+{% endblock content %}

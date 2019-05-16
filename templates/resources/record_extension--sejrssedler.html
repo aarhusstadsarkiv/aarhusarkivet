@@ -1,0 +1,108 @@
+{# Vis sejrsseddel i stedet for ikon #}
+<div class="cell small-12 large-6 resource-representation" style="padding-right:1.5em;">
+    <div style="white-space:pre-line;font-family:courier;padding:1.5em;background-color:rgb(250, 250, 196);border-radius:5px;box-shadow:5px 5px 10px rgba(0, 0, 0, 0.4);">
+        {{r.summary}}
+    </div>
+</div>
+
+<div id="core" class="cell small-12 large-6 resource-core">
+    <div>
+        <ul class="menu" style="float:right;">
+            <li>
+                <a href="https://www.facebook.com/sharer/sharer.php?u=" target="_blank" title="Del på Facebook" style="padding: 0.1rem .8rem .5rem;">
+                    <span class="fab fa-facebook fa-2x"></span>
+                </a>
+            </li>
+            <li>
+                <a href="https://twitter.com/intent/tweet?text=&via=wdweekly" target="_blank" title="Del på Twitter" style="padding: 0.1rem .8rem .5rem;">
+                    <span class="fab fa-twitter fa-2x"></span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    {% if r.collectors %}
+        <div class="media-object">
+            <div class="media-object-section app_keylabel">Arkivskaber</div>
+            <div class="media-object-section main-section">
+                {% for item in r.collectors %}
+                    <div>
+                        <a class="collector-link" href="/search?{{item.new_link}}">{{item.label}}</a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="media-object">
+        <div class="media-object-section app_keylabel">Materialetype</div>
+        <div class="media-object-section main-section">
+            {% for hierarchy in r.content_types %}
+                {% for item in hierarchy %}
+                    <div>
+                        <a class="resource-link" href="/search?{{item.new_link}}" style="margin-left:{{loop.index0 * 6}}px;">
+                            {% if not loop.first %}
+                                <span class="fas fa-arrow-right fa-sm"></span>
+                            {% endif %}
+                            {{item.label}}
+                        </a>
+                    </div>                            
+                {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+
+    {% if r.creators %}
+        <div class="media-object">
+            <div class="media-object-section app_keylabel">Kreativt ophav</div>
+            <div class="media-object-section main-section">
+                {% for item in r.creators %}
+                    <div><a class="resource-link" href="/search?{{item.new_link}}">{{item.label}}</a></div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="media-object">
+        <div class="media-object-section app_keylabel">Datering</div>
+        <div class="media-object-section main-section">
+        {% if r.date_from %}
+            {% if r.date_to %}
+                {% if r.date_to == r.date_from %}
+                    <span>{{r.date_from}}</span>
+                {% elif r.date_from[0:7] == r.date_to[0:7] %}
+                    <span>{{r.date_from[0:7]}}</span>
+                {% elif r.date_from[0:4] == r.date_to[0:4] and (r.date_from[5:10] == '01-01') %}
+                    <span>{{r.date_from[0:4]}}</span>
+                {% elif r.date_from[5:10] == '01-01' and (r.date_to[5:10] == '12-31') %}
+                    <span>{{r.date_from[0:4]}} ~ {{r.date_to[0:4]}}</span>
+                {% else %}
+                    <span>{{r.date_from}} ~ {{r.date_to}}</span>
+                {% endif %}
+            {% else %}
+                <span>{{r.date_from}} ~</span>
+            {% endif %}
+        {% elif r.date_to %}
+            <span>~ {{r.date_to}}</span>
+        {% else %}
+            <span>Udateret</span>
+        {% endif %}
+        </div>
+    </div>
+
+    <div class="media-object">
+        <div class="media-object-section app_keylabel">Kurator</div>
+        <div class="media-object-section main-section">
+            {% for item in r.curators %}
+                <div><a class="resource-link" href="/search?{{item.new_link}}">{{item.label}}</a></div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div id="archival_id" class="media-object">
+        <div class="media-object-section app_keylabel">Arkiv ID</div>
+        <div class="media-object-section main-section">{{r.id}}</div>
+    </div>
+
+    {% include 'components/actionbar_record.html' %}
+</div>
