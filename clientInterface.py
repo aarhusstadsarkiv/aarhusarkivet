@@ -1395,7 +1395,9 @@ class Client():
                                                           start - size))
 
                 if total <= 10000 and (start + size < total):
-                    last_start = total / size * size
+                    last_start = total // size * size
+                    if last_start == total:
+                        last_start = total - size
                     resp['last'] = _urlencode(processed_params,
                                               remove=rm_tup,
                                               insert=('start', last_start))

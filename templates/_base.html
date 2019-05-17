@@ -2,6 +2,9 @@
 <html lang="da" class="no-js">
 <head>
     <meta charset="utf-8">
+    {% if meta_description %}
+    <meta description="{{meta_description}}">
+    {% endif %}
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% if title %}{{title}} | AarhusArkivet{% else %}AarhusArkivet{% endif %}</title>

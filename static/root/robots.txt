@@ -2,3 +2,7 @@
 
 User-agent: *
 Disallow: /
+
+# Allow: /collections/
+# Allow: /about
+# Allow: /guides
