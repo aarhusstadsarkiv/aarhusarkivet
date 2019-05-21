@@ -1,9 +1,5 @@
-# -*- coding: utf-8 -*-
-
-# Standard library
 from functools import wraps
 
-# Third party libraries
 from flask import session
 from flask import redirect
 

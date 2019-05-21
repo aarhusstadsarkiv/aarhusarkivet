@@ -250,7 +250,8 @@ def login(page):
         return redirect(url_for("show_profile"))
     else:
         params = {
-            "redirect_uri": os.environ.get("AUTH0_CALLBACK_URL"),
+            # "redirect_uri": os.environ.get("AUTH0_CALLBACK_URL"),
+            "redirect_uri": request.host_url + "callback",
             "response_type": "code",
             "scope": "openid profile email",
             "client_id": os.environ.get("AUTH0_CLIENT_ID"),
@@ -284,7 +285,8 @@ def callback_handler():
         "code": request.args.get("code"),
         "client_id": os.environ.get("AUTH0_CLIENT_ID"),
         "client_secret": os.environ.get("AUTH0_CLIENT_SECRET"),
-        "redirect_uri": os.environ.get("AUTH0_CALLBACK_URL"),
+        # "redirect_uri": os.environ.get("AUTH0_CALLBACK_URL"),
+        "redirect_uri": request.host_url + "callback",
         "grant_type": os.environ.get("AUTH0_GRANT_TYPE"),
     }
 
@@ -363,4 +365,3 @@ if __name__ == "__main__":
         port=os.environ.get("PORT", 3000),
         debug=os.environ.get("DEBUG", False),
     )
-
