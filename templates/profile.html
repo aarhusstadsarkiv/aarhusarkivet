@@ -34,6 +34,7 @@
                 </li>
             {% endif %}
 
+            {# Ordrer ikke implementeret endnu
             {% if subpage == 'orders' %}
                 <li class="menu-text">
                     <span class="far fa-fw fa-check-square"></span>
@@ -47,6 +48,7 @@
                     </a>
                 </li>
             {% endif %}
+            #}
 
             {% if subpage == 'bookmarks' %}
                 <li class="menu-text">
@@ -98,6 +100,7 @@
                         </div>
                     {% endif %}
 
+            {# Ordrer ikke implementeret endnu
             {% elif subpage == 'orders' %}
                 <h4>Aktive bestillinger</h4>
                 {% if orders and session.get('is_employee') %}
@@ -122,6 +125,7 @@
                         </ol>
                     </div>
                 {% endif %}
+            #}
 
             {% elif subpage == 'searches' %}
                 <h4>Gemte søgninger</h4>

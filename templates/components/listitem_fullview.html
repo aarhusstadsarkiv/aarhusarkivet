@@ -9,11 +9,11 @@
 <a class="media-object" href="/records/{{record.id}}">
     {% if record.thumbnail %}
         <div class="media-object-section list-thumbnail">
-            {%  if record.availability > 3 or readingroom or session.get('is_employee') %}
+            {%  if record.availability|int > 3 or readingroom or session.get('is_employee') %}
                 <img src="{{record.thumbnail}}">
             {% else %}
                 <div class="align-center" style="display:flex;padding-top:1rem;padding-bottom:1rem;">
-                    <i class=" fas fa-lock fa-4x" style="opacity:.6;"></i>
+                    <i class="fas fa-lock fa-4x" style="opacity:.6;"></i>
                 </div>
             {% endif %}
         </div>

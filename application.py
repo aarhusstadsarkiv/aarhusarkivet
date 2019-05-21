@@ -24,7 +24,7 @@ except IOError:
 # Init app
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY")
-app.debug = os.environ.get("DEBUG")
+# app.debug = os.environ.get("DEBUG")
 app.config["SESSION_COOKIE_SECURE"] = os.environ.get("SESSION_COOKIE_SECURE", False)
 
 
@@ -78,9 +78,7 @@ def after_request(response):
     return response
 
 
-# app_pages = ['cookies', 'tos', 'privacy']
 app_pages = ["tos"]
-# about = ['collections', 'availability', 'usability']
 about = [
     "collections",
     "availability",
@@ -251,9 +249,6 @@ def login(page):
     if session.get("profile"):
         return redirect(url_for("show_profile"))
     else:
-        # Alternative Style
-        # return auth0.authorize(callback=os.environ.get("AUTH0_CALLBACK_URL"))
-
         params = {
             "redirect_uri": os.environ.get("AUTH0_CALLBACK_URL"),
             "response_type": "code",
