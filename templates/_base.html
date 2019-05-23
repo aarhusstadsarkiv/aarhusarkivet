@@ -1,29 +1,34 @@
 <!DOCTYPE html>
 <html lang="da" class="no-js">
 <head>
-    <meta charset="utf-8">
-    {% if meta_description %}
-    <meta description="{{meta_description}}">
-    {% endif %}
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% if title %}{{title}} | AarhusArkivet{% else %}AarhusArkivet{% endif %}</title>
-    {% if page == 'searchpage' %}<meta name="robots" content="noindex">{% endif %}
-    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
-    <script>
-        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-        ga('create', 'UA-114828717-1', 'auto');
-        ga('set', 'anonymizeIp', true);
-        ga('send', 'pageview');
-    </script>
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet">
-    <link href="https://use.fontawesome.com/releases/v5.0.2/css/all.css" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/application.css') }}" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.7/dist/css/lightgallery.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.css" rel="stylesheet">
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {% if meta_description %}<meta description="{{meta_description}}" />{% endif %}
+    {% if page == 'searchpage' %}<meta name="robots" content="noindex" />{% endif %}
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/favicon.ico') }}" />
+
+    <!-- Non-sri -->
+    <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet"> -->
+
+    <!-- Sri -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/1.6.12/css/lightgallery.min.css" integrity="sha256-8rfHbJr+ju3Oc099jFJMR1xAPu8CTPHU8uP5J3X/VAY=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.css" integrity="sha384-6iYDyQZuuNT7DcPJGXx241czdv2+GDGUcXRiqw1iXrjgYMTorSetxFP3JCMQMwnR" crossorigin="anonymous" />
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/application.css') }}" />
+    {% if host == "www.aarhusarkivet.dk" %}
+        <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+            ga('create', 'UA-114828717-1', 'auto');
+            ga('set', 'anonymizeIp', true);
+            ga('send', 'pageview');
+        </script>
+    {% endif %}
 </head>
 
 <body class="{{page}}">
@@ -76,9 +81,9 @@
                 <h5 style="margin:2rem 9px .5rem;color:#fefefe">Søgetips</h5>
                 <div class="searchtips">
                     <ul class="menu vertical">
-                        <li style="">Brug '*' til at trunkere. Eks. skattemandtal*</li>
-                        <li style="">Brug " " (anførselstegn) til frase-søgning, eks. "marselisborg slot"</li>
-                        <li style="">Brug '-' (uden mellemrum) før et ord eller frase til at ekskludere, eks. -Mejlgade eller -"marselisborg slot"</li>
+                        <li>Brug '*' til at trunkere. Eks. skattemandtal*</li>
+                        <li>Brug " " (anførselstegn) til frase-søgning, eks. "marselisborg slot"</li>
+                        <li>Brug '-' (uden mellemrum) før et ord eller frase til at ekskludere, eks. -Mejlgade eller -"marselisborg slot"</li>
                     </ul>
                 </div>
 
@@ -285,7 +290,6 @@
                     </button>
                 </li>
                 {% endfor %}
-            </div>
             {% endif %}
         {% endwith %}
         </ul>
@@ -306,16 +310,18 @@
     </div>
 
     <!-- Scripts -->
-    <!-- /<script>document.documentElement.className = document.documentElement.className.replace('no-js', 'js');</script> -->
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.4.2/js/foundation.min.js" crossorigin="anonymous"></script>
+    <!-- <script>document.documentElement.className = document.documentElement.className.replace('no-js', 'js');</script> -->
+    <!-- <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.js" integrity="sha384-PDjg2ZdS3khPzd53i18+7tzB32JVQfFMrTXYo21RqPgUmEVAPwIhxOUF/8sP79CS" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/foundation/6.4.3/js/foundation.min.js" integrity="sha256-mRYlCu5EG+ouD07WxLF8v4ZAZYCA6WrmdIXyn1Bv9Vk=" crossorigin="anonymous"></script>    <!-- <script src="https://cdn.jsdelivr.net/npm/foundation-sites@6.5.3/dist/js/foundation.min.js" integrity="sha256-/PFxCnsMh+nTuM0k3VJCRch1gwnCfKjaP8rJNq5SoBg=" crossorigin="anonymous"></script> -->
+    
     <script type="text/javascript">$(document).foundation();</script>
     <script type="text/javascript">onload=function(){
         var e=document.getElementById("refresh");
         if(e.value=="no")e.value="yes";
         else{e.value="no";location.reload(true);}};
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.0.3/cookieconsent.min.js"></script>
     <script>
         window.addEventListener("load", function(){
             window.cookieconsent.initialise({
@@ -340,14 +346,15 @@
     </script>
 
     <script src="{{ url_for('static', filename='js/vendor/typeahead.bundle.min.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.7/dist/js/lightgallery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.7/modules/lg-video.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.7/modules/lg-thumbnail.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.7/modules/lg-zoom.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/1.6.12/js/lightgallery.min.js" integrity="sha256-GnThhVDusd6Mnhplk3lS6eX/C+Q9jaSR6KctYP8OlAo=" crossorigin="anonymous"></script>    <script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.12/modules/lg-video.min.js" integrity="sha256-kTl9Tuvfx5PraTyCd73rRSPZQ4ED9mgaDJ+S8IxEiW4=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lg-thumbnail/1.1.0/lg-thumbnail.min.js" integrity="sha256-Ck/PWQUoHsc9d2X4yUALvrs71Qo5cs+gIHDWBl2Ggb8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lg-zoom/1.1.0/lg-zoom.min.js" integrity="sha256-8HKk4FQYhQmgSPX+eWa4NrDtKnmYv1FzubCwxi97jdA=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lg-video/1.2.2/lg-video.min.js" integrity="sha256-kTl9Tuvfx5PraTyCd73rRSPZQ4ED9mgaDJ+S8IxEiW4=" crossorigin="anonymous"></script>
+
     <script src="{{ url_for('static', filename='js/autosuggest.js') }}"></script>
     <script src="{{ url_for('static', filename='js/application.js') }}"></script>
     <script src="{{ url_for('static', filename='js/dates.js') }}"></script>
-    <!-- <script src="{{ url_for('static', filename='js/split_view.js') }}"></script> -->
     <script src="{{ url_for('static', filename='js/page_number.js') }}"></script>
     <script src="{{ url_for('static', filename='js/cart.js') }}"></script>
     <script src="{{ url_for('static', filename='js/bookmarks.js') }}"></script>

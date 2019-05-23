@@ -30,11 +30,11 @@ class GUIView(View):
         self.context = {}
         ip = request.headers.get("X-Forwarded-For")
         self.context["readingroom"] = ip in IP_WHITELIST
+        self.context["host"] = request.host
         self.client = clientInterface.Client()
         facet_dicts = self.client.list_facets_v2()
         self.context["active_facets"] = facet_dicts.get("active_facets")
         self.context["total_facets"] = facet_dicts.get("total_facets")
-        # update current url on each gui-request
         ses.set_current_url(request)
 
     def error_response(self, error):
