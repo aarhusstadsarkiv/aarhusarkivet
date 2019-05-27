@@ -177,11 +177,15 @@ app.add_url_rule(
     view_func=views.ProfileView.as_view("show_profile"),
 )
 app.add_url_rule(
-    "/users/me/<path:page>", view_func=views.ProfileView.as_view("show_profile_subpage")
+    "/users/me/<path:page>",
+    view_func=views.ProfileView.as_view("show_profile_subpage"),
 )
 
 # Autosuggest
-app.add_url_rule("/autosuggest", view_func=views.AutosuggestView.as_view("autosuggest"))
+app.add_url_rule(
+    "/autosuggest",
+    view_func=views.AutosuggestView.as_view("autosuggest"),
+)
 
 # CartAPI
 app.add_url_rule(
@@ -238,7 +242,11 @@ app.add_url_rule(
 )
 
 # Test
-app.add_url_rule("/testpage", view_func=views.TestView.as_view("test"), methods=["GET"])
+app.add_url_rule(
+    "/testpage",
+    view_func=views.TestView.as_view("test"),
+    methods=["GET"],
+)
 
 ##############
 # AUTH-VIEWS #

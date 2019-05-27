@@ -55,6 +55,8 @@ class FileView(View):
 
 class RootfileView(View):
     def dispatch_request(self, file):
+        if file.startswith("robots") and request.host_url != "https://www.aarhusarkivet.dk":
+            file = "robots_dev.txt"
         return send_from_directory("./static/root", file)
 
 
@@ -388,8 +390,8 @@ class AutosuggestView(View):
 class TestView(GUIView):
     def dispatch_request(self):
         # cart = ses.get_cart()
+        self.context["self"] = str(self)
         self.context["page"] = "test"
-        self.context["json_data"] = desktop.get_local_file()
+        # self.context["json_data"] = desktop.get_local_file()
         # return jsonify(self.context)
         return render_template("test.html", **self.context)
-

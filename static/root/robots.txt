@@ -3,6 +3,6 @@
 User-agent: *
 Disallow: /
 
-# Allow: /collections/
-# Allow: /about
-# Allow: /guides
+Allow: /collections/
+Allow: /about
+Allow: /guides

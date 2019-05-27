@@ -1,9 +1,13 @@
 <div>Page: {{page}}</div>
 <div>JSON</div>
 
-<dl>
-{% for k, v in json_data.items() %}
-    <dt>{{k}}</dt>
-    <dd>{{v}}</dd>
-{% endfor %}
-</dl>
+<div>Self: {{self}}</div>
+
+{% if json_data %}
+    <dl>
+    {% for k, v in json_data.items() %}
+        <dt>{{k}}</dt>
+        <dd>{{v}}</dd>
+    {% endfor %}
+    </dl>
+{% endif %}
