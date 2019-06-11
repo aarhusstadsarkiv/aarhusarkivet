@@ -7,11 +7,11 @@
 {% endif %}
 
 {# Determine title #}
-{% if collection in ['people', 'organisations', 'events', 'locations', 'objects'] %}
+{% if collection in ['people', 'organisations', 'events', 'locations', 'objects', 'collections'] %}
     {% if r.display_label %}
-        {% set title = r.display_label + " | AarhusArkivet" %}
+        {% set title = r.display_label %}
     {% else %}
-        {% set title = "Ubeskrevet entitet | AarhusArkivet" %}
+        {% set title = "Ubeskrevet entitet" %}
     {% endif %}
 {% else %}
     {% if r.title %}
