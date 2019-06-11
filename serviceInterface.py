@@ -497,7 +497,7 @@ class Service:
             )
             key_args[
                 "returnFields"
-            ] = "label,summary,content_types,thumbnail,portrait,collectors_label,date_from,date_to,created_at,availability,updated_at"
+            ] = "label,summary,collection,series,content_types,thumbnail,portrait,collectors_label,date_from,date_to,created_at,availability,updated_at"
             key_args["start"] = query_params.get("start", 0, int)
             key_args["size"] = query_params.get("size", 20, int)
 
@@ -536,13 +536,15 @@ class Service:
 
                 item["content_types"] = hit["fields"].get("content_types")
 
-                collectors_label = hit["fields"].get("collectors_label")
-                item["collectors_label"] = (
-                    collectors_label[0] if collectors_label else None
-                )
+                item["collection"] = hit["fields"].get("collection")
 
-                # series = hit['fields'].get("series")
-                # item['series'] = series or None
+                collectors_label = hit["fields"].get("collectors_label")
+                # item["collectors_label"] = (
+                #     collectors_label[0] if collectors_label else None
+                # )
+                item["collectors_label"] = collectors_label[0] if collectors_label else None
+
+                item['series'] = hit['fields'].get("series")
 
                 thumbnail = hit["fields"].get("thumbnail", None)
                 item["thumbnail"] = thumbnail[0] if thumbnail else None

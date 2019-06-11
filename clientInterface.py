@@ -1040,7 +1040,6 @@ FILTERS = {
 
 class Client():
 
-    # def __init__(self, config):
     def __init__(self):
         self.facets = FACETS
         self.filters = FILTERS
@@ -1057,7 +1056,6 @@ class Client():
             'objects': 'objects',
             'collections': 'collections'
         }
-
 
     def list_facets_v2(self):
         def encode(key, val):
