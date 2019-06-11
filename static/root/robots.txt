@@ -1,8 +1,46 @@
 # www.robotstxt.org/
 
 User-agent: *
-Disallow: /
 
-Allow: /collections/
-Allow: /about
-Allow: /guides
+# Redirecting page
+Disallow: /images
+
+# Most about-pages are irrelevant for findability
+# /about/collections "Om AarhusArkivet" er tilladt, resten ikke
+Disallow: /about/availability
+Disallow: /about/usability
+Disallow: /about/cookies
+Disallow: /about/pricacy
+Disallow: /about/archival_availability
+
+# All vocabs are irrelevant
+Disallow: /availability
+Disallow: /usability
+Disallow: /content_types
+Disallow: /subjects
+
+# All static-files are irrelevant
+Disallow: /static/
+
+# All searchresults are irrelevant
+Disallow: /search
+
+# All user-pages are irrelevant
+Disallow: /users/
+
+# Autosuggest is irrelevant
+Disallow: /autosuggest
+
+# Cart is irrelevant
+Disallow: /cart
+Disallow: /cart/
+
+# testpage is irrelevant
+Disallow: /testpage
+
+# All authorization is irrelevant
+Disallow: /logout
+Disallow: /login
+Disallow: /signup
+Disallow: /callback
+

@@ -114,10 +114,10 @@ app.add_url_rule(
 )
 
 # App-pages
-app.add_url_rule(
-    "/<any(" + ", ".join(app_pages) + "):page>",
-    view_func=views.AppView.as_view("show_app_page"),
-)
+# app.add_url_rule(
+#     "/<any(" + ", ".join(app_pages) + "):page>",
+#     view_func=views.AppView.as_view("show_app_page"),
+# )
 
 app.add_url_rule(
     "/guides/<any(" + ", ".join(guides) + "):page>",

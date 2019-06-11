@@ -3,6 +3,12 @@
 
 <div>Self: {{self}}</div>
 
+<div>Request:</div>
+{% if request %}
+    <p>{{request.host_url}}</p>
+{% endif %}
+
+<div>Json_data</div>
 {% if json_data %}
     <dl>
     {% for k, v in json_data.items() %}
