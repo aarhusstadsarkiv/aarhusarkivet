@@ -1,20 +1,12 @@
 import os
-# import json
 
 from dotenv import load_dotenv
-# import requests
-# from six.moves.urllib.parse import urlencode
-
 from flask import Flask
 from flask import request
 from flask import redirect
-# from flask import session
-# from flask import url_for
-# from flask import flash
 
 import constants
 import views
-# import db
 
 try:
     load_dotenv()
@@ -22,12 +14,13 @@ except IOError:
     pass
 
 
-# Init app
+##################
+# INITIALIZE APP #
+##################
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY")
 app.debug = os.environ.get("DEBUG", False)
 app.config["SESSION_COOKIE_SECURE"] = os.environ.get("SESSION_COOKIE_SECURE", False)
-
 
 # app.jinja_env.auto_reload = True
 app.url_map.strict_slashes = False
@@ -65,15 +58,16 @@ def after_request(response):
 
     return response
 
-
-# Homepage
+##########
+# ROUTES #
+##########
 app.add_url_rule(
     "/",
     defaults={"page": "index"},
     view_func=views.AppView.as_view("index")
 )
 
-# Auth
+# Auth-pages
 app.add_url_rule(
     "/<any('login', 'signup'):page>",
     view_func=views.LoginView.as_view("login"),
@@ -109,34 +103,40 @@ app.add_url_rule(
     view_func=views.AppView.as_view("show_imagesites"),
 )
 
-# Guide-pages
+# Guide-pages (subpaged)
 app.add_url_rule(
     "/guides/<any(" + ", ".join(constants.GUIDE_PAGES) + "):page>",
     view_func=views.AppView.as_view("show_guide"),
 )
 
-# About-pages
+# About-pages (subpaged)
 app.add_url_rule(
     "/about/<any(" + ", ".join(constants.ABOUT_PAGES) + "):page>",
     view_func=views.AppView.as_view("show_about"),
 )
 
-# Search
+# Vocabulary-pages (subpaged)
 app.add_url_rule(
-    "/search",
-    view_func=views.SearchView_v2.as_view("search")
+    "/<any(" + ", ".join(constants.VOCAB_PAGES) + "):collection>/<int:_id>",
+    view_func=views.VocabularyView.as_view("show_vocabulary"),
 )
 
-# Resources
+# Resource-pages
 app.add_url_rule(
     "/<any(" + ", ".join(constants.RESOURCE_PAGES) + "):collection>/<int:_id>",
     view_func=views.ResourceView.as_view("show_resource"),
 )
 
-# Vocabularies (subpaged)
+# Search-page
 app.add_url_rule(
-    "/<any(" + ", ".join(constants.VOCAB_PAGES) + "):collection>/<int:_id>",
-    view_func=views.VocabularyView.as_view("show_vocabulary"),
+    "/search",
+    view_func=views.SearchView.as_view("search")
+)
+
+# Autosuggest
+app.add_url_rule(
+    "/autosuggest",
+    view_func=views.AutosuggestView.as_view("autosuggest"),
 )
 
 # Profile (subpaged)
@@ -148,12 +148,6 @@ app.add_url_rule(
 app.add_url_rule(
     "/users/me/<path:page>",
     view_func=views.ProfileView.as_view("show_profile_subpage"),
-)
-
-# Autosuggest
-app.add_url_rule(
-    "/autosuggest",
-    view_func=views.AutosuggestView.as_view("autosuggest"),
 )
 
 # CartAPI
@@ -216,14 +210,16 @@ app.add_url_rule(
     methods=["PUT"],
 )
 
-# Test
+# Testpage
 app.add_url_rule(
     "/testpage",
     view_func=views.TestView.as_view("test"),
     methods=["GET"],
 )
 
-
+###########
+# RUN APP #
+###########
 if __name__ == "__main__":
     app.run(
         host="0.0.0.0",

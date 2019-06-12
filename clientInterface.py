@@ -9,120 +9,11 @@ import serviceInterface
 import constants
 
 
-# FILTERS = {
-#     'creators': {
-#         'label': u'Ophavsretsholder',
-#         'repeatable': True,
-#         'type': 'object',
-#     },
-#     'locations': {
-#         'label': u'Stedsangivelse',
-#         'repeatable': True,
-#         'type': 'object',
-#     },
-#     'events': {
-#         'label': u'Forestilling',
-#         'repeatable': True,
-#         'type': 'object',
-#     },
-#     'people': {
-#         'label': u'Person',
-#         'repeatable': True,
-#         'type': 'object',
-#     },
-#     'organisations': {
-#         'label': u'Organisation',
-#         'repeatable': True,
-#         'type': 'object',
-#     },
-#     'collection': {
-#         'label': u'Samling',
-#         'repeatable': False,
-#         'type': 'object',
-#     },
-#     'date_from': {
-#         'label': u'Startdato',
-#         'repeatable': False,
-#         'type': 'string',
-#     },
-#     'date_to': {
-#         'label': u'Slutdato',
-#         'repeatable': False,
-#         'type': 'string',
-#     },
-#     'subjects': {
-#         'label': u'Emnekategori',
-#         'repeatable': True,
-#         'type': 'object',
-#     },
-#     'series': {
-#         'label': u'Serie',
-#         'repeatable': False,
-#         'type': 'string',
-#     },
-#     'admin_tags': {
-#         'label': u'Tag',
-#         'repeatable': True,
-#         'type': 'string',
-#     },
-#     'collection_tags': {
-#         'label': u'Samlingstags',
-#         'repeatable': True,
-#         'type': 'string',
-#     },
-#     'content_types': {
-#         'label': u'Materialetype',
-#         'repeatable': True,
-#         'type': 'object',
-#     },
-#     'collectors': {
-#         'label': u'Arkivskaber',
-#         'repeatable': True,
-#         'type': 'object',
-#     },
-#     'curators': {
-#         'label': u'Kurator',
-#         'repeatable': True,
-#         'type': 'object',
-#     },
-#     'availability': {
-#         'label': u'Tilgængelighed',
-#         'repeatable': False,
-#         'type': 'object',
-#     },
-#     'sort': {
-#         'label': u'Sortering',
-#         'repeatable': False,
-#         'type': 'string',
-#     },
-#     'size': {
-#         'label': u'Antal visninger',
-#         'repeatable': False,
-#         'type': 'integer',
-#     },
-#     'start': {
-#         'label': u'Start',
-#         'repeatable': False,
-#         'type': 'integer',
-#     },
-#     'usability': {
-#         'label': u'Hvad må jeg bruge?',
-#         'repeatable': False,
-#         'type': 'object'
-#     },
-#     'registration_id': {
-#         'label': u'RegistreringsID',
-#         'repeatable': False,
-#         'type': 'integer'
-#     }
-# }
-
-
 class Client():
 
     def __init__(self):
         self.facets = constants.FACETS
-        self.filters = constants.FILTERS
+        self.filters = constants.QUERY_FILTERS
         self.service = serviceInterface.Service()
         self.service_url = 'https://openaws.appspot.com'
         self.resources = {
@@ -415,10 +306,10 @@ class Client():
         # If SAM-request (view=ids) or fmt=json, return without adding further keys
         # if query_params.get('view', '') == 'ids':
         if 'ids' in query_params.getlist('view'):
-            return self.service.list_resources_v2(query_params)
+            return self.service.list_resources(query_params)
 
         # Else return fullblown response
-        resp = self.service.list_resources_v2(query_params)
+        resp = self.service.list_resources(query_params)
 
         # Convert Immutable MultiDict to mutable list of tuples
         # http://werkzeug.pocoo.org/docs/0.13/datastructures/#werkzeug.datastructures.MultiDict

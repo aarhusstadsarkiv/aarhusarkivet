@@ -19,6 +19,7 @@ from flask.views import View, MethodView
 # Application
 import session as ses
 import db
+import constants
 from decorators import login_required, employee_required
 import clientInterface
 
@@ -182,36 +183,22 @@ class AppView(GUIView):
     def dispatch_request(self, page):
         self.context["subpage"] = page
         self.context["page"] = "homepage" if page == "index" else "app-page"
-        if page in [
-            "searchguide",
-            "genealogy",
-            "municipality_records"
-        ]:
+
+        if page in constants.GUIDE_PAGES:
             return render_template("guides.html", **self.context)
-
-        elif page in [
-            "collections",
-            "availability",
-            "usability",
-            "cookies",
-            "privacy",
-            "archival_availability",
-        ]:
+        elif page in constants.ABOUT_PAGES:
             return render_template("about.html", **self.context)
-
         else:
-            # Imagesites.html and others...
             return render_template("%s.html" % page, **self.context)
-            # return jsonify(self.context)
 
 
-class SearchView_v2(GUIView):
+class SearchView(GUIView):
     def dispatch_request(self):
         api_response = self.client.list_resources(request.args)
         # update latest search
         ses.set_latest_search(request)
 
-        # SAM and Sejrssedler only wants id-lists
+        # SAM and Sejrssedler.dk only wants id-lists
         if "ids" in request.args.getlist("view"):
             return jsonify(api_response)
 
@@ -281,15 +268,13 @@ class ResourceView(GUIView):
 class VocabularyView(GUIView):
     def dispatch_request(self, collection, _id):
         self.context["page"] = "vocabpage"
-        if collection in ["usability", "availability"]:
-            if _id not in [1, 2, 3, 4]:
-                abort(404)
-
         self.context["resource"] = _id
         self.context["collection"] = collection
 
+        if collection in ["usability", "availability"] and _id not in [1, 2, 3, 4]:
+            abort(404)
+
         return render_template("vocabulary.html", **self.context)
-        # return jsonify(self.context)
 
 
 class ProfileView(GUIView):

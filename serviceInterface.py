@@ -5,123 +5,13 @@ import boto3
 
 import constants
 
-# FILTERS = {
-#     "creators": {
-#         "label": u"Ophavsretsholder",
-#         "repeatable": True,
-#         "type": "object",
-#         "negatable": True,
-#     },
-#     "locations": {
-#         "label": u"Stedsangivelse",
-#         "repeatable": True,
-#         "type": "object",
-#         "negatable": True,
-#     },
-#     "events": {
-#         "label": u"Begivenhed",
-#         "repeatable": True,
-#         "type": "object",
-#         "negatable": True,
-#     },
-#     "people": {
-#         "label": u"Person",
-#         "repeatable": True,
-#         "type": "object",
-#         "negatable": True,
-#     },
-#     "organisations": {
-#         "label": u"Organisation",
-#         "repeatable": True,
-#         "type": "object",
-#         "negatable": True,
-#     },
-#     "collection": {
-#         "label": u"Samling",
-#         "repeatable": False,
-#         "type": "object",
-#         "negatable": True,
-#     },
-#     "date_from": {
-#         "label": u"Tidligste dato",
-#         "repeatable": False,
-#         "type": "date",
-#         "negatable": False,
-#     },
-#     "date_to": {
-#         "label": u"Seneste dato",
-#         "repeatable": False,
-#         "type": "date",
-#         "negatable": False,
-#     },
-#     "subjects": {
-#         "label": u"Emnekategori",
-#         "repeatable": True,
-#         "type": "object",
-#         "negatable": True,
-#     },
-#     "series": {
-#         "label": u"Arkivserie",
-#         "repeatable": False,
-#         "type": "string",
-#         "negatable": False,
-#     },
-#     "admin_tags": {
-#         "label": u"Administrativt tag",
-#         "repeatable": True,
-#         "type": "string",
-#         "negatable": True,
-#     },
-#     "collection_tags": {
-#         "label": u"Samlingstags",
-#         "repeatable": True,
-#         "type": "string",
-#         "negatable": True,
-#     },
-#     "content_types": {
-#         "label": u"Materialetype",
-#         "repeatable": True,
-#         "type": "object",
-#         "negatable": True,
-#     },
-#     "collectors": {
-#         "label": u"Arkivskaber",
-#         "repeatable": True,
-#         "type": "object",
-#         "negatable": True,
-#     },
-#     "curators": {
-#         "label": u"Kurator",
-#         "repeatable": True,
-#         "type": "object",
-#         "negatable": True,
-#     },
-#     "availability": {
-#         "label": u"Tilgængelighed",
-#         "repeatable": False,
-#         "type": "object",
-#         "negatable": True,
-#     },
-#     "usability": {
-#         "label": u"Brugslicens",
-#         "repeatable": False,
-#         "type": "object",
-#         "negatable": True,
-#     },
-#     "registration_id": {
-#         "label": u"RegistreringsID",
-#         "repeatable": False,
-#         "type": "integer",
-#         "negatable": False,
-#     },
-# }
 
 class Service:
     def __init__(self):
 
         self.OAWS_API_KEY = os.environ.get('OAWS_API_KEY')
         self.OAWS_BASE_URL = "https://openaws.appspot.com"
-        self.FILTERS = constants.FILTERS
+        self.FILTERS = constants.SEARCH_FILTERS
         self.SEARCH_ENGINE = boto3.client(
             "cloudsearchdomain",
             aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"),
@@ -236,38 +126,7 @@ class Service:
 
         return series, collection_tags
 
-        # sorted_series = sort_by_value('value', series)
-        # out = []
-        # temp = {}
-        # series_size = len(sorted_series)
-
-        # for idx, _dict in enumerate(sorted_series):
-        #     cur_temp = temp
-        #     levels = _dict.get('value').split('/')
-        #     for level in levels:
-        #         if cur_temp.get('level'):
-
-        #         else:
-        #     if idx + 1 < series_size:
-        #         next_dict_value = sorted_series[idx + 1].get('value')
-        #         if next_dict_value.startswith(cur_dict_value):
-
-        #         else:
-        #             out
-        #     else:
-
-        # sorted_collection_tags = sort_by_value('value', collection_tags)
-
-        # for facet, values in facets.items():
-        #     out = []
-        #     for level in values.get('buckets'):
-        #         b['add_link'] = encode(facet, b.get('value'))
-        #         out[b.get('value')] = b
-        #     result[facet] = out
-
-        # return api_response.get('facets')
-
-    def list_resources_v2(self, query_params):
+    def list_resources(self, query_params):
         # https://docs.aws.amazon.com/cloudsearch/latest/developerguide/search-api.html#structured-search-syntax
         # https://docs.aws.amazon.com/cloudsearch/latest/developerguide/searching-compound-queries.html
 

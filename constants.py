@@ -53,547 +53,547 @@ FACETS = {
         'hierarchical': True,
         'content': [
             {
-                "id": u"99",
-                "label": u"Andet materiale"
+                "id": "99",
+                "label": "Andet materiale"
             },
             {
                 "children": [
                   {
-                    "id": u"66",
+                    "id": "66",
                     "icon": "far fa-image",
-                    "label": u"Afbildning af arkitektur og bygning"
+                    "label": "Afbildning af arkitektur og bygning"
                   },
                   {
-                    "id": u"65",
+                    "id": "65",
                     "icon": "far fa-image",
-                    "label": u"Afbildning af kunst"
+                    "label": "Afbildning af kunst"
                   },
                   {
-                    "id": u"73",
+                    "id": "73",
                     "icon": "far fa-image",
-                    "label": u"Arkitekturtegning"
+                    "label": "Arkitekturtegning"
                   },
                   {
-                    "id": u"64",
+                    "id": "64",
                     "icon": "far fa-image",
-                    "label": u"By- og gadebilleder"
+                    "label": "By- og gadebilleder"
                   },
                   {
-                    "id": u"70",
+                    "id": "70",
                     "icon": "far fa-image",
-                    "label": u"Collage"
+                    "label": "Collage"
                   },
                   {
-                    "id": u"71",
+                    "id": "71",
                     "icon": "far fa-image",
-                    "label": u"Illustrationer"
+                    "label": "Illustrationer"
                   },
                   {
-                    "id": u"100",
+                    "id": "100",
                     "icon": "far fa-image",
-                    "label": u"Landskabs- og naturbilleder"
+                    "label": "Landskabs- og naturbilleder"
                   },
                   {
-                    "id": u"62",
+                    "id": "62",
                     "icon": "far fa-image",
-                    "label": u"Luftfoto"
+                    "label": "Luftfoto"
                   },
                   {
-                    "id": u"68",
+                    "id": "68",
                     "icon": "far fa-image",
-                    "label": u"Maleri"
+                    "label": "Maleri"
                   },
                   {
-                    "id": u"67",
+                    "id": "67",
                     "icon": "far fa-image",
-                    "label": u"Plakat"
+                    "label": "Plakat"
                   },
                   {
-                    "id": u"69",
+                    "id": "69",
                     "icon": "far fa-image",
-                    "label": u"Planche"
+                    "label": "Planche"
                   },
                   {
-                    "id": u"63",
+                    "id": "63",
                     "icon": "far fa-image",
-                    "label": u"Portræt"
+                    "label": "Portræt"
                   },
                   {
-                    "id": u"74",
+                    "id": "74",
                     "icon": "far fa-image",
-                    "label": u"Postkort"
+                    "label": "Postkort"
                   },
                   {
-                    "id": u"72",
+                    "id": "72",
                     "icon": "far fa-image",
-                    "label": u"Tekniske tegninger"
+                    "label": "Tekniske tegninger"
                   }
                 ],
-                "id": u"61",
-                "icon": u"far fa-image",
-                "label": u"Billeder"
+                "id": "61",
+                "icon": "far fa-image",
+                "label": "Billeder"
               },
               {
                 "children": [
                   {
-                    "id": u"98",
-                    "icon": u"fas fa-laptop",
-                    "label": u"Hjemmesider"
+                    "id": "98",
+                    "icon": "fas fa-laptop",
+                    "label": "Hjemmesider"
                   },
                   {
-                    "id": u"96",
-                    "icon": u"fas fa-laptop",
-                    "label": u"Software"
+                    "id": "96",
+                    "icon": "fas fa-laptop",
+                    "label": "Software"
                   },
                   {
-                    "id": u"97",
-                    "icon": u"fas fa-laptop",
-                    "label": u"Spil"
+                    "id": "97",
+                    "icon": "fas fa-laptop",
+                    "label": "Spil"
                   }
                 ],
-                "id": u"95",
-                "icon": u"fas fa-laptop",
-                "label": u"Elektronisk materiale"
+                "id": "95",
+                "icon": "fas fa-laptop",
+                "label": "Elektronisk materiale"
               },
               {
                 "children": [
                   {
-                    "description": u"Skøder, pantebreve, forpagtningskontrakter, m.m.",
-                    "id": u"13",
-                    "icon": u"fas fa-gavel",
-                    "label": u"Ejendomspapirer"
+                    "description": "Skøder, pantebreve, forpagtningskontrakter, m.m.",
+                    "id": "13",
+                    "icon": "fas fa-gavel",
+                    "label": "Ejendomspapirer"
                   },
                   {
-                    "id": u"12",
-                    "icon": u"fas fa-gavel",
-                    "label": u"Kontrakter"
+                    "id": "12",
+                    "icon": "fas fa-gavel",
+                    "label": "Kontrakter"
                   },
                   {
-                    "id": u"16",
-                    "icon": u"fas fa-gavel",
-                    "label": u"Love og cirkulærer"
+                    "id": "16",
+                    "icon": "fas fa-gavel",
+                    "label": "Love og cirkulærer"
                   },
                   {
-                    "id": u"15",
-                    "icon": u"fas fa-gavel",
-                    "label": u"Regulativer"
+                    "id": "15",
+                    "icon": "fas fa-gavel",
+                    "label": "Regulativer"
                   },
                   {
-                    "id": u"11",
-                    "icon": u"fas fa-gavel",
-                    "label": u"Retningslinier"
+                    "id": "11",
+                    "icon": "fas fa-gavel",
+                    "label": "Retningslinier"
                   },
                   {
-                    "id": u"17",
-                    "icon": u"fas fa-gavel",
-                    "label": u"Standarder og specifikationer"
+                    "id": "17",
+                    "icon": "fas fa-gavel",
+                    "label": "Standarder og specifikationer"
                   },
                   {
-                    "id": u"14",
-                    "icon": u"fas fa-gavel",
-                    "label": u"Vedtægter"
+                    "id": "14",
+                    "icon": "fas fa-gavel",
+                    "label": "Vedtægter"
                   }
                 ],
-                "id": u"10",
-                "icon": u"fas fa-gavel",
-                "label": u"Forskrifter og vedtægter"
+                "id": "10",
+                "icon": "fas fa-gavel",
+                "label": "Forskrifter og vedtægter"
               },
               {
                 "children": [
                   {
-                    "id": u"5",
-                    "icon": u"far folder-open",
-                    "label": u"Borgersager"
+                    "id": "5",
+                    "icon": "far folder-open",
+                    "label": "Borgersager"
                   },
                   {
-                    "id": u"2",
-                    "icon": u"far folder-open",
-                    "label": u"Bygge- og ejendomssager"
+                    "id": "2",
+                    "icon": "far folder-open",
+                    "label": "Bygge- og ejendomssager"
                   },
                   {
-                    "id": u"8",
-                    "icon": u"far folder-open",
-                    "label": u"By- og lokalplaner"
+                    "id": "8",
+                    "icon": "far folder-open",
+                    "label": "By- og lokalplaner"
                   },
                   {
-                    "id": u"7",
-                    "icon": u"far folder-open",
-                    "label": u"Byråds- og udvalgssager"
+                    "id": "7",
+                    "icon": "far folder-open",
+                    "label": "Byråds- og udvalgssager"
                   },
                   {
-                    "id": u"4",
-                    "icon": u"far folder-open",
-                    "label": u"Emnesager"
+                    "id": "4",
+                    "icon": "far folder-open",
+                    "label": "Emnesager"
                   },
                   {
-                    "id": u"9",
-                    "icon": u"far folder-open",
-                    "label": u"Kommunalplaner"
+                    "id": "9",
+                    "icon": "far folder-open",
+                    "label": "Kommunalplaner"
                   },
                   {
-                    "id": u"6",
-                    "icon": u"far folder-open",
-                    "label": u"Personalesager"
+                    "id": "6",
+                    "icon": "far folder-open",
+                    "label": "Personalesager"
                   },
                   {
-                    "id": u"3",
-                    "icon": u"far folder-open",
-                    "label": u"Vej og område, kulturmiljøsager"
+                    "id": "3",
+                    "icon": "far folder-open",
+                    "label": "Vej og område, kulturmiljøsager"
                   }
                 ],
-                "id": u"1",
-                "icon": u"far folder-open",
-                "label": u"Kommunale sager og planer"
+                "id": "1",
+                "icon": "far folder-open",
+                "label": "Kommunale sager og planer"
               },
               {
                 "children": [
                   {
-                    "id": u"80",
-                    "icon": u"far fa-map",
-                    "label": u"Diagram"
+                    "id": "80",
+                    "icon": "far fa-map",
+                    "label": "Diagram"
                   },
                   {
-                    "id": u"76",
-                    "icon": u"far fa-map",
-                    "label": u"Matrikelkort"
+                    "id": "76",
+                    "icon": "far fa-map",
+                    "label": "Matrikelkort"
                   },
                   {
-                    "id": u"79",
-                    "icon": u"far fa-map",
-                    "label": u"Tekniske kort"
+                    "id": "79",
+                    "icon": "far fa-map",
+                    "label": "Tekniske kort"
                   },
                   {
-                    "id": u"77",
-                    "icon": u"far fa-map",
-                    "label": u"Topografiske kort"
+                    "id": "77",
+                    "icon": "far fa-map",
+                    "label": "Topografiske kort"
                   },
                   {
-                    "id": u"78",
-                    "icon": u"far fa-map",
-                    "label": u"Økonomiske kort"
+                    "id": "78",
+                    "icon": "far fa-map",
+                    "label": "Økonomiske kort"
                   }
                 ],
-                "id": u"75",
-                "icon": u"far fa-map",
-                "label": u"Kortmateriale"
+                "id": "75",
+                "icon": "far fa-map",
+                "label": "Kortmateriale"
               },
               {
-                "description": u"upubliceret",
+                "description": "upubliceret",
                 "children": [
                   {
-                    "description": u"upubliceret",
-                    "id": u"51",
-                    "icon": u"far file-alt",
-                    "label": u"Afhandlinger og disputatser"
+                    "description": "upubliceret",
+                    "id": "51",
+                    "icon": "far file-alt",
+                    "label": "Afhandlinger og disputatser"
                   },
                   {
-                    "description": u"upubliceret",
-                    "id": u"53",
-                    "icon": u"far file-alt",
-                    "label": u"Eksamensopgaver"
+                    "description": "upubliceret",
+                    "id": "53",
+                    "icon": "far file-alt",
+                    "label": "Eksamensopgaver"
                   },
                   {
-                    "description": u"upubliceret",
-                    "id": u"50",
-                    "icon": u"far file-alt",
-                    "label": u"Erindringer og dagbøger"
+                    "description": "upubliceret",
+                    "id": "50",
+                    "icon": "far file-alt",
+                    "label": "Erindringer og dagbøger"
                   },
                   {
-                    "description": u"upubliceret",
-                    "id": u"52",
-                    "icon": u"far file-alt",
-                    "label": u"Forelæsningspapirer og -noter"
+                    "description": "upubliceret",
+                    "id": "52",
+                    "icon": "far file-alt",
+                    "label": "Forelæsningspapirer og -noter"
                   },
                   {
-                    "description": u"upubliceret",
-                    "id": u"56",
-                    "icon": u"far file-alt",
-                    "label": u"Håndbøger og manualer"
+                    "description": "upubliceret",
+                    "id": "56",
+                    "icon": "far file-alt",
+                    "label": "Håndbøger og manualer"
                   },
                   {
-                    "description": u"upubliceret, email, chat, breve, interviews",
-                    "id": u"60",
-                    "icon": u"far file-alt",
-                    "label": u"Korrespondance"
+                    "description": "upubliceret, email, chat, breve, interviews",
+                    "id": "60",
+                    "icon": "far file-alt",
+                    "label": "Korrespondance"
                   },
                   {
-                    "description": u"upubliceret, skudsmålsbøger, eksamenspapirer, anbefalinger, attester, m.m.",
-                    "id": u"58",
-                    "icon": u"far file-alt",
-                    "label": u"Personlige papirer"
+                    "description": "upubliceret, skudsmålsbøger, eksamenspapirer, anbefalinger, attester, m.m.",
+                    "id": "58",
+                    "icon": "far file-alt",
+                    "label": "Personlige papirer"
                   },
                   {
-                    "description": u"upubliceret, arkivalske registranter",
-                    "id": u"59",
-                    "icon": u"far file-alt",
-                    "label": u"Registranter"
+                    "description": "upubliceret, arkivalske registranter",
+                    "id": "59",
+                    "icon": "far file-alt",
+                    "label": "Registranter"
                   },
                   {
-                    "description": u"upubliceret, festtaler, oratoriske taler, politiske taler m.m.",
-                    "id": u"54",
-                    "icon": u"far file-alt",
-                    "label": u"Taler"
+                    "description": "upubliceret, festtaler, oratoriske taler, politiske taler m.m.",
+                    "id": "54",
+                    "icon": "far file-alt",
+                    "label": "Taler"
                   },
                   {
-                    "description": u"upubliceret",
-                    "id": u"57",
-                    "icon": u"far file-alt",
-                    "label": u"Tweets, online posts, blogs"
+                    "description": "upubliceret",
+                    "id": "57",
+                    "icon": "far file-alt",
+                    "label": "Tweets, online posts, blogs"
                   },
                   {
-                    "description": u"upubliceret",
-                    "id": u"55",
-                    "icon": u"far file-alt",
-                    "label": u"Udklip og småtryk"
+                    "description": "upubliceret",
+                    "id": "55",
+                    "icon": "far file-alt",
+                    "label": "Udklip og småtryk"
                   }
                 ],
-                "id": u"49",
-                "icon": u"far file-alt",
-                "label": u"Manuskripter"
+                "id": "49",
+                "icon": "far file-alt",
+                "label": "Manuskripter"
               },
               {
-                "description": u"tv, radio og internet",
+                "description": "tv, radio og internet",
                 "children": [
                   {
-                    "description": u"tv, radio og internet",
-                    "id": u"93",
-                    "icon": u"fas fa-film",
-                    "label": u"Animation"
+                    "description": "tv, radio og internet",
+                    "id": "93",
+                    "icon": "fas fa-film",
+                    "label": "Animation"
                   },
                   {
-                    "description": u"tv, radio og internet",
-                    "id": u"89",
-                    "icon": u"fas fa-film",
-                    "label": u"Dokumentarer"
+                    "description": "tv, radio og internet",
+                    "id": "89",
+                    "icon": "fas fa-film",
+                    "label": "Dokumentarer"
                   },
                   {
-                    "description": u"tv, radio og internet",
-                    "id": u"90",
-                    "icon": u"fas fa-film",
-                    "label": u"Eksperimental videokunst"
+                    "description": "tv, radio og internet",
+                    "id": "90",
+                    "icon": "fas fa-film",
+                    "label": "Eksperimental videokunst"
                   },
                   {
-                    "description": u"tv, radio og internet",
-                    "id": u"92",
-                    "icon": u"fas fa-film",
-                    "label": u"Fiktion og kortfilm"
+                    "description": "tv, radio og internet",
+                    "id": "92",
+                    "icon": "fas fa-film",
+                    "label": "Fiktion og kortfilm"
                   },
                   {
-                    "description": u"tv, radio og internet",
-                    "id": u"91",
-                    "icon": u"fas fa-film",
-                    "label": u"Magasin- og nyhedsprogrammer"
+                    "description": "tv, radio og internet",
+                    "id": "91",
+                    "icon": "fas fa-film",
+                    "label": "Magasin- og nyhedsprogrammer"
                   },
                   {
-                    "description": u"tv, radio og internet",
-                    "id": u"94",
-                    "icon": u"fas fa-film",
-                    "label": u"Oplæsninger"
+                    "description": "tv, radio og internet",
+                    "id": "94",
+                    "icon": "fas fa-film",
+                    "label": "Oplæsninger"
                   },
                   {
-                    "description": u"tv, radio og internet",
-                    "id": u"88",
-                    "icon": u"fas fa-film",
-                    "label": u"Reportager"
+                    "description": "tv, radio og internet",
+                    "id": "88",
+                    "icon": "fas fa-film",
+                    "label": "Reportager"
                   }
                 ],
-                "id": u"87",
-                "icon": u"fas fa-film",
-                "label": u"Medieproduktioner"
-              },
-              {
-                "children": [
-                  {
-                    "id": u"86",
-                    "label": u"Ikke-musikalsk lyd"
-                  },
-                  {
-                    "id": u"85",
-                    "label": u"Live-opførelser"
-                  },
-                  {
-                    "id": u"82",
-                    "label": u"Musikudgivelser"
-                  },
-                  {
-                    "id": u"83",
-                    "label": u"Noder"
-                  },
-                  {
-                    "id": u"84",
-                    "label": u"Sange og salmer"
-                  }
-                ],
-                "id": u"81",
-                "label": u"Musik og lydoptagelser"
+                "id": "87",
+                "icon": "fas fa-film",
+                "label": "Medieproduktioner"
               },
               {
                 "children": [
                   {
-                    "description": u"inkl. anmeldelser, nekrologer, opiniods, m.m.",
-                    "id": u"41",
-                    "icon": u"fas fa-book",
-                    "label": u"Artikler og essays"
+                    "id": "86",
+                    "label": "Ikke-musikalsk lyd"
                   },
                   {
-                    "description": u"inkl. diskografi, filmografi og andre værkfortegnelse",
-                    "id": u"40",
-                    "icon": u"fas fa-book",
-                    "label": u"Bibliografier"
+                    "id": "85",
+                    "label": "Live-opførelser"
                   },
                   {
-                    "id": u"44",
-                    "icon": u"fas fa-book",
-                    "label": u"Detailkataloger, reklamer, propaganda"
+                    "id": "82",
+                    "label": "Musikudgivelser"
                   },
                   {
-                    "id": u"37",
-                    "icon": u"fas fa-book",
-                    "label": u"Faglitteratur"
+                    "id": "83",
+                    "label": "Noder"
                   },
                   {
-                    "description": u"Vejvisere, telefonbøger, m.m.",
-                    "id": u"46",
-                    "icon": u"fas fa-book",
-                    "label": u"Fortegnelser"
-                  },
-                  {
-                    "id": u"45",
-                    "icon": u"fas fa-book",
-                    "label": u"Kataloger og programmer for diverse"
-                  },
-                  {
-                    "id": u"47",
-                    "icon": u"fas fa-book",
-                    "label": u"Nyhedsbreve og medlemsblade"
-                  },
-                  {
-                    "id": u"43",
-                    "icon": u"fas fa-book",
-                    "label": u"Pjecer, pamfletter"
-                  },
-                  {
-                    "id": u"48",
-                    "icon": u"fas fa-book",
-                    "label": u"Rapporter"
-                  },
-                  {
-                    "description": u"encyklopædier, ordbøger, m.m.",
-                    "id": u"39",
-                    "icon": u"fas fa-book",
-                    "label": u"Reference- og opslagsværker"
-                  },
-                  {
-                    "description": u"inkl. autobiografier",
-                    "id": u"38",
-                    "icon": u"fas fa-book",
-                    "label": u"Skønlitteratur, dramatik og poesi"
-                  },
-                  {
-                    "description": u"magasiner, årspublikationer, periodica, m.m.",
-                    "id": u"42",
-                    "icon": u"fas fa-book",
-                    "label": u"Tidsskrifter og aviser"
+                    "id": "84",
+                    "label": "Sange og salmer"
                   }
                 ],
-                "id": u"36",
-                "icon": u"fas fa-book",
-                "label": u"Publikationer"
+                "id": "81",
+                "label": "Musik og lydoptagelser"
               },
               {
                 "children": [
                   {
-                    "id": u"27",
-                    "icon": u"fab fa-leanpub",
-                    "label": u"Andre registre og protokoller"
+                    "description": "inkl. anmeldelser, nekrologer, opiniods, m.m.",
+                    "id": "41",
+                    "icon": "fas fa-book",
+                    "label": "Artikler og essays"
                   },
                   {
-                    "id": u"22",
-                    "icon": u"fab fa-leanpub",
-                    "label": u"Brandtaksationsprotokoller"
+                    "description": "inkl. diskografi, filmografi og andre værkfortegnelse",
+                    "id": "40",
+                    "icon": "fas fa-book",
+                    "label": "Bibliografier"
                   },
                   {
-                    "description": u"Lister, medlemsfortegnelser, adressefortegnelser, navnelister, m.m.",
-                    "id": u"28",
-                    "icon": u"fab fa-leanpub",
-                    "label": u"Diverse fortegnelser"
+                    "id": "44",
+                    "icon": "fas fa-book",
+                    "label": "Detailkataloger, reklamer, propaganda"
                   },
                   {
-                    "id": u"20",
-                    "icon": u"fab fa-leanpub",
-                    "label": u"Dødsattester og -journaler"
+                    "id": "37",
+                    "icon": "fas fa-book",
+                    "label": "Faglitteratur"
                   },
                   {
-                    "id": u"24",
-                    "icon": u"fab fa-leanpub",
-                    "label": u"Folketællinger"
+                    "description": "Vejvisere, telefonbøger, m.m.",
+                    "id": "46",
+                    "icon": "fas fa-book",
+                    "label": "Fortegnelser"
                   },
                   {
-                    "id": u"25",
-                    "icon": u"fab fa-leanpub",
-                    "label": u"Kirkebøger"
+                    "id": "45",
+                    "icon": "fas fa-book",
+                    "label": "Kataloger og programmer for diverse"
                   },
                   {
-                    "id": u"19",
-                    "icon": u"fab fa-leanpub",
-                    "label": u"Mødereferater og forhandlingsprotokoller"
+                    "id": "47",
+                    "icon": "fas fa-book",
+                    "label": "Nyhedsbreve og medlemsblade"
                   },
                   {
-                    "id": u"23",
-                    "icon": u"fab fa-leanpub",
-                    "label": u"Realregistre"
+                    "id": "43",
+                    "icon": "fas fa-book",
+                    "label": "Pjecer, pamfletter"
                   },
                   {
-                    "id": u"21",
-                    "icon": u"fab fa-leanpub",
-                    "label": u"Skattemandtalslister"
+                    "id": "48",
+                    "icon": "fas fa-book",
+                    "label": "Rapporter"
                   },
                   {
-                    "id": u"26",
-                    "icon": u"fab fa-leanpub",
-                    "label": u"Skifteprotokoller"
+                    "description": "encyklopædier, ordbøger, m.m.",
+                    "id": "39",
+                    "icon": "fas fa-book",
+                    "label": "Reference- og opslagsværker"
+                  },
+                  {
+                    "description": "inkl. autobiografier",
+                    "id": "38",
+                    "icon": "fas fa-book",
+                    "label": "Skønlitteratur, dramatik og poesi"
+                  },
+                  {
+                    "description": "magasiner, årspublikationer, periodica, m.m.",
+                    "id": "42",
+                    "icon": "fas fa-book",
+                    "label": "Tidsskrifter og aviser"
                   }
                 ],
-                "id": u"18",
-                "icon": u"fab fa-leanpub",
-                "label": u"Registre og protokoller"
+                "id": "36",
+                "icon": "fas fa-book",
+                "label": "Publikationer"
               },
               {
                 "children": [
                   {
-                    "id": u"34",
-                    "icon": u"far chart-bar",
-                    "label": u"Database"
+                    "id": "27",
+                    "icon": "fab fa-leanpub",
+                    "label": "Andre registre og protokoller"
                   },
                   {
-                    "id": u"31",
-                    "icon": u"far chart-bar",
-                    "label": u"Regnskaber og budgetmateriale"
+                    "id": "22",
+                    "icon": "fab fa-leanpub",
+                    "label": "Brandtaksationsprotokoller"
                   },
                   {
-                    "id": u"30",
-                    "icon": u"far chart-bar",
-                    "label": u"Spørgeskemaundersøgelser"
+                    "description": "Lister, medlemsfortegnelser, adressefortegnelser, navnelister, m.m.",
+                    "id": "28",
+                    "icon": "fab fa-leanpub",
+                    "label": "Diverse fortegnelser"
                   },
                   {
-                    "id": u"32",
-                    "icon": u"far chart-bar",
-                    "label": u"Statistisk materiale"
+                    "id": "20",
+                    "icon": "fab fa-leanpub",
+                    "label": "Dødsattester og -journaler"
                   },
                   {
-                    "id": u"33",
-                    "icon": u"far chart-bar",
-                    "label": u"Statistisk undersøgelse"
+                    "id": "24",
+                    "icon": "fab fa-leanpub",
+                    "label": "Folketællinger"
                   },
                   {
-                    "id": u"35",
-                    "icon": u"far chart-bar",
-                    "label": u"Tabelværk"
+                    "id": "25",
+                    "icon": "fab fa-leanpub",
+                    "label": "Kirkebøger"
+                  },
+                  {
+                    "id": "19",
+                    "icon": "fab fa-leanpub",
+                    "label": "Mødereferater og forhandlingsprotokoller"
+                  },
+                  {
+                    "id": "23",
+                    "icon": "fab fa-leanpub",
+                    "label": "Realregistre"
+                  },
+                  {
+                    "id": "21",
+                    "icon": "fab fa-leanpub",
+                    "label": "Skattemandtalslister"
+                  },
+                  {
+                    "id": "26",
+                    "icon": "fab fa-leanpub",
+                    "label": "Skifteprotokoller"
                   }
                 ],
-                "id": u"29",
-                "icon": u"far chart-bar",
-                "label": u"Statistisk og økonomisk materiale"
+                "id": "18",
+                "icon": "fab fa-leanpub",
+                "label": "Registre og protokoller"
+              },
+              {
+                "children": [
+                  {
+                    "id": "34",
+                    "icon": "far chart-bar",
+                    "label": "Database"
+                  },
+                  {
+                    "id": "31",
+                    "icon": "far chart-bar",
+                    "label": "Regnskaber og budgetmateriale"
+                  },
+                  {
+                    "id": "30",
+                    "icon": "far chart-bar",
+                    "label": "Spørgeskemaundersøgelser"
+                  },
+                  {
+                    "id": "32",
+                    "icon": "far chart-bar",
+                    "label": "Statistisk materiale"
+                  },
+                  {
+                    "id": "33",
+                    "icon": "far chart-bar",
+                    "label": "Statistisk undersøgelse"
+                  },
+                  {
+                    "id": "35",
+                    "icon": "far chart-bar",
+                    "label": "Tabelværk"
+                  }
+                ],
+                "id": "29",
+                "icon": "far chart-bar",
+                "label": "Statistisk og økonomisk materiale"
               }
         ]
     },
@@ -966,125 +966,242 @@ FACETS = {
     }
 }
 
-FILTERS = {
-            "creators": {
-                "label": u"Ophavsretsholder",
-                "repeatable": True,
-                "type": "object",
-                "negatable": True,
-            },
-            "locations": {
-                "label": u"Stedsangivelse",
-                "repeatable": True,
-                "type": "object",
-                "negatable": True,
-            },
-            "events": {
-                "label": u"Begivenhed",
-                "repeatable": True,
-                "type": "object",
-                "negatable": True,
-            },
-            "people": {
-                "label": u"Person",
-                "repeatable": True,
-                "type": "object",
-                "negatable": True,
-            },
-            "organisations": {
-                "label": u"Organisation",
-                "repeatable": True,
-                "type": "object",
-                "negatable": True,
-            },
-            "collection": {
-                "label": u"Samling",
-                "repeatable": False,
-                "type": "object",
-                "negatable": True,
-            },
-            "date_from": {
-                "label": u"Tidligste dato",
-                "repeatable": False,
-                "type": "date",
-                "negatable": False,
-            },
-            "date_to": {
-                "label": u"Seneste dato",
-                "repeatable": False,
-                "type": "date",
-                "negatable": False,
-            },
-            "subjects": {
-                "label": u"Emnekategori",
-                "repeatable": True,
-                "type": "object",
-                "negatable": True,
-            },
-            "series": {
-                "label": u"Arkivserie",
-                "repeatable": False,
-                "type": "string",
-                "negatable": False,
-            },
-            "admin_tags": {
-                "label": u"Administrativt tag",
-                "repeatable": True,
-                "type": "string",
-                "negatable": True,
-            },
-            "collection_tags": {
-                "label": u"Samlingstags",
-                "repeatable": True,
-                "type": "string",
-                "negatable": True,
-            },
-            "content_types": {
-                "label": u"Materialetype",
-                "repeatable": True,
-                "type": "object",
-                "negatable": True,
-            },
-            "collectors": {
-                "label": u"Arkivskaber",
-                "repeatable": True,
-                "type": "object",
-                "negatable": True,
-            },
-            "curators": {
-                "label": u"Kurator",
-                "repeatable": True,
-                "type": "object",
-                "negatable": True,
-            },
-            "availability": {
-                "label": u"Tilgængelighed",
-                "repeatable": False,
-                "type": "object",
-                "negatable": True,
-            },
-            'sort': {
-                'label': u'Sortering',
-                'repeatable': False,
-                'type': 'string',
-                'negatable': False,
-            },
-            'size': {
-                'label': u'Antal visninger',
-                'repeatable': False,
-                'type': 'integer',
-                'negatable': False,
-            },
-            "usability": {
-                "label": u"Hvad må jeg bruge?",
-                "repeatable": False,
-                "type": "object",
-                "negatable": True,
-            },
-            "registration_id": {
-                "label": u"RegistreringsID",
-                "repeatable": False,
-                "type": "integer",
-                "negatable": False,
-            },
-        }
+SEARCH_FILTERS = {
+    "creators": {
+        "label": "Ophavsretsholder",
+        "repeatable": True,
+        "type": "object",
+        "negatable": True,
+    },
+    "locations": {
+        "label": "Stedsangivelse",
+        "repeatable": True,
+        "type": "object",
+        "negatable": True,
+    },
+    "events": {
+        "label": "Begivenhed",
+        "repeatable": True,
+        "type": "object",
+        "negatable": True,
+    },
+    "people": {
+        "label": "Person",
+        "repeatable": True,
+        "type": "object",
+        "negatable": True,
+    },
+    "organisations": {
+        "label": "Organisation",
+        "repeatable": True,
+        "type": "object",
+        "negatable": True,
+    },
+    "collection": {
+        "label": "Samling",
+        "repeatable": False,
+        "type": "object",
+        "negatable": True,
+    },
+    "date_from": {
+        "label": "Tidligste dato",
+        "repeatable": False,
+        "type": "date",
+        "negatable": False,
+    },
+    "date_to": {
+        "label": "Seneste dato",
+        "repeatable": False,
+        "type": "date",
+        "negatable": False,
+    },
+    "subjects": {
+        "label": "Emnekategori",
+        "repeatable": True,
+        "type": "object",
+        "negatable": True,
+    },
+    "series": {
+        "label": "Arkivserie",
+        "repeatable": False,
+        "type": "string",
+        "negatable": False,
+    },
+    "admin_tags": {
+        "label": "Administrativt tag",
+        "repeatable": True,
+        "type": "string",
+        "negatable": True,
+    },
+    "collection_tags": {
+        "label": "Samlingstags",
+        "repeatable": True,
+        "type": "string",
+        "negatable": True,
+    },
+    "content_types": {
+        "label": "Materialetype",
+        "repeatable": True,
+        "type": "object",
+        "negatable": True,
+    },
+    "collectors": {
+        "label": "Arkivskaber",
+        "repeatable": True,
+        "type": "object",
+        "negatable": True,
+    },
+    "curators": {
+        "label": "Kurator",
+        "repeatable": True,
+        "type": "object",
+        "negatable": True,
+    },
+    "availability": {
+        "label": "Tilgængelighed",
+        "repeatable": False,
+        "type": "object",
+        "negatable": True,
+    },
+    "usability": {
+        "label": "Hvad må jeg bruge?",
+        "repeatable": False,
+        "type": "object",
+        "negatable": True,
+    },
+    "registration_id": {
+        "label": "RegistreringsID",
+        "repeatable": False,
+        "type": "integer",
+        "negatable": False,
+    },
+}
+
+QUERY_FILTERS = {
+    'sort': {
+        'label': 'Sortering',
+        'repeatable': False,
+        'type': 'string',
+        'negatable': False,
+    },
+    'size': {
+        'label': 'Antal visninger',
+        'repeatable': False,
+        'type': 'integer',
+        'negatable': False,
+    },
+    'start': {
+        'label': 'Start',
+        'repeatable': False,
+        'type': 'integer',
+        'negatable': False,
+    },
+    "creators": {
+        "label": "Ophavsretsholder",
+        "repeatable": True,
+        "type": "object",
+        "negatable": True,
+    },
+    "locations": {
+        "label": "Stedsangivelse",
+        "repeatable": True,
+        "type": "object",
+        "negatable": True,
+    },
+    "events": {
+        "label": "Begivenhed",
+        "repeatable": True,
+        "type": "object",
+        "negatable": True,
+    },
+    "people": {
+        "label": "Person",
+        "repeatable": True,
+        "type": "object",
+        "negatable": True,
+    },
+    "organisations": {
+        "label": "Organisation",
+        "repeatable": True,
+        "type": "object",
+        "negatable": True,
+    },
+    "collection": {
+        "label": "Samling",
+        "repeatable": False,
+        "type": "object",
+        "negatable": True,
+    },
+    "date_from": {
+        "label": "Tidligste dato",
+        "repeatable": False,
+        "type": "date",
+        "negatable": False,
+    },
+    "date_to": {
+        "label": "Seneste dato",
+        "repeatable": False,
+        "type": "date",
+        "negatable": False,
+    },
+    "subjects": {
+        "label": "Emnekategori",
+        "repeatable": True,
+        "type": "object",
+        "negatable": True,
+    },
+    "series": {
+        "label": "Arkivserie",
+        "repeatable": False,
+        "type": "string",
+        "negatable": False,
+    },
+    "admin_tags": {
+        "label": "Administrativt tag",
+        "repeatable": True,
+        "type": "string",
+        "negatable": True,
+    },
+    "collection_tags": {
+        "label": "Samlingstags",
+        "repeatable": True,
+        "type": "string",
+        "negatable": True,
+    },
+    "content_types": {
+        "label": "Materialetype",
+        "repeatable": True,
+        "type": "object",
+        "negatable": True,
+    },
+    "collectors": {
+        "label": "Arkivskaber",
+        "repeatable": True,
+        "type": "object",
+        "negatable": True,
+    },
+    "curators": {
+        "label": "Kurator",
+        "repeatable": True,
+        "type": "object",
+        "negatable": True,
+    },
+    "availability": {
+        "label": "Tilgængelighed",
+        "repeatable": False,
+        "type": "object",
+        "negatable": True,
+    },
+    "usability": {
+        "label": "Hvad må jeg bruge?",
+        "repeatable": False,
+        "type": "object",
+        "negatable": True,
+    },
+    "registration_id": {
+        "label": "RegistreringsID",
+        "repeatable": False,
+        "type": "integer",
+        "negatable": False,
+    },
+}
