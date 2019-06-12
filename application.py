@@ -1,19 +1,20 @@
 import os
-import json
+# import json
 
 from dotenv import load_dotenv
-import requests
-from six.moves.urllib.parse import urlencode
+# import requests
+# from six.moves.urllib.parse import urlencode
 
 from flask import Flask
 from flask import request
-from flask import session
 from flask import redirect
-from flask import url_for
-from flask import flash
+# from flask import session
+# from flask import url_for
+# from flask import flash
 
+import constants
 import views
-import db
+# import db
 
 try:
     load_dotenv()
@@ -24,26 +25,13 @@ except IOError:
 # Init app
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY")
-# app.debug = os.environ.get("DEBUG")
+app.debug = os.environ.get("DEBUG", False)
 app.config["SESSION_COOKIE_SECURE"] = os.environ.get("SESSION_COOKIE_SECURE", False)
 
 
 # app.jinja_env.auto_reload = True
 app.url_map.strict_slashes = False
-app.jinja_env.globals["ICONS"] = {
-    "61": {"icon": "far fa-image", "label": u"Billeder"},
-    "95": {"icon": "fas fa-laptop", "label": u"Elektronisk materiale"},
-    "10": {"icon": "fas fa-gavel", "label": u"Forskrifter og vedtægter"},
-    "1": {"icon": "far fa-folder-open", "label": u"Kommunale sager og planer"},
-    "75": {"icon": "far fa-map", "label": u"Kortmateriale"},
-    "49": {"icon": "far fa-file-alt", "label": u"Manuskripter"},
-    "87": {"icon": "fas fa-film", "label": u"Medieproduktioner"},
-    "81": {"icon": "fas fa-music", "label": u"Musik og lydoptagelser"},
-    "36": {"icon": "fas fa-book", "label": u"Publikationer"},
-    "18": {"icon": "fab fa-leanpub", "label": u"Registre og protokoller"},
-    "29": {"icon": "far fa-chart-bar", "label": u"Statistisk og økonomisk materiale"},
-    "99": {"icon": "far fa-file", "label": u"Andet materiale"},
-}
+app.jinja_env.globals["ICONS"] = constants.ICONS
 
 
 @app.before_request
@@ -78,95 +66,76 @@ def after_request(response):
     return response
 
 
-app_pages = ["tos"]
-about = [
-    "collections",
-    "availability",
-    "usability",
-    "cookies",
-    "privacy",
-    "archival_availability",
-]
-guides = ["searchguide", "genealogy", "municipality_records"]
-resources = [
-    "records",
-    "people",
-    "locations",
-    "organisations",
-    "events",
-    "objects",
-    "collections",
-    "creators",
-    "collectors",
-]
-vocabs = ["availability", "usability", "content_types", "subjects"]
-
 # Homepage
 app.add_url_rule(
-    "/", defaults={"page": "index"}, view_func=views.AppView.as_view("index")
+    "/",
+    defaults={"page": "index"},
+    view_func=views.AppView.as_view("index")
 )
 
-# Images-page
+# Auth
+app.add_url_rule(
+    "/<any('login', 'signup'):page>",
+    view_func=views.LoginView.as_view("login"),
+)
+
+app.add_url_rule(
+    "/logout",
+    view_func=views.LogoutView.as_view("logout"),
+)
+
+app.add_url_rule(
+    "/callback",
+    view_func=views.CallbackView.as_view("callback"),
+)
+
+# Static ROOT files
+app.add_url_rule(
+    "/<any(" + ", ".join(constants.STATIC_PAGES) + "):filepath>",
+    defaults={"root": True},
+    view_func=views.FileView.as_view("serve_static_rootfile")
+)
+
+# Static DOM files (css, images...)
+app.add_url_rule(
+    "/static/<path:filepath>",
+    view_func=views.FileView.as_view("serve_static_file")
+)
+
+# Imagesites-page
 app.add_url_rule(
     "/images",
     defaults={"page": "imagesites"},
-    view_func=views.BannerView.as_view("imagesites"),
+    view_func=views.AppView.as_view("show_imagesites"),
 )
 
-# App-pages
-# app.add_url_rule(
-#     "/<any(" + ", ".join(app_pages) + "):page>",
-#     view_func=views.AppView.as_view("show_app_page"),
-# )
-
+# Guide-pages
 app.add_url_rule(
-    "/guides/<any(" + ", ".join(guides) + "):page>",
+    "/guides/<any(" + ", ".join(constants.GUIDE_PAGES) + "):page>",
     view_func=views.AppView.as_view("show_guide"),
 )
 
+# About-pages
 app.add_url_rule(
-    "/about/<any(" + ", ".join(about) + "):page>",
+    "/about/<any(" + ", ".join(constants.ABOUT_PAGES) + "):page>",
     view_func=views.AppView.as_view("show_about"),
 )
 
-# Static root files
-app.add_url_rule(
-    "/robots.txt",
-    defaults={"file": "robots.txt"},
-    view_func=views.RootfileView.as_view("serve_robots"),
-)
-
-
-app.add_url_rule(
-    "/BingSiteAuth.xml",
-    defaults={"file": "BingSiteAuth.xml"},
-    view_func=views.RootfileView.as_view("serve_microsoft"),
-)
-
-
-app.add_url_rule(
-    "/google46a7bae009a5abed.html",
-    defaults={"file": "google46a7bae009a5abed.html"},
-    view_func=views.RootfileView.as_view("serve_google"),
-)
-
-# Static DOM files (css, images, js, scss...)
-app.add_url_rule(
-    "/static/<path:filename>", view_func=views.FileView.as_view("serve_static_file")
-)
-
 # Search
-app.add_url_rule("/search", view_func=views.SearchView_v2.as_view("search"))
+app.add_url_rule(
+    "/search",
+    view_func=views.SearchView_v2.as_view("search")
+)
 
 # Resources
 app.add_url_rule(
-    "/<any(" + ", ".join(resources) + "):collection>/<int:_id>",
+    "/<any(" + ", ".join(constants.RESOURCE_PAGES) + "):collection>/<int:_id>",
     view_func=views.ResourceView.as_view("show_resource"),
 )
 
 # Vocabularies (subpaged)
 app.add_url_rule(
-    "/<any(" + ", ".join(vocabs) + "):collection>/<int:_id>",
+    "/<any(" + ", ".join(constants.VOCAB_PAGES) + "):collection>/<int:_id>",
     view_func=views.VocabularyView.as_view("show_vocabulary"),
 )
 
@@ -189,11 +158,17 @@ app.add_url_rule(
 
 # CartAPI
 app.add_url_rule(
-    "/cart", view_func=views.CartView.as_view("show_cart"), methods=["GET"]
+    "/cart",
+    view_func=views.CartView.as_view("show_cart"),
+    methods=["GET"]
 )
+
 app.add_url_rule(
-    "/cart", view_func=views.CartAPI.as_view("add_to_cart"), methods=["POST"]
+    "/cart",
+    view_func=views.CartAPI.as_view("add_to_cart"),
+    methods=["POST"]
 )
+
 app.add_url_rule(
     "/cart/<resource_id>",
     view_func=views.CartAPI.as_view("remove_from_cart"),
@@ -224,7 +199,7 @@ app.add_url_rule(
     methods=["DELETE"],
 )
 
-# SearchesAPI
+# SavedSearchesAPI
 app.add_url_rule(
     "/users/me/searches",
     view_func=views.SearchesAPI.as_view("create_search"),
@@ -248,128 +223,9 @@ app.add_url_rule(
     methods=["GET"],
 )
 
-##############
-# AUTH-VIEWS #
-##############
-@app.route('/<any("login", "signup"):page>')
-def login(page):
-    # initialScreen = page if page == 'login' else 'signUp'
-    if session.get("profile"):
-        return redirect(url_for("show_profile"))
-    else:
-        params = {
-            # "redirect_uri": os.environ.get("AUTH0_CALLBACK_URL"),
-            "redirect_uri": request.host_url + "callback",
-            "response_type": "code",
-            "scope": "openid profile email",
-            "client_id": os.environ.get("AUTH0_CLIENT_ID"),
-            "audience": os.environ.get("AUTH0_AUDIENCE"),
-        }
-        url = "https://" + os.environ.get("AUTH0_DOMAIN") + "/authorize?"
-        return redirect(url + urlencode(params))
-
-
-@app.route("/logout")
-def logout():
-    session.clear()
-    params = {
-        "returnTo": url_for("index", _external=True),
-        "client_id": os.environ.get("AUTH0_CLIENT_ID"),
-    }
-    url = "https://" + os.environ.get("AUTH0_DOMAIN") + "/v2/logout?"
-    return redirect(url + urlencode(params))
-
-
-@app.route("/callback")
-def callback_handler():
-    if not request.args.get("code"):
-        flash('Missing "code". Unable to handle login/signup at the moment.')
-        if session.get("current_url"):
-            return redirect(session.get("current_url"))
-        else:
-            return redirect(url_for("index"))
-
-    token_payload = {
-        "code": request.args.get("code"),
-        "client_id": os.environ.get("AUTH0_CLIENT_ID"),
-        "client_secret": os.environ.get("AUTH0_CLIENT_SECRET"),
-        # "redirect_uri": os.environ.get("AUTH0_CALLBACK_URL"),
-        "redirect_uri": request.host_url + "callback",
-        "grant_type": os.environ.get("AUTH0_GRANT_TYPE"),
-    }
-
-    # get token
-    token_url = "https://{domain}/oauth/token".format(
-        domain=os.environ.get("AUTH0_DOMAIN")
-    )
-    headers = {"content-type": "application/json"}
-
-    token_info = requests.post(
-        token_url, data=json.dumps(token_payload), headers=headers
-    ).json()
-
-    # if not token
-    if not token_info.get("access_token"):
-        flash('Missing "access_token". Unable to handle login/signup at the moment.')
-        if session.get("current_url"):
-            return redirect(session.get("current_url"))
-        else:
-            return redirect(url_for("index"))
-
-    user_url = "https://{domain}/userinfo?access_token={access_token}".format(
-        domain=os.environ.get("AUTH0_DOMAIN"), access_token=token_info["access_token"]
-    )
-
-    # get userinfo
-    try:
-        userinfo = requests.get(user_url).json()
-    except ValueError as e:
-        flash("Unable to fetch userdata: " + e)
-        if session.get("current_url"):
-            return redirect(session.get("current_url"))
-        else:
-            return redirect(url_for("index"))
-
-    # Insert or sync with db_user
-    # return db_user with roles, max_units...
-    db_user = db.sync_or_create_user(userinfo)
-
-    if db_user.get("error"):
-        flash(u"Error syncing user with local db: " + db_user.get("msg"))
-    else:
-        # Populate the session
-        session["profile"] = {
-            "user_id": db_user.get("user_id"),
-            "name": db_user.get("federated_name"),
-            "email": db_user.get("email"),
-            "roles": db_user.get("roles"),
-        }
-
-        session["is_employee"] = True if "employee" in db_user.get("roles") else False
-        session["is_admin"] = True if "admin" in db_user.get("roles") else False
-
-        # Add bookmark_ids from db
-        session["bookmarks"] = db.list_bookmarks(
-            user_id=db_user.get("user_id"), ids_only=True
-        )
-
-        # Create session-cart, if not already created before login
-        if not session.get("cart"):
-            session["cart"] = []
-
-        # Add active orders from db
-        # session['orders'] = db.get_orders(user_id=user.get('user_id'), ids_only=True)
-        session.modified = True
-
-    if session.get("current_url"):
-        return redirect(session.get("current_url"))
-    else:
-        return redirect(url_for("index"))
-
 
 if __name__ == "__main__":
     app.run(
         host="0.0.0.0",
-        port=os.environ.get("PORT", 3000),
-        debug=os.environ.get("DEBUG", False),
+        port=os.environ.get("PORT", 3000)
     )

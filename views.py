@@ -1,21 +1,25 @@
 # -*- coding: utf-8 -*-
+import os
+import json
+from six.moves.urllib.parse import urlencode
 
 # Third party
+import requests
 from flask import request
 from flask import render_template
 from flask import send_from_directory
 from flask import jsonify
 from flask import abort
+from flask import redirect
+from flask import session
+from flask import flash
+from flask import url_for
 from flask.views import View, MethodView
 
 # Application
 import session as ses
 import db
-
-# import desktop
-
-# import mail
-from auth import login_required, employee_required
+from decorators import login_required, employee_required
 import clientInterface
 
 
@@ -45,35 +49,146 @@ class GUIView(View):
 
 
 class FileView(View):
-    def __init__(self, root=False):
-        self.root = root
-
-    def dispatch_request(self, filename):
-        folder = "./static/root" if self.root else "./static"
-        return send_from_directory(folder, filename)
+    def dispatch_request(self, filepath, root=False):
+        folder = "./static/root" if root else "./static"
+        if filepath.startswith("robots.txt") and request.host_url != "https://www.aarhusarkivet.dk/":
+            filepath = "robots_dev.txt"        
+        return send_from_directory(folder, filepath)
 
 
 class RootfileView(View):
-    def dispatch_request(self, file):
-        if file.startswith("robots") and request.host_url != "https://www.aarhusarkivet.dk/":
-            file = "robots_dev.txt"
-        return send_from_directory("./static/root", file)
+    def dispatch_request(self, filepath):
+        if filepath.startswith("robots") and request.host_url != "https://www.aarhusarkivet.dk/":
+            filepath = "robots_dev.txt"
+        return send_from_directory("./static/root", filepath)
 
 
-# DERIVED VIEWS
-class BannerView(GUIView):
+class LoginView(View):
     def dispatch_request(self, page):
-        self.context["page"] = page
-        return render_template("%s.html" % page, **self.context)
-        # return jsonify(self.context)
+        # initialScreen = page if page == 'login' else 'signUp'
+        if session.get("profile"):
+            return redirect(url_for("show_profile"))
+        else:
+            params = {
+                "redirect_uri": request.host_url + "callback",
+                "response_type": "code",
+                "scope": "openid profile email",
+                "client_id": os.environ.get("AUTH0_CLIENT_ID"),
+                "audience": os.environ.get("AUTH0_AUDIENCE"),
+            }
+            url = "https://" + os.environ.get("AUTH0_DOMAIN") + "/authorize?"
+            return redirect(url + urlencode(params))
+
+
+class LogoutView(View):
+    def dispatch_request(self):
+        session.clear()
+        params = {
+            "returnTo": url_for("index", _external=True),
+            "client_id": os.environ.get("AUTH0_CLIENT_ID"),
+        }
+        url = "https://" + os.environ.get("AUTH0_DOMAIN") + "/v2/logout?"
+        return redirect(url + urlencode(params))
+
+
+class CallbackView(View):
+    def dispatch_request(self):
+
+        if not request.args.get("code"):
+            flash('Missing "code". Unable to handle login/signup at the moment.')
+            if session.get("current_url"):
+                return redirect(session.get("current_url"))
+            else:
+                return redirect(url_for("index"))
+
+        token_payload = {
+            "code": request.args.get("code"),
+            "client_id": os.environ.get("AUTH0_CLIENT_ID"),
+            "client_secret": os.environ.get("AUTH0_CLIENT_SECRET"),
+            "redirect_uri": request.host_url + "callback",
+            "grant_type": os.environ.get("AUTH0_GRANT_TYPE"),
+        }
+
+        # get token
+        token_url = "https://{domain}/oauth/token".format(
+            domain=os.environ.get("AUTH0_DOMAIN")
+        )
+        headers = {"content-type": "application/json"}
+
+        token_info = requests.post(
+            token_url, data=json.dumps(token_payload), headers=headers
+        ).json()
+
+        # if not token
+        if not token_info.get("access_token"):
+            flash('Missing "access_token". Unable to handle login/signup at the moment.')
+            if session.get("current_url"):
+                return redirect(session.get("current_url"))
+            else:
+                return redirect(url_for("index"))
+
+        user_url = "https://{domain}/userinfo?access_token={access_token}".format(
+            domain=os.environ.get("AUTH0_DOMAIN"), access_token=token_info["access_token"]
+        )
+
+        # get userinfo
+        try:
+            userinfo = requests.get(user_url).json()
+        except ValueError as e:
+            flash("Unable to fetch userdata: " + e)
+            if session.get("current_url"):
+                return redirect(session.get("current_url"))
+            else:
+                return redirect(url_for("index"))
+
+        # Insert or sync with db_user
+        # return db_user with roles, max_units...
+        db_user = db.sync_or_create_user(userinfo)
+
+        if db_user.get("error"):
+            flash(u"Error syncing user with local db: " + db_user.get("msg"))
+        else:
+            # Populate the session
+            session["profile"] = {
+                "user_id": db_user.get("user_id"),
+                "name": db_user.get("federated_name"),
+                "email": db_user.get("email"),
+                "roles": db_user.get("roles"),
+            }
+
+            session["is_employee"] = True if "employee" in db_user.get("roles") else False
+            session["is_admin"] = True if "admin" in db_user.get("roles") else False
+
+            # Add bookmark_ids from db
+            session["bookmarks"] = db.list_bookmarks(
+                user_id=db_user.get("user_id"), ids_only=True
+            )
+
+            # Create session-cart, if not already created before login
+            if not session.get("cart"):
+                session["cart"] = []
+
+            # Add active orders from db
+            # session['orders'] = db.get_orders(user_id=user.get('user_id'), ids_only=True)
+            session.modified = True
+
+        if session.get("current_url"):
+            return redirect(session.get("current_url"))
+        else:
+            return redirect(url_for("index"))
 
 
 class AppView(GUIView):
     def dispatch_request(self, page):
         self.context["subpage"] = page
         self.context["page"] = "homepage" if page == "index" else "app-page"
-        if page in ["searchguide", "genealogy", "municipality_records"]:
+        if page in [
+            "searchguide",
+            "genealogy",
+            "municipality_records"
+        ]:
             return render_template("guides.html", **self.context)
+
         elif page in [
             "collections",
             "availability",
@@ -83,7 +198,9 @@ class AppView(GUIView):
             "archival_availability",
         ]:
             return render_template("about.html", **self.context)
+
         else:
+            # Imagesites.html and others...
             return render_template("%s.html" % page, **self.context)
             # return jsonify(self.context)
 

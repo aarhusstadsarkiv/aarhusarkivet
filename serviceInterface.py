@@ -3,124 +3,125 @@ import json
 import requests
 import boto3
 
-# import re
+import constants
 
+# FILTERS = {
+#     "creators": {
+#         "label": u"Ophavsretsholder",
+#         "repeatable": True,
+#         "type": "object",
+#         "negatable": True,
+#     },
+#     "locations": {
+#         "label": u"Stedsangivelse",
+#         "repeatable": True,
+#         "type": "object",
+#         "negatable": True,
+#     },
+#     "events": {
+#         "label": u"Begivenhed",
+#         "repeatable": True,
+#         "type": "object",
+#         "negatable": True,
+#     },
+#     "people": {
+#         "label": u"Person",
+#         "repeatable": True,
+#         "type": "object",
+#         "negatable": True,
+#     },
+#     "organisations": {
+#         "label": u"Organisation",
+#         "repeatable": True,
+#         "type": "object",
+#         "negatable": True,
+#     },
+#     "collection": {
+#         "label": u"Samling",
+#         "repeatable": False,
+#         "type": "object",
+#         "negatable": True,
+#     },
+#     "date_from": {
+#         "label": u"Tidligste dato",
+#         "repeatable": False,
+#         "type": "date",
+#         "negatable": False,
+#     },
+#     "date_to": {
+#         "label": u"Seneste dato",
+#         "repeatable": False,
+#         "type": "date",
+#         "negatable": False,
+#     },
+#     "subjects": {
+#         "label": u"Emnekategori",
+#         "repeatable": True,
+#         "type": "object",
+#         "negatable": True,
+#     },
+#     "series": {
+#         "label": u"Arkivserie",
+#         "repeatable": False,
+#         "type": "string",
+#         "negatable": False,
+#     },
+#     "admin_tags": {
+#         "label": u"Administrativt tag",
+#         "repeatable": True,
+#         "type": "string",
+#         "negatable": True,
+#     },
+#     "collection_tags": {
+#         "label": u"Samlingstags",
+#         "repeatable": True,
+#         "type": "string",
+#         "negatable": True,
+#     },
+#     "content_types": {
+#         "label": u"Materialetype",
+#         "repeatable": True,
+#         "type": "object",
+#         "negatable": True,
+#     },
+#     "collectors": {
+#         "label": u"Arkivskaber",
+#         "repeatable": True,
+#         "type": "object",
+#         "negatable": True,
+#     },
+#     "curators": {
+#         "label": u"Kurator",
+#         "repeatable": True,
+#         "type": "object",
+#         "negatable": True,
+#     },
+#     "availability": {
+#         "label": u"Tilgængelighed",
+#         "repeatable": False,
+#         "type": "object",
+#         "negatable": True,
+#     },
+#     "usability": {
+#         "label": u"Brugslicens",
+#         "repeatable": False,
+#         "type": "object",
+#         "negatable": True,
+#     },
+#     "registration_id": {
+#         "label": u"RegistreringsID",
+#         "repeatable": False,
+#         "type": "integer",
+#         "negatable": False,
+#     },
+# }
 
 class Service:
-    def __init__(self, api_key):
+    def __init__(self):
 
-        self.OAWS_API_KEY = api_key
+        self.OAWS_API_KEY = os.environ.get('OAWS_API_KEY')
         self.OAWS_BASE_URL = "https://openaws.appspot.com"
-        self.FILTERS = {
-            "creators": {
-                "label": u"Ophavsretsholder",
-                "repeatable": True,
-                "type": "object",
-                "negatable": True,
-            },
-            "locations": {
-                "label": u"Stedsangivelse",
-                "repeatable": True,
-                "type": "object",
-                "negatable": True,
-            },
-            "events": {
-                "label": u"Begivenhed",
-                "repeatable": True,
-                "type": "object",
-                "negatable": True,
-            },
-            "people": {
-                "label": u"Person",
-                "repeatable": True,
-                "type": "object",
-                "negatable": True,
-            },
-            "organisations": {
-                "label": u"Organisation",
-                "repeatable": True,
-                "type": "object",
-                "negatable": True,
-            },
-            "collection": {
-                "label": u"Samling",
-                "repeatable": False,
-                "type": "object",
-                "negatable": True,
-            },
-            "date_from": {
-                "label": u"Tidligste dato",
-                "repeatable": False,
-                "type": "date",
-                "negatable": False,
-            },
-            "date_to": {
-                "label": u"Seneste dato",
-                "repeatable": False,
-                "type": "date",
-                "negatable": False,
-            },
-            "subjects": {
-                "label": u"Emnekategori",
-                "repeatable": True,
-                "type": "object",
-                "negatable": True,
-            },
-            "series": {
-                "label": u"Arkivserie",
-                "repeatable": False,
-                "type": "string",
-                "negatable": False,
-            },
-            "admin_tags": {
-                "label": u"Administrativt tag",
-                "repeatable": True,
-                "type": "string",
-                "negatable": True,
-            },
-            "collection_tags": {
-                "label": u"Samlingstags",
-                "repeatable": True,
-                "type": "string",
-                "negatable": True,
-            },
-            "content_types": {
-                "label": u"Materialetype",
-                "repeatable": True,
-                "type": "object",
-                "negatable": True,
-            },
-            "collectors": {
-                "label": u"Arkivskaber",
-                "repeatable": True,
-                "type": "object",
-                "negatable": True,
-            },
-            "curators": {
-                "label": u"Kurator",
-                "repeatable": True,
-                "type": "object",
-                "negatable": True,
-            },
-            "availability": {
-                "label": u"Tilgængelighed",
-                "repeatable": False,
-                "type": "object",
-                "negatable": True,
-            },
-            "usability": {
-                "label": u"Brugslicens",
-                "repeatable": False,
-                "type": "object",
-                "negatable": True,
-            },
-            "registration_id": {
-                "label": u"RegistreringsID",
-                "repeatable": False,
-                "type": "integer",
-                "negatable": False,
-            },
-        }
+        self.FILTERS = constants.FILTERS
         self.SEARCH_ENGINE = boto3.client(
             "cloudsearchdomain",
             aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"),
@@ -457,7 +458,7 @@ class Service:
             key_args["filterQuery"] = "(and " + " ".join(filters_to_query) + ")"
 
         ##################################
-        # If Sejrs Sedler or SAM-request #
+        # If SAM-request or Sejrs Sedler #
         ##################################
         if "ids" in query_params.getlist("view"):
             key_args["returnFields"] = "_no_fields"
@@ -478,8 +479,7 @@ class Service:
                 out["next_cursor"] = response["hits"].get("cursor")
             for hit in response["hits"]["hit"]:
                 out["result"].append(hit["id"])
-            # Debugging
-            # out['total_response'] = response
+
             return out
 
         #########################
@@ -493,6 +493,7 @@ class Service:
                     "usability": {},
                     "content_types": {"size": 100},
                     "subjects": {"size": 100},
+                    "collection": {"size": 40},
                 }
             )
             key_args[
@@ -536,7 +537,8 @@ class Service:
 
                 item["content_types"] = hit["fields"].get("content_types")
 
-                item["collection"] = hit["fields"].get("collection")
+                collection_id =  hit["fields"].get("collection")
+                item["collection_id"] = collection_id[0] if collection_id else None
 
                 collectors_label = hit["fields"].get("collectors_label")
                 # item["collectors_label"] = (
@@ -546,19 +548,19 @@ class Service:
 
                 item['series'] = hit['fields'].get("series")
 
-                thumbnail = hit["fields"].get("thumbnail", None)
+                thumbnail = hit["fields"].get("thumbnail")
                 item["thumbnail"] = thumbnail[0] if thumbnail else None
 
-                portrait = hit["fields"].get("portrait", None)
+                portrait = hit["fields"].get("portrait")
                 item["portrait"] = portrait[0] if portrait else None
 
-                availability = hit["fields"].get("availability", None)
+                availability = hit["fields"].get("availability")
                 item["availability"] = availability[0] if availability else None
 
-                created_at = hit["fields"].get("created_at", None)
+                created_at = hit["fields"].get("created_at")
                 item["created_at"] = created_at[0] if created_at else None
 
-                updated_at = hit["fields"].get("updated_at", None)
+                updated_at = hit["fields"].get("updated_at")
                 item["updated_at"] = updated_at[0] if updated_at else None
 
                 date_from = hit["fields"].get("date_from")
