@@ -3,14 +3,14 @@ from functools import wraps
 from flask import session
 from flask import redirect
 
-import constants
+import settings
 
 
 # Base-authentication decorator
 def login_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        if constants.SESSION_KEY not in session:
+        if settings.SESSION_KEY not in session:
             return redirect('/login')
         return f(*args, **kwargs)
     return decorated
@@ -19,9 +19,9 @@ def login_required(f):
 def employee_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        if constants.SESSION_KEY not in session:
+        if settings.SESSION_KEY not in session:
             return redirect('/login')
-        elif 'employee' not in session[constants.SESSION_KEY].get('roles', ['user']):
+        elif 'employee' not in session[settings.SESSION_KEY].get('roles', ['user']):
             return redirect('/')
         else:
             return f(*args, **kwargs)
@@ -32,9 +32,9 @@ def employee_required(f):
 def tester_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        if constants.SESSION_KEY not in session:
+        if settings.SESSION_KEY not in session:
             return redirect('/login')
-        elif 'tester' not in session[constants.SESSION_KEY].get('roles', ['user']):
+        elif 'tester' not in session[settings.SESSION_KEY].get('roles', ['user']):
             return redirect('/')
         else:
             return f(*args, **kwargs)
@@ -45,9 +45,9 @@ def tester_required(f):
 def admin_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        if constants.SESSION_KEY not in session:
+        if settings.SESSION_KEY not in session:
             return redirect('/login')
-        elif 'admin' not in session[constants.SESSION_KEY].get('roles', ['user']):
+        elif 'admin' not in session[settings.SESSION_KEY].get('roles', ['user']):
             return redirect('/')
         else:
             return f(*args, **kwargs)

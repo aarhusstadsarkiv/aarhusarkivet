@@ -29,7 +29,7 @@ def add_to_cart(resource_id):
     cart.append(resource_id)
     session["cart"] = cart
     session.modified = True
-    return {"msg": u"Materialet er lagt i kurven.", "id": resource_id}
+    return {"msg": "Materialet er lagt i kurven.", "id": resource_id}
 
 
 def remove_from_cart(resource_id):
@@ -38,9 +38,9 @@ def remove_from_cart(resource_id):
         cart.remove(resource_id)
         session["cart"] = cart
         session.modified = True
-        return {"msg": u"Materialet fjernet fra kurven.", "id": resource_id}
+        return {"msg": "Materialet fjernet fra kurven.", "id": resource_id}
     else:
-        return {"error": True, "msg": u"Materialet var ikke i kurven."}
+        return {"error": True, "msg": "Materialet var ikke i kurven."}
 
 
 #############
@@ -55,7 +55,7 @@ def add_bookmark(resource_id):
     bookmarks.append(resource_id)
     session["bookmarks"] = bookmarks
     session.modified = True
-    return {"msg": u"Materialet blev tilføjet i session"}
+    return {"msg": "Materialet blev tilføjet i session"}
 
 
 def remove_bookmark(resource_id):
@@ -63,7 +63,7 @@ def remove_bookmark(resource_id):
     bookmarks.remove(resource_id)
     session["bookmarks"] = bookmarks
     session.modified = True
-    return {"msg": u"Materialet blev fjernet fra session"}
+    return {"msg": "Materialet blev fjernet fra session"}
 
 
 ##########
@@ -78,7 +78,7 @@ def add_order(resource_id):
     orders.append(resource_id)
     session["orders"] = orders
     session.modified = True
-    return {"msg": u"Materialet blev tilføjet i session"}
+    return {"msg": "Materialet blev tilføjet i session"}
 
 
 def remove_order(resource_id):
@@ -86,7 +86,7 @@ def remove_order(resource_id):
     orders.remove(resource_id)
     session["orders"] = orders
     session.modified = True
-    return {"msg": u"Materialet blev fjernet fra session"}
+    return {"msg": "Materialet blev fjernet fra session"}
 
 
 ############
@@ -102,7 +102,7 @@ def add_search(url):
     searches.append(url)
     session["searches"] = searches
     session.modified = True
-    return {"msg": u"Materialet blev tilføjet i session"}
+    return {"msg": "Materialet blev tilføjet i session"}
 
 
 # Not implemented yet ?
@@ -111,7 +111,7 @@ def remove_search(url):
     searches.remove(url)
     session["searches"] = searches
     session.modified = True
-    return {"msg": u"Materialet blev fjernet fra session"}
+    return {"msg": "Materialet blev fjernet fra session"}
 
 
 # Current_url-methods

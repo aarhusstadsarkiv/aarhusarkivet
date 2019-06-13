@@ -5,7 +5,7 @@ from flask import Flask
 from flask import request
 from flask import redirect
 
-import constants
+import settings
 import views
 
 try:
@@ -24,7 +24,7 @@ app.config["SESSION_COOKIE_SECURE"] = os.environ.get("SESSION_COOKIE_SECURE", Fa
 
 # app.jinja_env.auto_reload = True
 app.url_map.strict_slashes = False
-app.jinja_env.globals["ICONS"] = constants.ICONS
+app.jinja_env.globals["ICONS"] = settings.ICONS
 
 
 @app.before_request
@@ -85,7 +85,7 @@ app.add_url_rule(
 
 # Static ROOT files
 app.add_url_rule(
-    "/<any(" + ", ".join(constants.STATIC_PAGES) + "):filepath>",
+    "/<any(" + ", ".join(settings.STATIC_PAGES) + "):filepath>",
     defaults={"root": True},
     view_func=views.FileView.as_view("serve_static_rootfile")
 )
@@ -105,25 +105,25 @@ app.add_url_rule(
 
 # Guide-pages (subpaged)
 app.add_url_rule(
-    "/guides/<any(" + ", ".join(constants.GUIDE_PAGES) + "):page>",
+    "/guides/<any(" + ", ".join(settings.GUIDE_PAGES) + "):page>",
     view_func=views.AppView.as_view("show_guide"),
 )
 
 # About-pages (subpaged)
 app.add_url_rule(
-    "/about/<any(" + ", ".join(constants.ABOUT_PAGES) + "):page>",
+    "/about/<any(" + ", ".join(settings.ABOUT_PAGES) + "):page>",
     view_func=views.AppView.as_view("show_about"),
 )
 
 # Vocabulary-pages (subpaged)
 app.add_url_rule(
-    "/<any(" + ", ".join(constants.VOCAB_PAGES) + "):collection>/<int:_id>",
+    "/<any(" + ", ".join(settings.VOCAB_PAGES) + "):collection>/<int:_id>",
     view_func=views.VocabularyView.as_view("show_vocabulary"),
 )
 
 # Resource-pages
 app.add_url_rule(
-    "/<any(" + ", ".join(constants.RESOURCE_PAGES) + "):collection>/<int:_id>",
+    "/<any(" + ", ".join(settings.RESOURCE_PAGES) + "):collection>/<int:_id>",
     view_func=views.ResourceView.as_view("show_resource"),
 )
 
@@ -131,12 +131,6 @@ app.add_url_rule(
 app.add_url_rule(
     "/search",
     view_func=views.SearchView.as_view("search")
-)
-
-# Autosuggest
-app.add_url_rule(
-    "/autosuggest",
-    view_func=views.AutosuggestView.as_view("autosuggest"),
 )
 
 # Profile (subpaged)
@@ -150,13 +144,32 @@ app.add_url_rule(
     view_func=views.ProfileView.as_view("show_profile_subpage"),
 )
 
-# CartAPI
+# CartView
 app.add_url_rule(
     "/cart",
     view_func=views.CartView.as_view("show_cart"),
     methods=["GET"]
 )
 
+# Testpage
+app.add_url_rule(
+    "/testpage",
+    view_func=views.TestView.as_view("test"),
+    methods=["GET"],
+)
+
+
+##############
+# API-ROUTES #
+##############
+
+# AutosuggestAPI
+app.add_url_rule(
+    "/autosuggest",
+    view_func=views.AutosuggestAPI.as_view("autosuggest"),
+)
+
+# CartAPI
 app.add_url_rule(
     "/cart",
     view_func=views.CartAPI.as_view("add_to_cart"),
@@ -208,13 +221,6 @@ app.add_url_rule(
     "/users/me/searches/<created>",
     view_func=views.SearchesAPI.as_view("update_search"),
     methods=["PUT"],
-)
-
-# Testpage
-app.add_url_rule(
-    "/testpage",
-    view_func=views.TestView.as_view("test"),
-    methods=["GET"],
 )
 
 ###########

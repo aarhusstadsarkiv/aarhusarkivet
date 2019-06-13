@@ -19,9 +19,10 @@ from flask.views import View, MethodView
 # Application
 import session as ses
 import db
-import constants
+import settings
 from decorators import login_required, employee_required
 import clientInterface
+import autocompleteInterface
 
 
 IP_WHITELIST = ["193.33.148.24"]
@@ -55,13 +56,6 @@ class FileView(View):
         if filepath.startswith("robots.txt") and request.host_url != "https://www.aarhusarkivet.dk/":
             filepath = "robots_dev.txt"        
         return send_from_directory(folder, filepath)
-
-
-class RootfileView(View):
-    def dispatch_request(self, filepath):
-        if filepath.startswith("robots") and request.host_url != "https://www.aarhusarkivet.dk/":
-            filepath = "robots_dev.txt"
-        return send_from_directory("./static/root", filepath)
 
 
 class LoginView(View):
@@ -179,14 +173,17 @@ class CallbackView(View):
             return redirect(url_for("index"))
 
 
+#############
+# GUI-VIEWS #
+#############
 class AppView(GUIView):
     def dispatch_request(self, page):
         self.context["subpage"] = page
         self.context["page"] = "homepage" if page == "index" else "app-page"
 
-        if page in constants.GUIDE_PAGES:
+        if page in settings.GUIDE_PAGES:
             return render_template("guides.html", **self.context)
-        elif page in constants.ABOUT_PAGES:
+        elif page in settings.ABOUT_PAGES:
             return render_template("about.html", **self.context)
         else:
             return render_template("%s.html" % page, **self.context)
@@ -214,35 +211,25 @@ class SearchView(GUIView):
             return jsonify(response)
 
         else:
-            self.context.update(api_response)
             self.context["page"] = "searchpage"
+            self.context.update(api_response)
             return render_template("search.html", **self.context)
             # return jsonify(self.context)
-
-
-class CartView(GUIView):
-    def dispatch_request(self):
-        cart = ses.get_cart()
-        self.context["cart"] = self.client.batch_records(cart)
-        self.context["page"] = "cart"
-        # return jsonify(self.context)
-        return render_template("cart.html", **self.context)
 
 
 class ResourceView(GUIView):
     def dispatch_request(self, collection, _id):
         # _id is routed as int, just to eliminate obvious errors
         fmt = request.args.get("fmt", None)
-        valid_client = request.args.get("curators", "") == "4"
         response = self.client.get_resource(collection, resource=str(_id), fmt=fmt)
+
         if response.get("error"):
             return self.error_response(response.get("error"))
 
         if fmt == "json":
-            # If request does not come from aarhusteaterarkiv-web
-            # or logged in user is employee
+            # If request does not come from aarhusteaterarkiv-web or employee
             # then remove asset-links
-            if valid_client or (ses.get_user() and "employee" in ses.get_user_roles()):
+            if request.args.get("curators", "") == "4" or (ses.get_user() and "employee" in ses.get_user_roles()):
                 return jsonify(response)
             else:
                 response.pop("thumbnail", None)
@@ -258,6 +245,7 @@ class ResourceView(GUIView):
             return render_template("components/record.html", **self.context)
 
         else:
+            # Normal response
             self.context["resource"] = response
             self.context["collection"] = collection
             self.context["page"] = "resourcepage"
@@ -345,6 +333,41 @@ class AdminView(GUIView):
         render_template("admin.html", **self.context)
 
 
+class CartView(GUIView):
+    def dispatch_request(self):
+        cart = ses.get_cart()
+        self.context["cart"] = self.client.batch_records(cart)
+        self.context["page"] = "cart"
+        return render_template("cart.html", **self.context)
+
+
+class TestView(GUIView):
+    def dispatch_request(self):
+        # cart = ses.get_cart()
+        self.context["self"] = str(self)
+        self.context["page"] = "test"
+        self.context["request"] = request
+        # self.context["json_data"] = desktop.get_local_file()
+        # return jsonify(self.context)
+        return render_template("test.html", **self.context)
+
+
+#############
+# API-VIEWS #
+#############
+class AutosuggestAPI(MethodView):
+    def get(self):
+        self.autocomplete = autocompleteInterface.AutocompleteHandler()
+        key_args = {}
+        key_args["term"] = request.args.get("q")
+        key_args["limit"] = request.args.get("limit", 10)
+        key_args["domain"] = request.args.get("domain")
+        if key_args["term"]:
+            return jsonify(self.autocomplete.get(**key_args))
+        else:
+            return jsonify([])
+
+
 class OrderAPI(MethodView):
     # Receives and returns JSON, but is dependent on a session-object
     decorators = [login_required]
@@ -356,7 +379,7 @@ class OrderAPI(MethodView):
 
     #     if resource_id in ses.get_orders():
     #         resp = {'error': True,
-    #                 'msg': u'Du har allerede bestilt materialet.'}
+    #                 'msg': "Du har allerede bestilt materialet.'}
 
     #     elif unit_id and resource_id:
     #         # resp = db.create_order(user, resource_id, unit_id)
@@ -366,7 +389,7 @@ class OrderAPI(MethodView):
 
     #     else:
     #         resp = {'error': True,
-    #                 'msg': u'Manglende information: unit_id eller \
+    #                 'msg': "Manglende information: unit_id eller \
     #                     resource_id.'}
 
     #     return jsonify(resp)
@@ -388,12 +411,6 @@ class OrderAPI(MethodView):
     # return jsonify(response)
 
 
-# TO IMPLEMENT
-class UnitAPI(MethodView):
-    def get(self):
-        return jsonify({"implemented": False})
-
-
 class BookmarkAPI(MethodView):
     # Receives and returns JSON, but is dependent on a session-object
     # AND uses gui-login decorators
@@ -407,7 +424,7 @@ class BookmarkAPI(MethodView):
         if resource_id:
             if resource_id in ses.get_bookmarks():
                 return jsonify(
-                    {"error": True, "msg": u"Materialet var allerede bogmærket"}
+                    {"error": True, "msg": "Materialet var allerede bogmærket"}
                 )
             else:
                 bookmark = {"user_id": user_id, "resource_id": resource_id}
@@ -416,7 +433,7 @@ class BookmarkAPI(MethodView):
                     ses.add_bookmark(resource_id)  # Add to session also
                 return jsonify(response)
         else:
-            return jsonify({"error": True, "msg": u"Manglende materialeID"})
+            return jsonify({"error": True, "msg": "Manglende materialeID"})
 
     def delete(self, resource_id):
         user_id = ses.get_user_id()
@@ -440,7 +457,7 @@ class SearchesAPI(MethodView):
             search = {"user_id": user_id, "url": url, "description": description}
             return jsonify(db.add_search(search))
         else:
-            return jsonify({"error": True, "msg": u"Manglende url-parameter"})
+            return jsonify({"error": True, "msg": "Manglende url-parameter"})
 
     def put(self, created):
         user_id = ses.get_user_id()
@@ -452,10 +469,10 @@ class SearchesAPI(MethodView):
             if response.get("error"):
                 return jsonify(response)
             else:
-                response["msg"] = u"Søgning opdateret"
+                response["msg"] = "Søgning opdateret"
                 return jsonify(response)
         else:
-            return jsonify({"error": True, "msg": u"Manglende beskrivelse"})
+            return jsonify({"error": True, "msg": "Manglende beskrivelse"})
 
     def delete(self, created):
         search = {"user_id": ses.get_user_id(), "created": created}
@@ -470,31 +487,13 @@ class CartAPI(MethodView):
         if resource_id:
             return jsonify(ses.add_to_cart(resource_id))
         else:
-            return jsonify({"error": u"Missing resource_id"})
+            return jsonify({"error": "Missing resource_id"})
 
     def delete(self, resource_id):
         return jsonify(ses.remove_from_cart(resource_id))
 
 
-class AutosuggestView(View):
-    def dispatch_request(self):
-        self.client = clientInterface.Client()
-        key_args = {}
-        key_args["term"] = request.args.get("q")
-        key_args["limit"] = request.args.get("limit", 10)
-        key_args["domain"] = request.args.get("domain")
-        if key_args["term"]:
-            return jsonify(self.client.autocomplete(**key_args))
-        else:
-            return jsonify([])
-
-
-class TestView(GUIView):
-    def dispatch_request(self):
-        # cart = ses.get_cart()
-        self.context["self"] = str(self)
-        self.context["page"] = "test"
-        self.context["request"] = request
-        # self.context["json_data"] = desktop.get_local_file()
-        # return jsonify(self.context)
-        return render_template("test.html", **self.context)
+# TO IMPLEMENT
+class UnitAPI(MethodView):
+    def get(self):
+        return jsonify({"implemented": False})

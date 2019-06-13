@@ -124,9 +124,9 @@ def delete_user(user_id):
     # searches_deleted =
     resp = _delete_item("users", {"user_id": user_id})
     if resp:
-        return {"msg": u"Brugeren er nu slettet.", "id": user_id}
+        return {"msg": "Brugeren er nu slettet.", "id": user_id}
     else:
-        return {"error": True, "msg": u"Brugeren fandtes ikke i databasen"}
+        return {"error": True, "msg": "Brugeren fandtes ikke i databasen"}
 
 
 def update_user_role(user_id, new_role):
@@ -163,9 +163,9 @@ def get_search(key):
 def add_search(item):
     resp = _put_item("searches", item)
     if resp:
-        return {"msg": u"Søgningen blev gemt."}
+        return {"msg": "Søgningen blev gemt."}
     else:
-        return {"error": True, "msg": u"Ukendt serverfejl."}
+        return {"error": True, "msg": "Ukendt serverfejl."}
 
 
 def update_search(user_id, created, description):
@@ -182,9 +182,9 @@ def delete_search(item):
     # key = {'user_id': user_id, 'created': created}
     resp = _delete_item("searches", item)
     if resp:
-        return {"msg": u"Søgningen blev slettet", "created": item.get("created")}
+        return {"msg": "Søgningen blev slettet", "created": item.get("created")}
     else:
-        return {"error": True, "msg": u"Søgningen blev ikke slettet"}
+        return {"error": True, "msg": "Søgningen blev ikke slettet"}
 
 
 #############
@@ -210,18 +210,18 @@ def list_bookmarks(user_id, sort="sort_key", sort_desc=False, ids_only=False):
 def put_bookmark(item):
     resp = _put_item("bookmarks", item)
     if resp:
-        return {"msg": u"Materialet er nu bogmærket.", "id": item.get("resource_id")}
+        return {"msg": "Materialet er nu bogmærket.", "id": item.get("resource_id")}
     else:
-        return {"error": True, "msg": u"Ukendt serverfejl."}
+        return {"error": True, "msg": "Ukendt serverfejl."}
 
 
 def delete_bookmark(item):
     # key = {'user_id': user_id, 'created': created}
     resp = _delete_item("bookmarks", item)
     if resp:
-        return {"msg": u"Bogmærket er nu fjernet.", "id": item.get("resource_id")}
+        return {"msg": "Bogmærket er nu fjernet.", "id": item.get("resource_id")}
     else:
-        return {"error": True, "msg": u"Ukendt serverfejl."}
+        return {"error": True, "msg": "Ukendt serverfejl."}
 
 
 #########
@@ -270,7 +270,7 @@ def list_orders(key, value, ids_only=False, limit=None):
     kwargs["table_name"] = "orders"
 
     if key not in ["user_id", "unit_id"]:
-        return {"error": True, "msg": u"key must be unit_id or user_id"}
+        return {"error": True, "msg": "key must be unit_id or user_id"}
 
     kwargs["pk"] = {"name": key, "value": value}
     if limit:
@@ -304,10 +304,10 @@ def _insert_order(user_id, resource_id, unit_id):
     # Test conditions
     # MOVE TO VIEW-HANDLER
     # if unit_id in user.get('active_units'):
-    #     return {'msg': u'Du har allerede bestilt magasin-enheden'}
+    #     return {'msg': "Du har allerede bestilt magasin-enheden'}
 
     # if len(user.get('active_units')) >= user.get('max_units'):
-    #     return {'error': True, 'msg': u'Du kan ikke bestille flere materialer.'}
+    #     return {'error': True, 'msg': "Du kan ikke bestille flere materialer.'}
 
     # Baseline
     order = {"user_id": user_id, "resource_id": resource_id, "unit_id": unit_id}
@@ -318,11 +318,11 @@ def _insert_order(user_id, resource_id, unit_id):
         if unit.get("status") == "readingroom":
             order["status"] = "available"
             order["expires"] = str(datetime.date.today() + datetime.timedelta(days=14))
-            msg = u"Materialet er allerede tilgængelig på læsesalen."
+            msg = "Materialet er allerede tilgængelig på læsesalen."
         # Else reserve the unit (like first in queue)
         else:
             order["status"] = "waiting"
-            msg = u"Materialet er bestilt. du får besked, når det er tilgængeligt på læsesalen."
+            msg = "Materialet er bestilt. du får besked, når det er tilgængeligt på læsesalen."
     # If existing orders on the unit, place in queue
     else:
         order["status"] = "waiting"
@@ -347,7 +347,7 @@ def delete_order(user_id, resource_id):
         "orders", {"user_id": user_id, "resource_id": resource_id}, return_item=True
     )
     if not deleted_order:
-        return {"error": True, "msg": u"Kunne ikke slette ordren."}
+        return {"error": True, "msg": "Kunne ikke slette ordren."}
 
     # Fetch unit-status. If at readingroom, update next in line
     # and send availability-mail
@@ -363,7 +363,7 @@ def delete_order(user_id, resource_id):
                 # If order is updated, send availability-mail
                 send_mail("order_available", nxt[0]["email"])
 
-    return {"msg": u"Bestillingen er nu slettet.", "id": resource_id}
+    return {"msg": "Bestillingen er nu slettet.", "id": resource_id}
 
 
 ################

@@ -6,14 +6,14 @@ import requests
 from six.moves.urllib.parse import urlencode
 
 import serviceInterface
-import constants
+import settings
 
 
 class Client():
 
     def __init__(self):
-        self.facets = constants.FACETS
-        self.filters = constants.QUERY_FILTERS
+        self.facets = settings.FACETS
+        self.filters = settings.QUERY_FILTERS
         self.service = serviceInterface.Service()
         self.service_url = 'https://openaws.appspot.com'
         self.resources = {
@@ -50,12 +50,12 @@ class Client():
             output = []
             views = [
                 {
-                    'label': u'Listevisning',
+                    'label': 'Listevisning',
                     'value': 'list',
                     'icon': 'fas fa-list'  # 'view_list'
                 },
                 {
-                    'label': u'Galleri-visning',
+                    'label': 'Galleri-visning',
                     'value': 'gallery',
                     'icon': 'fas fa-th'  # 'view_module'
                 }
@@ -80,19 +80,19 @@ class Client():
         def _generate_sorts(params, sort, direction):
             sorts = [
                 {
-                    'label': u'Ældste dato først',
+                    'label': 'Ældste dato først',
                     'sort': 'date_from',
                     'icon': 'fas fa-long-arrow-alt-up',  # 'arrow_upward'
                     'direction': 'asc'
                 },
                 {
-                    'label': u'Nyeste dato først',
+                    'label': 'Nyeste dato først',
                     'sort': 'date_to',
                     'icon': 'fas fa-long-arrow-alt-down',  # 'arrow_downward'
                     'direction': 'desc'
                 },
                 {
-                    'label': u'Relevans',
+                    'label': 'Relevans',
                     'sort': '_score',
                     'direction': 'desc'
                 }
@@ -198,55 +198,55 @@ class Client():
 
             return filters
 
-        def _generate_facets_v2(facets, params=None):
+        # def _generate_facets_v2(facets, params=None):
 
-            def _generate_facet(name, active_facets, params):
+        #     def _generate_facet(name, active_facets, params):
 
-                def _recursive(name, total_facets, active_facets, params):
+        #         def _recursive(name, total_facets, active_facets, params):
 
-                    for d in total_facets:
-                        _id = d.get('id')
+        #             for d in total_facets:
+        #                 _id = d.get('id')
 
-                        if _id in active_facets.keys():
-                            d['count'] = active_facets.get(_id)
+        #                 if _id in active_facets.keys():
+        #                     d['count'] = active_facets.get(_id)
 
-                            current = (name, _id)
-                            if params and (current in params):
-                                rm_params = [x for x in params if x != current]
-                                d['remove_link'] = _urlencode_v2(rm_params)
-                                # i['remove_link'] = _urlencode(params,
-                                #                               remove=current)
-                            elif params:
-                                add_params = params + [current]
-                                d['add_link'] = _urlencode_v2(add_params)
-                                # i['add_link'] = _urlencode(params,
-                                #                            insert=current)
-                            else:
-                                d['add_link'] = _urlencode_v2([current])
+        #                     current = (name, _id)
+        #                     if params and (current in params):
+        #                         rm_params = [x for x in params if x != current]
+        #                         d['remove_link'] = _urlencode_v2(rm_params)
+        #                         # i['remove_link'] = _urlencode(params,
+        #                         #                               remove=current)
+        #                     elif params:
+        #                         add_params = params + [current]
+        #                         d['add_link'] = _urlencode_v2(add_params)
+        #                         # i['add_link'] = _urlencode(params,
+        #                         #                            insert=current)
+        #                     else:
+        #                         d['add_link'] = _urlencode_v2([current])
 
-                            if d.get('children'):
-                                _recursive(name, d.get('children'),
-                                           active_facets, params)
+        #                     if d.get('children'):
+        #                         _recursive(name, d.get('children'),
+        #                                    active_facets, params)
 
-                    return total_facets
+        #             return total_facets
 
-                facet_label = self.facets[name].get('label')
-                total_facets = deepcopy(self.facets[name].get('content'))
-                linked_tree = _recursive(name, total_facets, active_facets, params)
+        #         facet_label = self.facets[name].get('label')
+        #         total_facets = deepcopy(self.facets[name].get('content'))
+        #         linked_tree = _recursive(name, total_facets, active_facets, params)
 
-                return {"label": facet_label, 'content': linked_tree}
+        #         return {"label": facet_label, 'content': linked_tree}
 
-            output = {}
-            for facet_name in facets:
-                # extract id and count from aws-output
-                buckets = facets[facet_name].get('buckets')
-                active_facets = {b.get('value'): b.get('count') for b in buckets}
-                # generate links recursively
-                output[facet_name] = _generate_facet(facet_name,
-                                                     active_facets,
-                                                     params)
+        #     output = {}
+        #     for facet_name in facets:
+        #         # extract id and count from aws-output
+        #         buckets = facets[facet_name].get('buckets')
+        #         active_facets = {b.get('value'): b.get('count') for b in buckets}
+        #         # generate links recursively
+        #         output[facet_name] = _generate_facet(facet_name,
+        #                                              active_facets,
+        #                                              params)
 
-            return output
+        #     return output
 
         def _generate_facets_v3(facets, params=None):
             result = {}
@@ -562,19 +562,6 @@ class Client():
                     'id': resource
                 }
             }
-
-    def autocomplete(self, term, limit=10, domain=None):
-        url = "https://aarhusiana.appspot.com/autocomplete_v3"
-        params = [('t', term), ('limit', limit)]
-        if domain and domain in ['events', 'people', 'organisations', 'locations', 'collections']:
-            params.append(('domain', domain))
-        response = requests.get(url, params=params)
-
-        try:
-            payload = json.loads(response.content)
-            return payload.get('result')
-        except ValueError as e:
-            return {'status_code': 5, 'status_msg': e}
 
     def batch_records(self, id_list):
         if id_list:

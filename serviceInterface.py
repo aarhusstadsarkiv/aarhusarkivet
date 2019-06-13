@@ -3,7 +3,7 @@ import json
 import requests
 import boto3
 
-import constants
+import settings
 
 
 class Service:
@@ -11,7 +11,7 @@ class Service:
 
         self.OAWS_API_KEY = os.environ.get('OAWS_API_KEY')
         self.OAWS_BASE_URL = "https://openaws.appspot.com"
-        self.FILTERS = constants.SEARCH_FILTERS
+        self.FILTERS = settings.SEARCH_FILTERS
         self.SEARCH_ENGINE = boto3.client(
             "cloudsearchdomain",
             aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"),
