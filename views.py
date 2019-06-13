@@ -54,8 +54,11 @@ class GUIView(View):
 class FileView(View):
     def dispatch_request(self, filepath, root=False):
         folder = "./static/root" if root else "./static"
-        if filepath.startswith("robots.txt") and request.host_url != "https://www.aarhusarkivet.dk/":
-            filepath = "robots_dev.txt"        
+        if (
+            filepath.startswith("robots.txt")
+            and request.host_url != "https://www.aarhusarkivet.dk/"
+        ):
+            filepath = "robots_dev.txt"
         return send_from_directory(folder, filepath)
 
 
@@ -117,14 +120,17 @@ class CallbackView(View):
 
         # if not token
         if not token_info.get("access_token"):
-            flash('Missing "access_token". Unable to handle login/signup at the moment.')
+            flash(
+                'Missing "access_token". Unable to handle login/signup at the moment.'
+            )
             if session.get("current_url"):
                 return redirect(session.get("current_url"))
             else:
                 return redirect(url_for("index"))
 
         user_url = "https://{domain}/userinfo?access_token={access_token}".format(
-            domain=os.environ.get("AUTH0_DOMAIN"), access_token=token_info["access_token"]
+            domain=os.environ.get("AUTH0_DOMAIN"),
+            access_token=token_info["access_token"],
         )
 
         # get userinfo
@@ -152,7 +158,9 @@ class CallbackView(View):
                 "roles": db_user.get("roles"),
             }
 
-            session["is_employee"] = True if "employee" in db_user.get("roles") else False
+            session["is_employee"] = (
+                True if "employee" in db_user.get("roles") else False
+            )
             session["is_admin"] = True if "admin" in db_user.get("roles") else False
 
             # Add bookmark_ids from db
@@ -231,7 +239,9 @@ class ResourceView(GUIView):
         if fmt == "json":
             # If request does not come from aarhusteaterarkiv-web or employee
             # then remove asset-links
-            if request.args.get("curators", "") == "4" or (ses.get_user() and "employee" in ses.get_user_roles()):
+            if request.args.get("curators", "") == "4" or (
+                ses.get_user() and "employee" in ses.get_user_roles()
+            ):
                 return jsonify(response)
             else:
                 response.pop("thumbnail", None)

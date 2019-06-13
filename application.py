@@ -58,42 +58,33 @@ def after_request(response):
 
     return response
 
+
 ##########
 # ROUTES #
 ##########
 app.add_url_rule(
-    "/",
-    defaults={"page": "index"},
-    view_func=views.AppView.as_view("index")
+    "/", defaults={"page": "index"}, view_func=views.AppView.as_view("index")
 )
 
 # Auth-pages
 app.add_url_rule(
-    "/<any('login', 'signup'):page>",
-    view_func=views.LoginView.as_view("login"),
+    "/<any('login', 'signup'):page>", view_func=views.LoginView.as_view("login")
 )
 
-app.add_url_rule(
-    "/logout",
-    view_func=views.LogoutView.as_view("logout"),
-)
+app.add_url_rule("/logout", view_func=views.LogoutView.as_view("logout"))
 
-app.add_url_rule(
-    "/callback",
-    view_func=views.CallbackView.as_view("callback"),
-)
+app.add_url_rule("/callback", view_func=views.CallbackView.as_view("callback"))
 
 # Static ROOT files
 app.add_url_rule(
     "/<any(" + ", ".join(settings.STATIC_PAGES) + "):filepath>",
     defaults={"root": True},
-    view_func=views.FileView.as_view("serve_static_rootfile")
+    view_func=views.FileView.as_view("serve_static_rootfile"),
 )
 
 # Static DOM files (css, images...)
 app.add_url_rule(
-    "/static/<path:filepath>",
-    view_func=views.FileView.as_view("serve_static_file")
+    "/static/<path:filepath>", view_func=views.FileView.as_view("serve_static_file")
 )
 
 # Imagesites-page
@@ -128,10 +119,7 @@ app.add_url_rule(
 )
 
 # Search-page
-app.add_url_rule(
-    "/search",
-    view_func=views.SearchView.as_view("search")
-)
+app.add_url_rule("/search", view_func=views.SearchView.as_view("search"))
 
 # Profile (subpaged)
 app.add_url_rule(
@@ -140,40 +128,27 @@ app.add_url_rule(
     view_func=views.ProfileView.as_view("show_profile"),
 )
 app.add_url_rule(
-    "/users/me/<path:page>",
-    view_func=views.ProfileView.as_view("show_profile_subpage"),
+    "/users/me/<path:page>", view_func=views.ProfileView.as_view("show_profile_subpage")
 )
 
 # CartView
 app.add_url_rule(
-    "/cart",
-    view_func=views.CartView.as_view("show_cart"),
-    methods=["GET"]
+    "/cart", view_func=views.CartView.as_view("show_cart"), methods=["GET"]
 )
 
 # Testpage
-app.add_url_rule(
-    "/testpage",
-    view_func=views.TestView.as_view("test"),
-    methods=["GET"],
-)
-
+app.add_url_rule("/testpage", view_func=views.TestView.as_view("test"), methods=["GET"])
 
 ##############
 # API-ROUTES #
 ##############
 
 # AutosuggestAPI
-app.add_url_rule(
-    "/autosuggest",
-    view_func=views.AutosuggestAPI.as_view("autosuggest"),
-)
+app.add_url_rule("/autosuggest", view_func=views.AutosuggestAPI.as_view("autosuggest"))
 
 # CartAPI
 app.add_url_rule(
-    "/cart",
-    view_func=views.CartAPI.as_view("add_to_cart"),
-    methods=["POST"]
+    "/cart", view_func=views.CartAPI.as_view("add_to_cart"), methods=["POST"]
 )
 
 app.add_url_rule(
@@ -227,7 +202,4 @@ app.add_url_rule(
 # RUN APP #
 ###########
 if __name__ == "__main__":
-    app.run(
-        host="0.0.0.0",
-        port=os.environ.get("PORT", 3000)
-    )
+    app.run(host="0.0.0.0", port=os.environ.get("PORT", 3000))

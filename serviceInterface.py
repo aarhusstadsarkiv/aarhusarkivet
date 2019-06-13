@@ -9,7 +9,7 @@ import settings
 class Service:
     def __init__(self):
 
-        self.OAWS_API_KEY = os.environ.get('OAWS_API_KEY')
+        self.OAWS_API_KEY = os.environ.get("OAWS_API_KEY")
         self.OAWS_BASE_URL = "https://openaws.appspot.com"
         self.FILTERS = settings.SEARCH_FILTERS
         self.SEARCH_ENGINE = boto3.client(
@@ -396,16 +396,18 @@ class Service:
 
                 item["content_types"] = hit["fields"].get("content_types")
 
-                collection_id =  hit["fields"].get("collection")
+                collection_id = hit["fields"].get("collection")
                 item["collection_id"] = collection_id[0] if collection_id else None
 
                 collectors_label = hit["fields"].get("collectors_label")
                 # item["collectors_label"] = (
                 #     collectors_label[0] if collectors_label else None
                 # )
-                item["collectors_label"] = collectors_label[0] if collectors_label else None
+                item["collectors_label"] = (
+                    collectors_label[0] if collectors_label else None
+                )
 
-                item['series'] = hit['fields'].get("series")
+                item["series"] = hit["fields"].get("series")
 
                 thumbnail = hit["fields"].get("thumbnail")
                 item["thumbnail"] = thumbnail[0] if thumbnail else None

@@ -9,23 +9,22 @@ import serviceInterface
 import settings
 
 
-class Client():
-
+class Client:
     def __init__(self):
         self.facets = settings.FACETS
         self.filters = settings.QUERY_FILTERS
         self.service = serviceInterface.Service()
-        self.service_url = 'https://openaws.appspot.com'
+        self.service_url = "https://openaws.appspot.com"
         self.resources = {
-            'records': 'records_v3',
-            'people': 'entities',
-            'locations': 'entities',
-            'organisations': 'entities',
-            'events': 'entities',
-            'creators': 'entities',
-            'collectors': 'entities',
-            'objects': 'objects',
-            'collections': 'collections'
+            "records": "records_v3",
+            "people": "entities",
+            "locations": "entities",
+            "organisations": "entities",
+            "events": "entities",
+            "creators": "entities",
+            "collectors": "entities",
+            "objects": "objects",
+            "collections": "collections",
         }
 
     def list_facets_v2(self):
@@ -38,80 +37,87 @@ class Client():
 
         for facet in facets:
             out = {}
-            for b in facets[facet].get('buckets'):
-                b['add_link'] = encode(facet, b.get('value'))
-                out[b.get('value')] = b
+            for b in facets[facet].get("buckets"):
+                b["add_link"] = encode(facet, b.get("value"))
+                out[b.get("value")] = b
             result[facet] = out
-        return {'total_facets': self.facets, 'active_facets': result}
+        return {"total_facets": self.facets, "active_facets": result}
 
     def list_resources(self, query_params=None):
-
         def _generate_views(params, view):
             output = []
             views = [
                 {
-                    'label': 'Listevisning',
-                    'value': 'list',
-                    'icon': 'fas fa-list'  # 'view_list'
+                    "label": "Listevisning",
+                    "value": "list",
+                    "icon": "fas fa-list",  # 'view_list'
                 },
                 {
-                    'label': 'Galleri-visning',
-                    'value': 'gallery',
-                    'icon': 'fas fa-th'  # 'view_module'
-                }
+                    "label": "Galleri-visning",
+                    "value": "gallery",
+                    "icon": "fas fa-th",  # 'view_module'
+                },
             ]
 
             if params:
-                stripped_params = [(t[0], t[1]) for t in params if t[0] != 'view']
+                stripped_params = [(t[0], t[1]) for t in params if t[0] != "view"]
             else:
                 stripped_params = []
 
             for option in views:
                 current = {}
-                current['label'] = option.get('label')
-                current['icon'] = option.get('icon')
-                if option.get('value') == view:
-                    current['selected'] = True
+                current["label"] = option.get("label")
+                current["icon"] = option.get("icon")
+                if option.get("value") == view:
+                    current["selected"] = True
                 else:
-                    current['link'] = _urlencode(stripped_params + [('view', option.get('value'))])
+                    current["link"] = _urlencode(
+                        stripped_params + [("view", option.get("value"))]
+                    )
                 output.append(current)
             return output
 
         def _generate_sorts(params, sort, direction):
             sorts = [
                 {
-                    'label': 'Ældste dato først',
-                    'sort': 'date_from',
-                    'icon': 'fas fa-long-arrow-alt-up',  # 'arrow_upward'
-                    'direction': 'asc'
+                    "label": "Ældste dato først",
+                    "sort": "date_from",
+                    "icon": "fas fa-long-arrow-alt-up",  # 'arrow_upward'
+                    "direction": "asc",
                 },
                 {
-                    'label': 'Nyeste dato først',
-                    'sort': 'date_to',
-                    'icon': 'fas fa-long-arrow-alt-down',  # 'arrow_downward'
-                    'direction': 'desc'
+                    "label": "Nyeste dato først",
+                    "sort": "date_to",
+                    "icon": "fas fa-long-arrow-alt-down",  # 'arrow_downward'
+                    "direction": "desc",
                 },
-                {
-                    'label': 'Relevans',
-                    'sort': '_score',
-                    'direction': 'desc'
-                }
+                {"label": "Relevans", "sort": "_score", "direction": "desc"},
             ]
             output = []
 
             if params:
-                stripped_params = [(t[0], t[1]) for t in params if t[0] not in ['sort', 'direction', 'start']]
+                stripped_params = [
+                    (t[0], t[1])
+                    for t in params
+                    if t[0] not in ["sort", "direction", "start"]
+                ]
             else:
                 stripped_params = []
 
             for option in sorts:
                 current = {}
-                current['icon'] = option.get('icon')
-                current['label'] = option.get('label')
-                if option.get('sort') == sort and option.get('direction') == direction:
-                    current['selected'] = True
+                current["icon"] = option.get("icon")
+                current["label"] = option.get("label")
+                if option.get("sort") == sort and option.get("direction") == direction:
+                    current["selected"] = True
                 else:
-                    current['link'] = _urlencode(stripped_params + [('sort', option.get('sort')), ('direction', option.get('direction'))])
+                    current["link"] = _urlencode(
+                        stripped_params
+                        + [
+                            ("sort", option.get("sort")),
+                            ("direction", option.get("direction")),
+                        ]
+                    )
                 output.append(current)
             return output
 
@@ -120,17 +126,17 @@ class Client():
             output = []
 
             if params:
-                stripped_params = [(t[0], t[1]) for t in params if t[0] != 'size']
+                stripped_params = [(t[0], t[1]) for t in params if t[0] != "size"]
             else:
                 stripped_params = []
 
             for option in sizes:
                 current = {}
-                current['label'] = option
+                current["label"] = option
                 if option == size:
-                    current['selected'] = True
+                    current["selected"] = True
                 else:
-                    current['link'] = _urlencode(stripped_params + [('size', option)])
+                    current["link"] = _urlencode(stripped_params + [("size", option)])
                 output.append(current)
             return output
 
@@ -138,63 +144,75 @@ class Client():
             # Takes filters-array of filters and adds view- and remove-links
             for f in filters:
                 # If resolve_params has a display_label equal to "ID Missing"
-                if f.get('error'):
+                if f.get("error"):
                     continue
 
-                key = f.get('key')
-                value = f.get('value')
-                negated = f.get('negated')
+                key = f.get("key")
+                value = f.get("value")
+                negated = f.get("negated")
 
                 # View_link
                 # 'label' indicates an id-based filter, which has
                 # an id and has been resolved
-                if f.get('label'):
-                    if key == 'collection':
-                        f['view_link'] = "/".join(['collections', value])
+                if f.get("label"):
+                    if key == "collection":
+                        f["view_link"] = "/".join(["collections", value])
                     else:
-                        f['view_link'] = "/".join([key, value])
+                        f["view_link"] = "/".join([key, value])
 
                 # Remove_link
                 # If positive collection, also remove series
                 # negative collection-params works like normal param
-                if key == 'collection' and not negated:
-                    new_params = [(k, v) for k, v in params if k not in ['collection', 'series', 'start']]
-                    f['remove_link'] = _urlencode(new_params)
+                if key == "collection" and not negated:
+                    new_params = [
+                        (k, v)
+                        for k, v in params
+                        if k not in ["collection", "series", "start"]
+                    ]
+                    f["remove_link"] = _urlencode(new_params)
                 else:
-                    new_params = [(k, v) for k, v in params if k not in ['start']]
-                    original_key = '-' + key if negated else key
-                    f['remove_link'] = _urlencode(new_params,
-                                                  remove=(original_key, value))
+                    new_params = [(k, v) for k, v in params if k not in ["start"]]
+                    original_key = "-" + key if negated else key
+                    f["remove_link"] = _urlencode(
+                        new_params, remove=(original_key, value)
+                    )
 
                 # Inverse_link
                 # If negated, replace with positive, vice versa
                 # exception: if positive collection, remove series-param, as
                 # it follows the positive collection
                 if negated:
-                    new_params = [(k, v) for k, v in params if k not in ['start']]
-                    f['invert_link'] = _urlencode(new_params,
-                                                  insert=(key, value),
-                                                  remove=('-' + key, value))
+                    new_params = [(k, v) for k, v in params if k not in ["start"]]
+                    f["invert_link"] = _urlencode(
+                        new_params, insert=(key, value), remove=("-" + key, value)
+                    )
                 else:
-                    if key == 'collection':
-                        new_params = [(k, v) for k, v in params if k not in ['collection', 'series']]
-                        f['invert_link'] = _urlencode(new_params,
-                                                      insert=('-' + key, value))
+                    if key == "collection":
+                        new_params = [
+                            (k, v)
+                            for k, v in params
+                            if k not in ["collection", "series"]
+                        ]
+                        f["invert_link"] = _urlencode(
+                            new_params, insert=("-" + key, value)
+                        )
                     else:
-                        new_params = [(k, v) for k, v in params if k not in ['start']]
-                        f['invert_link'] = _urlencode(new_params,
-                                                      insert=('-' + key, value),
-                                                      remove=(key, value))
+                        new_params = [(k, v) for k, v in params if k not in ["start"]]
+                        f["invert_link"] = _urlencode(
+                            new_params, insert=("-" + key, value), remove=(key, value)
+                        )
 
-                if key in ['people', 'organisations']:
-                    response = self._get_request("https://openaws.appspot.com/entities/" + value)
-                    if response.get('status_code') == 0:
-                        entity = response.get('result')
+                if key in ["people", "organisations"]:
+                    response = self._get_request(
+                        "https://openaws.appspot.com/entities/" + value
+                    )
+                    if response.get("status_code") == 0:
+                        entity = response.get("result")
 
-                        if entity.get('is_creative_creator'):
-                            f['creator_link'] = "creators=" + value
-                        if entity.get('is_creator'):
-                            f['creator_link'] = "collectors=" + value
+                        if entity.get("is_creative_creator"):
+                            f["creator_link"] = "creators=" + value
+                        if entity.get("is_creator"):
+                            f["creator_link"] = "collectors=" + value
 
             return filters
 
@@ -252,16 +270,16 @@ class Client():
             result = {}
             for facet in facets:
                 out = {}
-                for b in facets[facet].get('buckets'):
-                    active = (facet, b.get('value'))
+                for b in facets[facet].get("buckets"):
+                    active = (facet, b.get("value"))
                     if params and (active in params):
                         rm_params = [x for x in params if x != active]
-                        b['remove_link'] = _urlencode_v2(rm_params)
+                        b["remove_link"] = _urlencode_v2(rm_params)
                     elif params:
-                        b['add_link'] = _urlencode_v2(params + [active])
+                        b["add_link"] = _urlencode_v2(params + [active])
                     else:
-                        b['add_link'] = _urlencode_v2([active])
-                    out[b.get('value')] = b
+                        b["add_link"] = _urlencode_v2([active])
+                    out[b.get("value")] = b
                 result[facet] = out
             return result
 
@@ -288,24 +306,26 @@ class Client():
                 else:
                     temp_params.append(insert)
             elif insert:
-                    temp_params.append(insert)
+                temp_params.append(insert)
 
             # utf8_params = [(t[0], unicode(t[1]).encode('utf-8')) for t in temp_params]
             utf8_params = [(t[0], t[1]) for t in temp_params]
             return urlencode(utf8_params)
 
         # If requesting af list of collections
-        if query_params.get('resource', '') == 'collections':
+        if query_params.get("resource", "") == "collections":
             response = self._get_request("https://openaws.appspot.com/collections")
-            if response.get('status_code') == 0:
+            if response.get("status_code") == 0:
                 return response.result
             else:
-                return {"error": response.get('status_code'),
-                        "msg": response.get('status_msg')}
+                return {
+                    "error": response.get("status_code"),
+                    "msg": response.get("status_msg"),
+                }
 
         # If SAM-request (view=ids) or fmt=json, return without adding further keys
         # if query_params.get('view', '') == 'ids':
-        if 'ids' in query_params.getlist('view'):
+        if "ids" in query_params.getlist("view"):
             return self.service.list_resources(query_params)
 
         # Else return fullblown response
@@ -317,68 +337,65 @@ class Client():
         processed_params = [tup for tup in query_params.items(multi=True)]
 
         # Keys used for generating searchviews and facets
-        resp['params'] = processed_params
+        resp["params"] = processed_params
 
-        resp['collection_search'] = query_params.get('collection', False)
+        resp["collection_search"] = query_params.get("collection", False)
 
-        resp['filters'] = _generate_filters_v2(resp['server_filters'],
-                                               processed_params)
-        resp['active_facets'] = _generate_facets_v3(resp['server_facets'],
-                                                    processed_params)
+        resp["filters"] = _generate_filters_v2(resp["server_filters"], processed_params)
+        resp["active_facets"] = _generate_facets_v3(
+            resp["server_facets"], processed_params
+        )
 
         # 'non_query_params' is used to generate a remove_link for the q-param
         # which is not processed in _generate_filter()
-        query = query_params.get('q')
+        query = query_params.get("q")
         if query:
-            other_params = [i for i in processed_params if i != ('q', query)]
-            resp['non_query_params'] = _urlencode_v2(other_params)
+            other_params = [i for i in processed_params if i != ("q", query)]
+            resp["non_query_params"] = _urlencode_v2(other_params)
 
         # Just testing - remove?
-        resp['total_facets'] = self.facets
+        resp["total_facets"] = self.facets
 
         # Client-params dependent on valid response
-        if resp.get('status_code') == 0:
+        if resp.get("status_code") == 0:
 
-            total = resp['total']
-            start = resp['start']
-            size = resp['size']
+            total = resp["total"]
+            start = resp["start"]
+            size = resp["size"]
 
             # Append to service-response
-            resp['size_list'] = _generate_sizes(processed_params, size)
-            resp['sort_list'] = _generate_sorts(processed_params,
-                                                resp['sort'],
-                                                resp['direction'])
-            resp['view_list'] = _generate_views(processed_params,
-                                                query_params.get('view',
-                                                                 'list'))
-            resp['view'] = query_params.get('view', 'list')
+            resp["size_list"] = _generate_sizes(processed_params, size)
+            resp["sort_list"] = _generate_sorts(
+                processed_params, resp["sort"], resp["direction"]
+            )
+            resp["view_list"] = _generate_views(
+                processed_params, query_params.get("view", "list")
+            )
+            resp["view"] = query_params.get("view", "list")
 
-            if resp.get('result'):
-                rm_tup = ('start', str(start))
+            if resp.get("result"):
+                rm_tup = ("start", str(start))
                 if start > 0:
-                    resp['first'] = _urlencode(processed_params,
-                                               remove=rm_tup)
-                    resp['previous'] = _urlencode(processed_params,
-                                                  remove=rm_tup,
-                                                  insert=('start',
-                                                          start - size))
+                    resp["first"] = _urlencode(processed_params, remove=rm_tup)
+                    resp["previous"] = _urlencode(
+                        processed_params, remove=rm_tup, insert=("start", start - size)
+                    )
 
                 if total <= 10000 and (start + size < total):
                     last_start = total // size * size
                     if last_start == total:
                         last_start = total - size
-                    resp['last'] = _urlencode(processed_params,
-                                              remove=rm_tup,
-                                              insert=('start', last_start))
+                    resp["last"] = _urlencode(
+                        processed_params, remove=rm_tup, insert=("start", last_start)
+                    )
 
                 if (start + size < total) and (start + size <= 10000):
-                    resp['next'] = _urlencode(processed_params,
-                                              remove=rm_tup,
-                                              insert=('start',
-                                                      start + size))
+                    resp["next"] = _urlencode(
+                        processed_params, remove=rm_tup, insert=("start", start + size)
+                    )
 
         else:
-            resp['message'] = "Something went wrong..."
+            resp["message"] = "Something went wrong..."
 
         return resp
 
@@ -457,7 +474,7 @@ class Client():
 
     #             elif key in ['collection_tags']:
     #                 result[key] = _generate_hierarchical_structure(value)
-                    
+
     #             elif key in ['resources']:
     #                 result[key] = value
 
@@ -565,15 +582,15 @@ class Client():
 
     def batch_records(self, id_list):
         if id_list:
-            url = 'https://openaws.appspot.com/resolve_records_v2'
-            data = {'view': 'record', 'oasid': json.dumps(id_list)}
+            url = "https://openaws.appspot.com/resolve_records_v2"
+            data = {"view": "record", "oasid": json.dumps(id_list)}
             response = requests.post(url, data=data)
             try:
                 payload = json.loads(response.content)
-                if payload.get('status_code') == 0:
-                    return payload.get('result')
+                if payload.get("status_code") == 0:
+                    return payload.get("result")
             except ValueError as e:
-                return {'status_code': 5, 'status_msg': e}
+                return {"status_code": 5, "status_msg": e}
         else:
             return []
 
@@ -595,7 +612,7 @@ class Client():
 
             if key in path:
                 # path[key] += ';' + unicode(value).encode('utf-8')
-                path[key] += ';' + value
+                path[key] += ";" + value
             else:
                 # path[key] = unicode(value).encode('utf-8')
                 path[key] = value
@@ -613,4 +630,5 @@ class Client():
             response_to_dict = json.loads(response.content)
             return response_to_dict
         except ValueError as e:
-            return {'status_code': 5, 'error': e}
+            return {"status_code": 5, "error": e}
+

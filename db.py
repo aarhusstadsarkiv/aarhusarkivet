@@ -8,8 +8,6 @@ from boto3 import resource
 from boto3.dynamodb.conditions import Key  # , Attr
 from dotenv import load_dotenv
 
-# from mail import send_mail
-
 
 try:
     load_dotenv()

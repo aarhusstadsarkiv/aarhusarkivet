@@ -5,14 +5,14 @@ from flask import redirect
 
 import settings
 
-
 # Base-authentication decorator
 def login_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         if settings.SESSION_KEY not in session:
-            return redirect('/login')
+            return redirect("/login")
         return f(*args, **kwargs)
+
     return decorated
 
 
@@ -20,11 +20,12 @@ def employee_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         if settings.SESSION_KEY not in session:
-            return redirect('/login')
-        elif 'employee' not in session[settings.SESSION_KEY].get('roles', ['user']):
-            return redirect('/')
+            return redirect("/login")
+        elif "employee" not in session[settings.SESSION_KEY].get("roles", ["user"]):
+            return redirect("/")
         else:
             return f(*args, **kwargs)
+
     return decorated
 
 
@@ -33,11 +34,12 @@ def tester_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         if settings.SESSION_KEY not in session:
-            return redirect('/login')
-        elif 'tester' not in session[settings.SESSION_KEY].get('roles', ['user']):
-            return redirect('/')
+            return redirect("/login")
+        elif "tester" not in session[settings.SESSION_KEY].get("roles", ["user"]):
+            return redirect("/")
         else:
             return f(*args, **kwargs)
+
     return decorated
 
 
@@ -46,9 +48,10 @@ def admin_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         if settings.SESSION_KEY not in session:
-            return redirect('/login')
-        elif 'admin' not in session[settings.SESSION_KEY].get('roles', ['user']):
-            return redirect('/')
+            return redirect("/login")
+        elif "admin" not in session[settings.SESSION_KEY].get("roles", ["user"]):
+            return redirect("/")
         else:
             return f(*args, **kwargs)
+
     return decorated

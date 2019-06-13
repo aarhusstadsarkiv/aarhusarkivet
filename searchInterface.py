@@ -8,7 +8,7 @@ import settings
 import resourceInterface
 
 
-class SearchHandler():
+class SearchHandler:
     def __init__(self):
         # self.OAWS_API_KEY = os.environ.get('OAWS_API_KEY')
         # self.OAWS_BASE_URL = "https://openaws.appspot.com"
@@ -25,7 +25,7 @@ class SearchHandler():
     def list_collection_facets(collection_id):
         facet_options = {
             "collection_tags": {"sort": "count", "size": 7000},
-            "series": {"sort": "count", "size": 2000}
+            "series": {"sort": "count", "size": 2000},
         }
 
         key_args = {}
@@ -194,7 +194,9 @@ class SearchHandler():
                             negated_filters.append((stripped_key, value))
                             filter_str = "(not " + filter_str + ")"
                         filters_to_query.append(filter_str)
-                        filters_to_resolve.append({"resource": stripped_key, "id": int(value)})
+                        filters_to_resolve.append(
+                            {"resource": stripped_key, "id": int(value)}
+                        )
 
                     elif filter_type in ["string", "integer"]:
                         filter_str = ":".join([stripped_key, "'" + value + "'"])
@@ -241,7 +243,7 @@ class SearchHandler():
             ] = "label,summary,collection,series,content_types,thumbnail,portrait,collectors_label,date_from,date_to,created_at,availability,updated_at"
             key_args["start"] = query_params.get("start", 0, int)
             key_args["size"] = query_params.get("size", 20, int)
-        
+
         # Make request to Cloudsearch
         response = self.search_engine.search(**key_args)
 

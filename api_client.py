@@ -3,7 +3,8 @@ import resourceInterface
 
 from six.moves.urllib.parse import urlencode
 
-class ApiHandler():
+
+class ApiHandler:
     def __init__():
         self.searchAPI = searchInterface.SearchHandler()
         self.resourceAPI = resourceInterface.ResourceHandler()
@@ -28,8 +29,6 @@ class ApiHandler():
             for hit in api_response["hits"]["hit"]:
                 out["result"].append(hit["id"])
 
-        return out
-        
         # else standard request
         else:
             out = {}
@@ -61,16 +60,18 @@ class ApiHandler():
 
                 item["content_types"] = hit["fields"].get("content_types")
 
-                collection_id =  hit["fields"].get("collection")
+                collection_id = hit["fields"].get("collection")
                 item["collection_id"] = collection_id[0] if collection_id else None
 
                 collectors_label = hit["fields"].get("collectors_label")
                 # item["collectors_label"] = (
                 #     collectors_label[0] if collectors_label else None
                 # )
-                item["collectors_label"] = collectors_label[0] if collectors_label else None
+                item["collectors_label"] = (
+                    collectors_label[0] if collectors_label else None
+                )
 
-                item['series'] = hit['fields'].get("series")
+                item["series"] = hit["fields"].get("series")
 
                 thumbnail = hit["fields"].get("thumbnail")
                 item["thumbnail"] = thumbnail[0] if thumbnail else None
@@ -96,7 +97,6 @@ class ApiHandler():
                 records.append(item)
             out["result"] = records
 
-
             if api_response.get("filters_to_resolve"):
                 resp = self.resourceAPI.get_labels(filters_to_resolve)
 
@@ -115,10 +115,9 @@ class ApiHandler():
             out["server_filters"] = filters_to_output
             # out['negated_filters'] = negated_filters
 
-            return out
+        return out
 
     def get_resource(collection, resource):
-
         def format_record(record):
             def _generate_hierarchical_structure(string_list):
                 # Takes a list of strings with possible '/' as hierarchical seperators
@@ -162,50 +161,50 @@ class ApiHandler():
             for key, value in record.items():
                 # First handle all specialcases
                 # If 'series' then treat uniquely
-                if key == 'series':
+                if key == "series":
                     output = []
                     currentLevel = []
                     urlpath = {}
-                    collection = record.get('collection')
+                    collection = record.get("collection")
 
                     if collection:
-                        urlpath['collection'] = collection.get('id')
+                        urlpath["collection"] = collection.get("id")
 
-                    for idx in value.split('/'):
+                    for idx in value.split("/"):
                         currentLevel.append(idx)
-                        urlpath['series'] = '/'.join(currentLevel)
+                        urlpath["series"] = "/".join(currentLevel)
                         level = {}
-                        level['label'] = idx
-                        level['new_link'] = urlencode(urlpath)
+                        level["label"] = idx
+                        level["new_link"] = urlencode(urlpath)
                         output.append(level)
                     result[key] = output
 
                 # If key is list of strings
-                elif key in ['admin_tags']:
+                elif key in ["admin_tags"]:
                     output = []
                     for idx in value:
                         item = {}
-                        item['label'] = idx
-                        item['new_link'] = urlencode({key: _id})
+                        item["label"] = idx
+                        item["new_link"] = urlencode({key: _id})
                         output.append(item)
                     result[key] = output
 
-                elif key in ['collection_tags']:
+                elif key in ["collection_tags"]:
                     result[key] = _generate_hierarchical_structure(value)
-                    
-                elif key in ['resources']:
+
+                elif key in ["resources"]:
                     result[key] = value
 
                 # If key is dict
                 elif isinstance(value, dict) and key in self.filters:
                     # If id-dict
-                    if value.get('id'):
-                        _id = value.get('id')
-                        label = value.get('label')
+                    if value.get("id"):
+                        _id = value.get("id")
+                        label = value.get("label")
                         item = {}
-                        item['label'] = label
-                        item['id'] = _id
-                        item['new_link'] = urlencode({key: _id})
+                        item["label"] = label
+                        item["id"] = _id
+                        item["new_link"] = urlencode({key: _id})
                         result[key] = item
                     else:
                         result[key] = value
@@ -217,24 +216,24 @@ class ApiHandler():
                     for _dict in value:
 
                         # hierarchical concept or entity
-                        if isinstance(_dict.get('id'), list):
+                        if isinstance(_dict.get("id"), list):
                             hierarchy = []
-                            for i, v in enumerate(_dict.get('id')):
+                            for i, v in enumerate(_dict.get("id")):
                                 item = {}
-                                item['id'] = v
-                                item['label'] = _dict.get('label')[i]
-                                item['new_link'] = '='.join([key, str(v)])
+                                item["id"] = v
+                                item["label"] = _dict.get("label")[i]
+                                item["new_link"] = "=".join([key, str(v)])
                                 hierarchy.append(item)
                             output.append(hierarchy)
 
                         # flat concept or entity
                         else:
-                            _id = _dict.get('id')
-                            label = _dict.get('label')
+                            _id = _dict.get("id")
+                            label = _dict.get("label")
                             item = {}
-                            item['id'] = _id
-                            item['label'] = label
-                            item['new_link'] = urlencode({key: _id})
+                            item["id"] = _id
+                            item["label"] = label
+                            item["new_link"] = urlencode({key: _id})
                             output.append(item)
 
                     result[key] = output
@@ -294,7 +293,7 @@ class ApiHandler():
                     return hierList
 
                 collection_facets = self.searchAPI.list_collection_facets(collection_id)
-                
+
                 # Convert to dicts with label, id and children keys, like the classic 'series'
                 series = []
                 if collection_facets.get("series"):
@@ -303,54 +302,54 @@ class ApiHandler():
 
                 collection_tags = []
                 if collection_facets.get("collection_tags"):
-                    collection_tags_list = collection_facets["collection_tags"].get("buckets")
-                    collection_tags = _generate_hierarchical_structure(collection_tags_list)
+                    collection_tags_list = collection_facets["collection_tags"].get(
+                        "buckets"
+                    )
+                    collection_tags = _generate_hierarchical_structure(
+                        collection_tags_list
+                    )
 
                 return series, collection_tags
 
             # Enhance with dynamically fetched structures from searchengine
-            series, collection_tags = _list_collection_structures(collection.get('id'))
-            collection['series'] = series
-            collection['collection_tags'] = collection_tags
+            series, collection_tags = _list_collection_structures(collection.get("id"))
+            collection["series"] = series
+            collection["collection_tags"] = collection_tags
 
             # Pop 'structure'-key - at least for now. Reintroduce when we can work with descriptions on
             # individual series-levels
-            collection.pop('structure', None)
+            collection.pop("structure", None)
 
             return collection
 
         api_response = self.resourceAPI.get_resource(collection, resource)
 
-        if api_response.get('status_code') == 0:
-            result = api_response.get('result')
-            if collection == 'records':
+        if api_response.get("status_code") == 0:
+            result = api_response.get("result")
+            if collection == "records":
                 return format_record(result)
-            elif collection == 'collections':
+            elif collection == "collections":
                 return format_collection(result)
             else:
                 return result
 
-        elif api_response.get('status_code') == 1:
+        elif api_response.get("status_code") == 1:
             return {
-                'error': {
-                    'code': 404,
-                    'msg': 'Resourcen eksisterer ikke',
-                    'id': resource
+                "error": {
+                    "code": 404,
+                    "msg": "Resourcen eksisterer ikke",
+                    "id": resource,
                 }
             }
-        elif api_response.get('status_code') == 2:
+        elif api_response.get("status_code") == 2:
             return {
-                'error': {
-                    'code': 404,
-                    'msg': 'Resourcen er slettet',
-                    'id': resource
-                }
+                "error": {"code": 404, "msg": "Resourcen er slettet", "id": resource}
             }
         else:
             return {
-                'error': {
-                    'code': api_response.get('status_code'),
-                    'msg': api_response.get('status_msg'),
-                    'id': resource
+                "error": {
+                    "code": api_response.get("status_code"),
+                    "msg": api_response.get("status_msg"),
+                    "id": resource,
                 }
             }
