@@ -382,186 +382,186 @@ class Client():
 
         return resp
 
-    def get_resource(self, collection, resource, fmt=None):
+    # def get_resource(self, collection, resource, fmt=None):
 
-        def _generate_hierarchical_structure(string_list):
-            # Takes a list of strings with possible '/' as hierarchical seperators
-            # Returns a dict-structure with 'label', 'path' and possibly 'children'-keys
+    #     def _generate_hierarchical_structure(string_list):
+    #         # Takes a list of strings with possible '/' as hierarchical seperators
+    #         # Returns a dict-structure with 'label', 'path' and possibly 'children'-keys
 
-            def addHierItem(key, hierStruct, hierList, parent):
-                if parent != "":
-                    path = parent + "/" + key
-                else:
-                    path = key
+    #         def addHierItem(key, hierStruct, hierList, parent):
+    #             if parent != "":
+    #                 path = parent + "/" + key
+    #             else:
+    #                 path = key
 
-                hierItem = {"label": key, "path": path}
+    #             hierItem = {"label": key, "path": path}
 
-                childrenList = []
-                children = hierStruct.get(key)
-                for childKey in sorted(children):
-                    addHierItem(childKey, children, childrenList, path)
+    #             childrenList = []
+    #             children = hierStruct.get(key)
+    #             for childKey in sorted(children):
+    #                 addHierItem(childKey, children, childrenList, path)
 
-                if len(childrenList) > 0:
-                    hierItem["children"] = childrenList
+    #             if len(childrenList) > 0:
+    #                 hierItem["children"] = childrenList
 
-                hierList.append(hierItem)
+    #             hierList.append(hierItem)
 
-            hierList = []
-            hierStruct = {}
-            for item in sorted(string_list):
-                splitList = item.split("/")
+    #         hierList = []
+    #         hierStruct = {}
+    #         for item in sorted(string_list):
+    #             splitList = item.split("/")
 
-                curLevel = hierStruct
-                for key in splitList:
-                    hierData = curLevel.get(key, {})
-                    curLevel[key] = hierData
-                    curLevel = hierData
+    #             curLevel = hierStruct
+    #             for key in splitList:
+    #                 hierData = curLevel.get(key, {})
+    #                 curLevel[key] = hierData
+    #                 curLevel = hierData
 
-            for key in sorted(hierStruct):
-                addHierItem(key, hierStruct, hierList, "")
+    #         for key in sorted(hierStruct):
+    #             addHierItem(key, hierStruct, hierList, "")
 
-            return hierList
+    #         return hierList
 
-        def format_record(record):
-            result = {}
-            for key, value in record.items():
-                # First handle all specialcases
-                # If 'series' then treat uniquely
-                if key == 'series':
-                    output = []
-                    currentLevel = []
-                    urlpath = {}
-                    collection = record.get('collection')
+    #     def format_record(record):
+    #         result = {}
+    #         for key, value in record.items():
+    #             # First handle all specialcases
+    #             # If 'series' then treat uniquely
+    #             if key == 'series':
+    #                 output = []
+    #                 currentLevel = []
+    #                 urlpath = {}
+    #                 collection = record.get('collection')
 
-                    if collection:
-                        urlpath['collection'] = collection.get('id')
+    #                 if collection:
+    #                     urlpath['collection'] = collection.get('id')
 
-                    for idx in value.split('/'):
-                        currentLevel.append(idx)
-                        urlpath['series'] = '/'.join(currentLevel)
-                        level = {}
-                        level['label'] = idx
-                        level['new_link'] = self._generate_new_link(urlpath)
-                        output.append(level)
-                    result[key] = output
+    #                 for idx in value.split('/'):
+    #                     currentLevel.append(idx)
+    #                     urlpath['series'] = '/'.join(currentLevel)
+    #                     level = {}
+    #                     level['label'] = idx
+    #                     level['new_link'] = self._generate_new_link(urlpath)
+    #                     output.append(level)
+    #                 result[key] = output
 
-                # If key is list of strings
-                elif key in ['admin_tags']:
-                    output = []
-                    for idx in value:
-                        item = {}
-                        item['label'] = idx
-                        item['new_link'] = self._generate_new_link(key, idx)
-                        output.append(item)
-                    result[key] = output
+    #             # If key is list of strings
+    #             elif key in ['admin_tags']:
+    #                 output = []
+    #                 for idx in value:
+    #                     item = {}
+    #                     item['label'] = idx
+    #                     item['new_link'] = self._generate_new_link(key, idx)
+    #                     output.append(item)
+    #                 result[key] = output
 
-                elif key in ['collection_tags']:
-                    result[key] = _generate_hierarchical_structure(value)
+    #             elif key in ['collection_tags']:
+    #                 result[key] = _generate_hierarchical_structure(value)
                     
-                elif key in ['resources']:
-                    result[key] = value
+    #             elif key in ['resources']:
+    #                 result[key] = value
 
-                # If key is dict
-                elif isinstance(value, dict) and key in self.filters:
-                    # If id-dict
-                    if value.get('id'):
-                        _id = value.get('id')
-                        label = value.get('label')
-                        item = {}
-                        item['label'] = label
-                        item['id'] = _id
-                        item['new_link'] = self._generate_new_link(key, _id)
-                        result[key] = item
-                    else:
-                        result[key] = value
+    #             # If key is dict
+    #             elif isinstance(value, dict) and key in self.filters:
+    #                 # If id-dict
+    #                 if value.get('id'):
+    #                     _id = value.get('id')
+    #                     label = value.get('label')
+    #                     item = {}
+    #                     item['label'] = label
+    #                     item['id'] = _id
+    #                     item['new_link'] = self._generate_new_link(key, _id)
+    #                     result[key] = item
+    #                 else:
+    #                     result[key] = value
 
-                # If key is list (of id-dicts)
-                elif isinstance(value, list) and key in self.filters:
-                    output = []
+    #             # If key is list (of id-dicts)
+    #             elif isinstance(value, list) and key in self.filters:
+    #                 output = []
 
-                    for _dict in value:
+    #                 for _dict in value:
 
-                        # hierarchical concept or entity
-                        if isinstance(_dict.get('id'), list):
-                            hierarchy = []
-                            for i, v in enumerate(_dict.get('id')):
-                                item = {}
-                                item['id'] = v
-                                item['label'] = _dict.get('label')[i]
-                                item['new_link'] = '='.join([key, str(v)])
-                                hierarchy.append(item)
-                            output.append(hierarchy)
+    #                     # hierarchical concept or entity
+    #                     if isinstance(_dict.get('id'), list):
+    #                         hierarchy = []
+    #                         for i, v in enumerate(_dict.get('id')):
+    #                             item = {}
+    #                             item['id'] = v
+    #                             item['label'] = _dict.get('label')[i]
+    #                             item['new_link'] = '='.join([key, str(v)])
+    #                             hierarchy.append(item)
+    #                         output.append(hierarchy)
 
-                        # flat concept or entity
-                        else:
-                            _id = _dict.get('id')
-                            label = _dict.get('label')
-                            item = {}
-                            item['id'] = _id
-                            item['label'] = label
-                            item['new_link'] = self._generate_new_link(key, _id)
-                            output.append(item)
+    #                     # flat concept or entity
+    #                     else:
+    #                         _id = _dict.get('id')
+    #                         label = _dict.get('label')
+    #                         item = {}
+    #                         item['id'] = _id
+    #                         item['label'] = label
+    #                         item['new_link'] = self._generate_new_link(key, _id)
+    #                         output.append(item)
 
-                    result[key] = output
+    #                 result[key] = output
 
-                else:
-                    result[key] = value
+    #             else:
+    #                 result[key] = value
 
-            return result
+    #         return result
 
-        def format_collection(collection):
+    #     def format_collection(collection):
 
-            # Enhance with dynamically fetched structures from searchengine
-            series, collection_tags = self.service.list_collection_structures(collection.get('id'))
-            collection['series'] = series
-            collection['collection_tags'] = collection_tags
+    #         # Enhance with dynamically fetched structures from searchengine
+    #         series, collection_tags = self.service.list_collection_structures(collection.get('id'))
+    #         collection['series'] = series
+    #         collection['collection_tags'] = collection_tags
 
-            # Pop 'structure'-key - at least for now. Reintroduce when we can work with descriptions on
-            # individual series-levels
-            collection.pop('structure', None)
+    #         # Pop 'structure'-key - at least for now. Reintroduce when we can work with descriptions on
+    #         # individual series-levels
+    #         collection.pop('structure', None)
 
-            return collection
+    #         return collection
 
-        response = self._get_request('/'.join([self.service_url,
-                                               self.resources.get(collection),
-                                               resource]))
+    #     response = self._get_request('/'.join([self.service_url,
+    #                                            self.resources.get(collection),
+    #                                            resource]))
 
-        if response.get('status_code') == 0:
-            res = response.get('result')
-            if collection == 'records':
-                if fmt == 'json':
-                    return res
-                else:
-                    return format_record(res)
-            elif collection == 'collections':
-                return format_collection(res)
-            else:
-                return res
+    #     if response.get('status_code') == 0:
+    #         res = response.get('result')
+    #         if collection == 'records':
+    #             if fmt == 'json':
+    #                 return res
+    #             else:
+    #                 return format_record(res)
+    #         elif collection == 'collections':
+    #             return format_collection(res)
+    #         else:
+    #             return res
 
-        elif response.get('status_code') == 1:
-            return {
-                'error': {
-                    'code': 404,
-                    'msg': 'Resourcen eksisterende ikke',
-                    'id': resource
-                }
-            }
-        elif response.get('status_code') == 2:
-            return {
-                'error': {
-                    'code': 404,
-                    'msg': 'Resourcen er slettet',
-                    'id': resource
-                }
-            }
-        else:
-            return {
-                'error': {
-                    'code': response.get('status_code'),
-                    'msg': response.get('status_msg'),
-                    'id': resource
-                }
-            }
+    #     elif response.get('status_code') == 1:
+    #         return {
+    #             'error': {
+    #                 'code': 404,
+    #                 'msg': 'Resourcen eksisterende ikke',
+    #                 'id': resource
+    #             }
+    #         }
+    #     elif response.get('status_code') == 2:
+    #         return {
+    #             'error': {
+    #                 'code': 404,
+    #                 'msg': 'Resourcen er slettet',
+    #                 'id': resource
+    #             }
+    #         }
+    #     else:
+    #         return {
+    #             'error': {
+    #                 'code': response.get('status_code'),
+    #                 'msg': response.get('status_msg'),
+    #                 'id': resource
+    #             }
+    #         }
 
     def batch_records(self, id_list):
         if id_list:

@@ -23,7 +23,7 @@ import settings
 from decorators import login_required, employee_required
 import clientInterface
 import autocompleteInterface
-
+import resourceInterface
 
 IP_WHITELIST = ["193.33.148.24"]
 
@@ -38,6 +38,7 @@ class GUIView(View):
         self.context["readingroom"] = ip in IP_WHITELIST
         self.context["host"] = request.host
         self.client = clientInterface.Client()
+        self.resourceAPI = resourceInterface.ResourceHandler()
         facet_dicts = self.client.list_facets_v2()
         self.context["active_facets"] = facet_dicts.get("active_facets")
         self.context["total_facets"] = facet_dicts.get("total_facets")
@@ -221,7 +222,8 @@ class ResourceView(GUIView):
     def dispatch_request(self, collection, _id):
         # _id is routed as int, just to eliminate obvious errors
         fmt = request.args.get("fmt", None)
-        response = self.client.get_resource(collection, resource=str(_id), fmt=fmt)
+        # response = self.client.get_resource(collection, resource=str(_id), fmt=fmt)
+        response = self.resourceAPI.get_resource(collection, resource=str(_id))
 
         if response.get("error"):
             return self.error_response(response.get("error"))
@@ -245,7 +247,7 @@ class ResourceView(GUIView):
             return render_template("components/record.html", **self.context)
 
         else:
-            # Normal response
+            # Normal request
             self.context["resource"] = response
             self.context["collection"] = collection
             self.context["page"] = "resourcepage"
