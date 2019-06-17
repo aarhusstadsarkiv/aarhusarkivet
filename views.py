@@ -23,7 +23,9 @@ import settings
 from decorators import login_required, employee_required
 import clientInterface
 import autocompleteInterface
-import resourceInterface
+
+# import resourceInterface
+import api_client
 
 IP_WHITELIST = ["193.33.148.24"]
 
@@ -38,17 +40,18 @@ class GUIView(View):
         self.context["readingroom"] = ip in IP_WHITELIST
         self.context["host"] = request.host
         self.client = clientInterface.Client()
-        self.resourceAPI = resourceInterface.ResourceHandler()
+        # self.resourceAPI = resourceInterface.ResourceHandler()
+        self.api = api_client.ApiHandler()
         facet_dicts = self.client.list_facets_v2()
         self.context["active_facets"] = facet_dicts.get("active_facets")
         self.context["total_facets"] = facet_dicts.get("total_facets")
         ses.set_current_url(request)
 
-    def error_response(self, error):
-        if error.get("code") == 404:
-            abort(404)
-        else:
-            return render_template("errorpages/error.html", **error)
+    def error_response(self, errors):
+        # if error.get("code") == 404:
+        #     abort(404)
+        # else:
+        return render_template("errorpages/error.html", errors=errors)
 
 
 class FileView(View):
@@ -201,14 +204,19 @@ class AppView(GUIView):
 class SearchView(GUIView):
     def dispatch_request(self):
         api_response = self.client.list_resources(request.args)
+        # api_response = self.api.search_records(request.args)
         # update latest search
+
+        if api_response.get("errors"):
+            return self.error_response(api_response.get("errors"))
+
         ses.set_latest_search(request)
 
         # SAM and Sejrssedler.dk only wants id-lists
         if "ids" in request.args.getlist("view"):
             return jsonify(api_response)
 
-        # This is also used by Aarhus Teater
+        # This is also used by Aarhus Teater?
         # Todo or enhance
         elif request.args.get("fmt", "") == "json":
             response = {}
@@ -229,19 +237,19 @@ class SearchView(GUIView):
 class ResourceView(GUIView):
     def dispatch_request(self, collection, _id):
         # _id is routed as int, just to eliminate obvious errors
-        fmt = request.args.get("fmt", None)
         # response = self.client.get_resource(collection, resource=str(_id), fmt=fmt)
-        response = self.resourceAPI.get_resource(collection, resource=str(_id))
+        # response = self.resourceAPI.get_resource(collection, resource=str(_id))
+        response = self.api.get_resource(collection, str(_id))
 
-        if response.get("error"):
-            return self.error_response(response.get("error"))
+        if response.get("errors"):
+            return self.error_response(response.get("errors"))
 
-        if fmt == "json":
+        if request.args.get("fmt") == "json":
             # If request does not come from aarhusteaterarkiv-web or employee
             # then remove asset-links
-            if request.args.get("curators", "") == "4" or (
-                ses.get_user() and "employee" in ses.get_user_roles()
-            ):
+            if request.args.get("curators", "") == "4":
+                return jsonify(response)
+            elif ses.get_user() and "employee" in ses.get_user_roles():
                 return jsonify(response)
             else:
                 response.pop("thumbnail", None)
@@ -257,7 +265,6 @@ class ResourceView(GUIView):
             return render_template("components/record.html", **self.context)
 
         else:
-            # Normal request
             self.context["resource"] = response
             self.context["collection"] = collection
             self.context["page"] = "resourcepage"

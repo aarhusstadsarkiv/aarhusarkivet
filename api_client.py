@@ -1,123 +1,66 @@
+from six.moves.urllib.parse import urlencode
+
 import searchInterface
 import resourceInterface
-
-from six.moves.urllib.parse import urlencode
+import autosuggestInterface
+import settings
 
 
 class ApiHandler:
-    def __init__():
+    def __init__(self):
         self.searchAPI = searchInterface.SearchHandler()
         self.resourceAPI = resourceInterface.ResourceHandler()
         self.autosuggestAPI = autosuggestInterface.AutosuggestHandler()
+        self.params = settings.SEARCH_FILTERS
 
     def autosuggest(self, term, limit=10, domain=""):
         return self.autosuggestAPI.get(term, limit, domain)
 
-    def search_records(query_params):
-        # 'query_params' is a Immutable MultiDict
+    def search_records(self, query_params):
+        # Validate query-params
+        errors = []
+        for key in query_params:
+            stripped_key = key[1:] if key[0] == "-" else key
+            if stripped_key not in self.params:
+                errors.append({"param": key, "msg": "Invalid param"})
+
+            if key[0] == "-" and not self.params[stripped_key].get("negatable"):
+                errors.append({"param": key, "msg": "Param not negatable"})
+
+            # 'query_params' is a Immutable MultiDict
+            if len(query_params.getlist(key)) > 1 and not self.params[stripped_key].get(
+                "repeatable"
+            ):
+                errors.append({"param": key, "msg": "Param not repeatable"})
+        if errors:
+            return {"errors": errors}
+
+        # Make api-call
         api_response = self.searchAPI.search_records(query_params)
 
-        # If SAM-request (or from sejrssedler.dk)
-        if "ids" in query_params.getlist("view"):
-            out = {}
-            out["status_code"] = 0
-            out["result"] = []
-            if key_args.get("size") + api_response["hits"].get("start") < api_response[
-                "hits"
-            ].get("found"):
-                out["next_cursor"] = api_response["hits"].get("cursor")
-            for hit in api_response["hits"]["hit"]:
-                out["result"].append(hit["id"])
+        # If any id-filters need related labels
+        if api_response.get("filters_to_resolve"):
+            resp = self.resourceAPI.get_labels(filters_to_resolve)
 
-        # else standard request
-        else:
-            out = {}
-            out["sort"] = sort
-            out["direction"] = direction
-            out["size"] = key_args["size"]
-            out["date_from"] = date_from
-            out["date_to"] = date_to
-            out["total"] = api_response["hits"]["found"]
-            out["start"] = api_response["hits"]["start"]
-            out["server_facets"] = api_response["facets"]
-            if q:
-                out["query"] = q
+            if resp.get("status_code") == 0:
+                for _dict in resp.get("result"):
+                    negated = True if (key, k) in negated_filters else False
+                    filters_to_output.append(
+                        {
+                            "key": _dict.get("resource"),
+                            "value": _dict.get("id"),
+                            "label": _dict.get("label"),
+                            "negated": negated,
+                        }
+                    )
 
-            out["_query_string"] = key_args["query"]
-            # out['filterQueryString'] = key_args['filterQuery']
-
-            # Parse hits
-            records = []
-            for hit in api_response["hits"]["hit"]:
-                item = {}
-                item["id"] = hit["id"]
-
-                label = hit["fields"].get("label")
-                item["label"] = label[0] if label else None
-
-                summary = hit["fields"].get("summary")
-                item["summary"] = summary[0] if summary else None
-
-                item["content_types"] = hit["fields"].get("content_types")
-
-                collection_id = hit["fields"].get("collection")
-                item["collection_id"] = collection_id[0] if collection_id else None
-
-                collectors_label = hit["fields"].get("collectors_label")
-                # item["collectors_label"] = (
-                #     collectors_label[0] if collectors_label else None
-                # )
-                item["collectors_label"] = (
-                    collectors_label[0] if collectors_label else None
-                )
-
-                item["series"] = hit["fields"].get("series")
-
-                thumbnail = hit["fields"].get("thumbnail")
-                item["thumbnail"] = thumbnail[0] if thumbnail else None
-
-                portrait = hit["fields"].get("portrait")
-                item["portrait"] = portrait[0] if portrait else None
-
-                availability = hit["fields"].get("availability")
-                item["availability"] = availability[0] if availability else None
-
-                created_at = hit["fields"].get("created_at")
-                item["created_at"] = created_at[0] if created_at else None
-
-                updated_at = hit["fields"].get("updated_at")
-                item["updated_at"] = updated_at[0] if updated_at else None
-
-                date_from = hit["fields"].get("date_from")
-                item["date_from"] = date_from[0] if date_from else None
-
-                date_to = hit["fields"].get("date_to")
-                item["date_to"] = date_to[0] if date_to else None
-
-                records.append(item)
-            out["result"] = records
-
-            if api_response.get("filters_to_resolve"):
-                resp = self.resourceAPI.get_labels(filters_to_resolve)
-
-                if resp.get("status_code") == 0:
-                    for _dict in resp.get("result"):
-                        negated = True if (key, k) in negated_filters else False
-                        filters_to_output.append(
-                            {
-                                "key": _dict.get("resource"),
-                                "value": _dict.get("id"),
-                                "label": _dict.get("label"),
-                                "negated": negated,
-                            }
-                        )
-
-            out["server_filters"] = filters_to_output
-            # out['negated_filters'] = negated_filters
+        out["server_filters"] = filters_to_output
+        # out['negated_filters'] = negated_filters
 
         return out
 
-    def get_resource(collection, resource):
+    def get_resource(self, collection, resource):
+        # Formater record-dict
         def format_record(record):
             def _generate_hierarchical_structure(string_list):
                 # Takes a list of strings with possible '/' as hierarchical seperators
@@ -196,7 +139,7 @@ class ApiHandler:
                     result[key] = value
 
                 # If key is dict
-                elif isinstance(value, dict) and key in self.filters:
+                elif isinstance(value, dict) and key in self.params:
                     # If id-dict
                     if value.get("id"):
                         _id = value.get("id")
@@ -210,7 +153,7 @@ class ApiHandler:
                         result[key] = value
 
                 # If key is list (of id-dicts)
-                elif isinstance(value, list) and key in self.filters:
+                elif isinstance(value, list) and key in self.params:
                     output = []
 
                     for _dict in value:
@@ -243,6 +186,7 @@ class ApiHandler:
 
             return result
 
+        # Formater samlings-dict
         def format_collection(collection):
             def _list_collection_structures(collection_id):
                 # Used to fetch series and collection_tags as facets (incl. count) when requesting a collection
@@ -322,34 +266,18 @@ class ApiHandler:
 
             return collection
 
+        # Make api-call
         api_response = self.resourceAPI.get_resource(collection, resource)
 
-        if api_response.get("status_code") == 0:
-            result = api_response.get("result")
-            if collection == "records":
-                return format_record(result)
-            elif collection == "collections":
-                return format_collection(result)
-            else:
-                return result
+        # If api-error
+        if api_response.get("errors"):
+            return api_response
 
-        elif api_response.get("status_code") == 1:
-            return {
-                "error": {
-                    "code": 404,
-                    "msg": "Resourcen eksisterer ikke",
-                    "id": resource,
-                }
-            }
-        elif api_response.get("status_code") == 2:
-            return {
-                "error": {"code": 404, "msg": "Resourcen er slettet", "id": resource}
-            }
+        # Format response
+        if collection == "records":
+            return format_record(api_response)
+        elif collection == "collections":
+            return format_collection(api_response)
         else:
-            return {
-                "error": {
-                    "code": api_response.get("status_code"),
-                    "msg": api_response.get("status_msg"),
-                    "id": resource,
-                }
-            }
+            return api_response
+

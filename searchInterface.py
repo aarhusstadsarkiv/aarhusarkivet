@@ -5,7 +5,8 @@ import requests
 import boto3
 
 import settings
-import resourceInterface
+
+# import resourceInterface
 
 
 class SearchHandler:
@@ -13,7 +14,7 @@ class SearchHandler:
         # self.OAWS_API_KEY = os.environ.get('OAWS_API_KEY')
         # self.OAWS_BASE_URL = "https://openaws.appspot.com"
         # self.resourceAPI = resourceInterface.ResourceHandler()
-        self.FILTERS = settings.SEARCH_FILTERS
+        self.filters = settings.SEARCH_FILTERS
         self.search_engine = boto3.client(
             "cloudsearchdomain",
             aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"),
@@ -23,6 +24,7 @@ class SearchHandler:
         )
 
     def list_collection_facets(collection_id):
+        # lists all series and collection_tags of a given collection
         facet_options = {
             "collection_tags": {"sort": "count", "size": 7000},
             "series": {"sort": "count", "size": 2000},
@@ -47,9 +49,6 @@ class SearchHandler:
         # https://docs.aws.amazon.com/cloudsearch/latest/developerguide/search-api.html#structured-search-syntax
         # https://docs.aws.amazon.com/cloudsearch/latest/developerguide/searching-compound-queries.html
 
-        ############
-        # BASELINE #
-        ############
         # Kwargs to send to all bobo3-cloudsearch-calls.
         key_args = {}
         key_args["queryParser"] = "structured"
@@ -57,6 +56,7 @@ class SearchHandler:
             {"fields": ["label^4", "summary^2", "description"]}
         )
 
+        # Variables
         date_from = query_params.get("date_from")
         date_to = query_params.get("date_to")
         q = query_params.get("q")
@@ -163,7 +163,7 @@ class SearchHandler:
         ############
         filters_to_query = []
         # If using id_based filters (collections or entities)
-        # call resourceInterface.get_labels to fetch labels for each id
+        # its labels must be fetched by the api-client later.
         filters_to_resolve = []
         filters_to_output = []
         negated_filters = []
@@ -171,55 +171,47 @@ class SearchHandler:
         # Build filterQuery. TODO: hairy stuff that needs documentation
         for key in query_params.keys():
 
-            # If key is negated, but not allowed to, skip it
-            if (
-                key.startswith("-")
-                and key[1:] in self.FILTERS
-                and not self.FILTERS[key[1:]].get("negatable")
-            ):
-                continue
-            # remove any negation before using self.FILTERS
+            # remove any negation
             stripped_key = key[1:] if key.startswith("-") else key
+            filter_type = self.filters[stripped_key].get("type")
 
-            if stripped_key in self.FILTERS:
-                filter_type = self.FILTERS[stripped_key].get("type")
+            # Go back to using the full key-label before iterating query
+            for value in query_params.getlist(key):
 
-                # Go back to using the full key-label before iterating query
-                for value in query_params.getlist(key):
+                if filter_type == "object":
+                    filter_str = ":".join([stripped_key, "'" + value + "'"])
+                    # if negation, update filter_str and add to negated_filters
+                    if stripped_key != key:
+                        negated_filters.append((stripped_key, value))
+                        filter_str = "(not " + filter_str + ")"
+                    filters_to_query.append(filter_str)
+                    filters_to_resolve.append(
+                        {"resource": stripped_key, "id": int(value)}
+                    )
 
-                    if filter_type == "object":
-                        filter_str = ":".join([stripped_key, "'" + value + "'"])
-                        # if negation, update filter_str and add to negated[]
-                        if stripped_key != key:
-                            negated_filters.append((stripped_key, value))
-                            filter_str = "(not " + filter_str + ")"
-                        filters_to_query.append(filter_str)
-                        filters_to_resolve.append(
-                            {"resource": stripped_key, "id": int(value)}
-                        )
+                elif filter_type in ["string", "integer"]:
+                    filter_str = ":".join([stripped_key, "'" + value + "'"])
+                    # if negation, update filter_str
+                    if stripped_key != key:
+                        negated_filters.append((stripped_key, value))
+                        filter_str = "(not " + filter_str + ")"
+                    filters_to_query.append(filter_str)
+                    filters_to_output.append({"key": key, "value": value})
 
-                    elif filter_type in ["string", "integer"]:
-                        filter_str = ":".join([stripped_key, "'" + value + "'"])
-                        # if negation, update filter_str
-                        if stripped_key != key:
-                            negated_filters.append((stripped_key, value))
-                            filter_str = "(not " + filter_str + ")"
-                        filters_to_query.append(filter_str)
-                        filters_to_output.append({"key": key, "value": value})
+                elif key == "date_from":
+                    filters_to_query.append("date_from:[" + value + ",}")
+                    filters_to_output.append({"key": key, "value": value})
 
-                    elif key == "date_from":
-                        filters_to_query.append("date_from:[" + value + ",}")
-                        filters_to_output.append({"key": key, "value": value})
-
-                    elif key == "date_to":
-                        filters_to_query.append("date_to:{," + value + "]")
-                        filters_to_output.append({"key": key, "value": value})
+                elif key == "date_to":
+                    filters_to_query.append("date_to:{," + value + "]")
+                    filters_to_output.append({"key": key, "value": value})
 
         if filters_to_query:
             key_args["filterQuery"] = "(and " + " ".join(filters_to_query) + ")"
 
-        # If SAM-request or Sejrs Sedler
+        # If SAM-request or Sejrs Sedler, only a simple id-list with cursor is required
         if "ids" in query_params.getlist("view"):
+            # Build request
             key_args["returnFields"] = "_no_fields"
             key_args["size"] = query_params.get("size", 1000, int)
             if query_params.get("cursor"):
@@ -227,8 +219,24 @@ class SearchHandler:
             else:
                 key_args["cursor"] = "initial"
 
-        # Else standard-request
+            # Make request to Cloudsearch
+            response = self.search_engine.search(**key_args)
+
+            # Build simple response
+            out = {}
+            out["status_code"] = 0
+            out["result"] = []
+            if key_args.get("size") + api_response["hits"].get("start") < api_response[
+                "hits"
+            ].get("found"):
+                out["next_cursor"] = api_response["hits"].get("cursor")
+            for hit in api_response["hits"]["hit"]:
+                out["result"].append(hit["id"])
+            return out
+
+        # Else it's just a standard-request, which requires more elaborate request and output
         else:
+            # Build request
             key_args["facet"] = json.dumps(
                 {
                     "availability": {},
@@ -244,11 +252,76 @@ class SearchHandler:
             key_args["start"] = query_params.get("start", 0, int)
             key_args["size"] = query_params.get("size", 20, int)
 
-        # Make request to Cloudsearch
-        response = self.search_engine.search(**key_args)
+            # Make request to Cloudsearch
+            api_response = self.search_engine.search(**key_args)
 
-        if filters_to_resolve:
-            response["filters_to_resolve"] = filters_to_resolve
+            # Build response
+            out = {}
+            out["sort"] = sort
+            out["direction"] = direction
+            out["size"] = key_args["size"]
+            out["date_from"] = date_from
+            out["date_to"] = date_to
+            out["_query_string"] = key_args["query"]
+            out["total"] = api_response["hits"]["found"]
+            out["start"] = api_response["hits"]["start"]
+            out["server_facets"] = api_response["facets"]
+            if q:
+                out["query"] = q
 
-        return response
+            # Parse hits
+            records = []
+            for hit in api_response["hits"]["hit"]:
+                item = {}
+                item["id"] = hit["id"]
+
+                label = hit["fields"].get("label")
+                item["label"] = label[0] if label else None
+
+                summary = hit["fields"].get("summary")
+                item["summary"] = summary[0] if summary else None
+
+                item["content_types"] = hit["fields"].get("content_types")
+
+                collection_id = hit["fields"].get("collection")
+                item["collection_id"] = collection_id[0] if collection_id else None
+
+                collectors_label = hit["fields"].get("collectors_label")
+                item["collectors_label"] = (
+                    collectors_label[0] if collectors_label else None
+                )
+
+                item["series"] = hit["fields"].get("series")
+
+                thumbnail = hit["fields"].get("thumbnail")
+                item["thumbnail"] = thumbnail[0] if thumbnail else None
+
+                portrait = hit["fields"].get("portrait")
+                item["portrait"] = portrait[0] if portrait else None
+
+                availability = hit["fields"].get("availability")
+                item["availability"] = availability[0] if availability else None
+
+                created_at = hit["fields"].get("created_at")
+                item["created_at"] = created_at[0] if created_at else None
+
+                updated_at = hit["fields"].get("updated_at")
+                item["updated_at"] = updated_at[0] if updated_at else None
+
+                date_from = hit["fields"].get("date_from")
+                item["date_from"] = date_from[0] if date_from else None
+
+                date_to = hit["fields"].get("date_to")
+                item["date_to"] = date_to[0] if date_to else None
+
+                records.append(item)
+            out["result"] = records
+
+            # If any id-filters where used, add them here for the api-client to fetch labels
+            # Also add any negated_filters, as they are used
+            out["filters_to_resolve"] = (
+                filters_to_resolve if filters_to_resolve else None
+            )
+
+            return out
 
