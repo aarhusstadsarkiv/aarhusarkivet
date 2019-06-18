@@ -200,11 +200,9 @@
     {% endif %}
 
     {# Collection_tags (dynamically produced for each view) #}
-    {# NOTE: Re-implement if collectiontags is to be used again!
     {% if r.collection_tags %}
         <h5 id="collection_tags">Samlingstags</h5>
         <p>Browse i samlingens tags. Klik på et tag for at se, hvilke materialer, der er opmærket med dette.</p>
         {% include 'resources/collection_tags.html' %}
     {% endif %}
-    #}
 </div>

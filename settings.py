@@ -966,242 +966,296 @@ FACETS = {
     }
 }
 
-SEARCH_FILTERS = {
-    "creators": {
-        "label": "Ophavsretsholder",
-        "repeatable": True,
-        "type": "object",
-        "negatable": True,
+QUERY_PARAMS = {
+    'view': {
+        'label': 'Visning',
+        'repeatable': False,
+        'type': 'string',
+        "search_filter": False
     },
-    "locations": {
-        "label": "Stedsangivelse",
-        "repeatable": True,
-        "type": "object",
-        "negatable": True,
+    'fmt': {
+        'label': 'Format',
+        'repeatable': False,
+        'type': 'string',
+        "search_filter": False
     },
-    "events": {
-        "label": "Begivenhed",
-        "repeatable": True,
-        "type": "object",
-        "negatable": True,
-    },
-    "people": {
-        "label": "Person",
-        "repeatable": True,
-        "type": "object",
-        "negatable": True,
-    },
-    "organisations": {
-        "label": "Organisation",
-        "repeatable": True,
-        "type": "object",
-        "negatable": True,
-    },
-    "collection": {
-        "label": "Samling",
-        "repeatable": False,
-        "type": "object",
-        "negatable": True,
-    },
-    "date_from": {
-        "label": "Tidligste dato",
-        "repeatable": False,
-        "type": "date",
-        "negatable": False,
-    },
-    "date_to": {
-        "label": "Seneste dato",
-        "repeatable": False,
-        "type": "date",
-        "negatable": False,
-    },
-    "subjects": {
-        "label": "Emnekategori",
-        "repeatable": True,
-        "type": "object",
-        "negatable": True,
-    },
-    "series": {
-        "label": "Arkivserie",
-        "repeatable": False,
-        "type": "string",
-        "negatable": False,
-    },
-    "admin_tags": {
-        "label": "Administrativt tag",
-        "repeatable": True,
-        "type": "string",
-        "negatable": True,
-    },
-    "collection_tags": {
-        "label": "Samlingstags",
-        "repeatable": True,
-        "type": "string",
-        "negatable": True,
-    },
-    "content_types": {
-        "label": "Materialetype",
-        "repeatable": True,
-        "type": "object",
-        "negatable": True,
-    },
-    "collectors": {
-        "label": "Arkivskaber",
-        "repeatable": True,
-        "type": "object",
-        "negatable": True,
-    },
-    "curators": {
-        "label": "Kurator",
-        "repeatable": True,
-        "type": "object",
-        "negatable": True,
-    },
-    "availability": {
-        "label": "Tilgængelighed",
-        "repeatable": False,
-        "type": "object",
-        "negatable": True,
-    },
-    "usability": {
-        "label": "Hvad må jeg bruge?",
-        "repeatable": False,
-        "type": "object",
-        "negatable": True,
-    },
-    "registration_id": {
-        "label": "RegistreringsID",
-        "repeatable": False,
-        "type": "integer",
-        "negatable": False,
-    },
-}
-
-QUERY_FILTERS = {
     'sort': {
         'label': 'Sortering',
         'repeatable': False,
         'type': 'string',
-        'negatable': False,
+        "search_filter": False
+    },
+    'direction': {
+        'label': 'Retning',
+        'repeatable': False,
+        'type': 'string',
+        "search_filter": False
     },
     'size': {
         'label': 'Antal visninger',
         'repeatable': False,
         'type': 'integer',
-        'negatable': False,
+        "search_filter": False
     },
     'start': {
         'label': 'Start',
         'repeatable': False,
         'type': 'integer',
-        'negatable': False,
+        "search_filter": False
     },
     "creators": {
         "label": "Ophavsretsholder",
         "repeatable": True,
         "type": "object",
         "negatable": True,
+        "search_filter": True
     },
     "locations": {
         "label": "Stedsangivelse",
         "repeatable": True,
         "type": "object",
         "negatable": True,
+        "search_filter": True
     },
     "events": {
         "label": "Begivenhed",
         "repeatable": True,
         "type": "object",
         "negatable": True,
+        "search_filter": True
     },
     "people": {
         "label": "Person",
         "repeatable": True,
         "type": "object",
         "negatable": True,
+        "search_filter": True
     },
     "organisations": {
         "label": "Organisation",
         "repeatable": True,
         "type": "object",
         "negatable": True,
+        "search_filter": True
     },
     "collection": {
         "label": "Samling",
         "repeatable": False,
         "type": "object",
         "negatable": True,
+        "search_filter": True
     },
     "date_from": {
         "label": "Tidligste dato",
         "repeatable": False,
         "type": "date",
         "negatable": False,
+        "search_filter": True
     },
     "date_to": {
         "label": "Seneste dato",
         "repeatable": False,
         "type": "date",
         "negatable": False,
+        "search_filter": True
     },
     "subjects": {
         "label": "Emnekategori",
         "repeatable": True,
         "type": "object",
         "negatable": True,
+        "search_filter": True
     },
     "series": {
         "label": "Arkivserie",
         "repeatable": False,
         "type": "string",
         "negatable": False,
+        "search_filter": True
     },
     "admin_tags": {
         "label": "Administrativt tag",
         "repeatable": True,
         "type": "string",
         "negatable": True,
+        "search_filter": True
     },
     "collection_tags": {
         "label": "Samlingstags",
         "repeatable": True,
         "type": "string",
         "negatable": True,
+        "search_filter": True
     },
     "content_types": {
         "label": "Materialetype",
         "repeatable": True,
         "type": "object",
         "negatable": True,
+        "search_filter": True
     },
     "collectors": {
         "label": "Arkivskaber",
         "repeatable": True,
         "type": "object",
         "negatable": True,
+        "search_filter": True
     },
     "curators": {
         "label": "Kurator",
         "repeatable": True,
         "type": "object",
         "negatable": True,
+        "search_filter": True
     },
     "availability": {
         "label": "Tilgængelighed",
         "repeatable": False,
         "type": "object",
         "negatable": True,
+        "search_filter": True
     },
     "usability": {
         "label": "Hvad må jeg bruge?",
         "repeatable": False,
         "type": "object",
         "negatable": True,
+        "search_filter": True
     },
     "registration_id": {
         "label": "RegistreringsID",
         "repeatable": False,
         "type": "integer",
         "negatable": False,
+        "search_filter": True
     },
 }
+
+# SEARCH_FILTERS = {
+#     "creators": {
+#         "label": "Ophavsretsholder",
+#         "repeatable": True,
+#         "type": "object",
+#         "negatable": True,
+#         "search_filter": True,
+#     },
+#     "locations": {
+#         "label": "Stedsangivelse",
+#         "repeatable": True,
+#         "type": "object",
+#         "negatable": True,
+#         "search_filter": True,
+#     },
+#     "events": {
+#         "label": "Begivenhed",
+#         "repeatable": True,
+#         "type": "object",
+#         "negatable": True,
+#         "search_filter": True,
+#     },
+#     "people": {
+#         "label": "Person",
+#         "repeatable": True,
+#         "type": "object",
+#         "negatable": True,
+#         "search_filter": True,
+#     },
+#     "organisations": {
+#         "label": "Organisation",
+#         "repeatable": True,
+#         "type": "object",
+#         "negatable": True,
+#         "search_filter": True,
+#     },
+#     "collection": {
+#         "label": "Samling",
+#         "repeatable": False,
+#         "type": "object",
+#         "negatable": True,
+#         "search_filter": True,
+#     },
+#     "date_from": {
+#         "label": "Tidligste dato",
+#         "repeatable": False,
+#         "type": "date",
+#         "negatable": False,
+#         "search_filter": True,
+#     },
+#     "date_to": {
+#         "label": "Seneste dato",
+#         "repeatable": False,
+#         "type": "date",
+#         "negatable": False,
+#         "search_filter": True,
+#     },
+#     "subjects": {
+#         "label": "Emnekategori",
+#         "repeatable": True,
+#         "type": "object",
+#         "negatable": True,
+#         "search_filter": True,
+#     },
+#     "series": {
+#         "label": "Arkivserie",
+#         "repeatable": False,
+#         "type": "string",
+#         "negatable": False,
+#         "search_filter": True,
+#     },
+#     "admin_tags": {
+#         "label": "Administrativt tag",
+#         "repeatable": True,
+#         "type": "string",
+#         "negatable": True,
+#         "search_filter": True,
+#     },
+#     "collection_tags": {
+#         "label": "Samlingstags",
+#         "repeatable": True,
+#         "type": "string",
+#         "negatable": True,
+#         "search_filter": True,
+#     },
+#     "content_types": {
+#         "label": "Materialetype",
+#         "repeatable": True,
+#         "type": "object",
+#         "negatable": True,
+#         "search_filter": True,
+#     },
+#     "collectors": {
+#         "label": "Arkivskaber",
+#         "repeatable": True,
+#         "type": "object",
+#         "negatable": True,
+#         "search_filter": True,
+#     },
+#     "curators": {
+#         "label": "Kurator",
+#         "repeatable": True,
+#         "type": "object",
+#         "negatable": True,
+#         "search_filter": True,
+#     },
+#     "availability": {
+#         "label": "Tilgængelighed",
+#         "repeatable": False,
+#         "type": "object",
+#         "negatable": True,
+#         "search_filter": True,
+#     },
+#     "usability": {
+#         "label": "Hvad må jeg bruge?",
+#         "repeatable": False,
+#         "type": "object",
+#         "negatable": True,
+#         "search_filter": True,
+#     },
+#     "registration_id": {
+#         "label": "RegistreringsID",
+#         "repeatable": False,
+#         "type": "integer",
+#         "negatable": False,
+#         "search_filter": True,
+#     },
+# }

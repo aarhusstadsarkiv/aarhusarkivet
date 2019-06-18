@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import os
 import json
 from six.moves.urllib.parse import urlencode
@@ -203,33 +202,39 @@ class AppView(GUIView):
 
 class SearchView(GUIView):
     def dispatch_request(self):
-        api_response = self.client.list_resources(request.args)
-        # api_response = self.api.search_records(request.args)
+        # api_resp = self.client.list_resources(request.args)
+        api_resp = self.api.search_records(request.args)
+        
+        # Debugging
+        # return jsonify(api_resp)
+        
+        if api_resp.get("errors"):
+            if request.args.get("fmt", "") == "json":
+                return jsonify(api_resp)
+            else:
+                return self.error_response(api_resp.get("errors"))
+
         # update latest search
-
-        if api_response.get("errors"):
-            return self.error_response(api_response.get("errors"))
-
         ses.set_latest_search(request)
 
-        # SAM and Sejrssedler.dk only wants id-lists
+        # SAM (and Sejrssedler.dk) only wants id-lists
         if "ids" in request.args.getlist("view"):
-            return jsonify(api_response)
+            return jsonify(api_resp)
 
-        # This is also used by Aarhus Teater?
+        # This is also used by Aarhus Teater? Is it?
         # Todo or enhance
         elif request.args.get("fmt", "") == "json":
-            response = {}
-            response["status_code"] = api_response.get("status_code")
-            response["result"] = api_response.get("result")
-            response["filters"] = api_response.get("filters")
-            response["next"] = api_response.get("next")
-            response["previous"] = api_response.get("previous")
-            return jsonify(response)
+            resp = {}
+            resp["status_code"] = api_resp.get("status_code")
+            resp["result"] = api_resp.get("result")
+            resp["filters"] = api_resp.get("filters")
+            resp["next"] = api_resp.get("next")
+            resp["previous"] = api_resp.get("previous")
+            return jsonify(resp)
 
         else:
             self.context["page"] = "searchpage"
-            self.context.update(api_response)
+            self.context.update(api_resp)
             return render_template("search.html", **self.context)
             # return jsonify(self.context)
 
@@ -239,33 +244,33 @@ class ResourceView(GUIView):
         # _id is routed as int, just to eliminate obvious errors
         # response = self.client.get_resource(collection, resource=str(_id), fmt=fmt)
         # response = self.resourceAPI.get_resource(collection, resource=str(_id))
-        response = self.api.get_resource(collection, str(_id))
+        api_resp = self.api.get_resource(collection, str(_id))
 
-        if response.get("errors"):
-            return self.error_response(response.get("errors"))
+        if api_resp.get("errors"):
+            return self.error_response(api_resp.get("errors"))
 
         if request.args.get("fmt") == "json":
             # If request does not come from aarhusteaterarkiv-web or employee
             # then remove asset-links
             if request.args.get("curators", "") == "4":
-                return jsonify(response)
+                return jsonify(api_resp)
             elif ses.get_user() and "employee" in ses.get_user_roles():
-                return jsonify(response)
+                return jsonify(api_resp)
             else:
-                response.pop("thumbnail", None)
-                response.pop("portrait", None)
-                response.pop("representations", None)
-                response.pop("resources", None)
-                return jsonify(response)
+                api_resp.pop("thumbnail", None)
+                api_resp.pop("portrait", None)
+                api_resp.pop("representations", None)
+                api_resp.pop("resources", None)
+                return jsonify(api_resp)
 
         elif request.is_xhr:
             # If ajax-requested on the results-page it returns an html-blob
-            self.context["resource"] = response
+            self.context["resource"] = api_resp
             self.context["page"] = "searchpage"
             return render_template("components/record.html", **self.context)
 
         else:
-            self.context["resource"] = response
+            self.context["resource"] = api_resp
             self.context["collection"] = collection
             self.context["page"] = "resourcepage"
             return render_template("resource.html", **self.context)

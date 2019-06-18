@@ -19,9 +19,13 @@ class ResourceHandler:
             "collections": "collections",
         }
 
-    def _api_request(self, path, params=None):
-        # Always returns a dict with 'status_code' plus 'result' or 'error'
-        r = requests.get("/".join([self.host, path]), params=params)
+    def _api_request(self, path, method="get", params=None, data=None):
+        # Always returns a dict with 'status_code' plus 'result' or 'status_msg'
+        if method == "get":
+            r = requests.get("/".join([self.host, path]), params=params)
+        else:
+            r = requests.post("/".join([self.host, path]), data=data)
+
         try:
             r_to_dict = json.loads(r.content)
             return r_to_dict
@@ -56,8 +60,13 @@ class ResourceHandler:
                 ]
             }
 
-    def get_labels(self, resource_list):
-        # resource_list: [{'resource': 'collection', 'id': 4}, {'resource': 'availability', 'id': 2}]
+    # 'batch_records' from ClientInterface reformatted
+    def multi_get_records(self, id_list):
+        data = {"view": "record", "oasid": json.dumps(id_list)}
+        return _api_request(path="resolve_records_v2", method="post", data=data)
+
+    def get_entity_labels(self, resource_list):
+        # resource_list: [('collection', '4'), ('availability', '2')]
         r = self._api_request("resolve_params", params=resource_list)
 
         if r.get("status_code") == 0:
@@ -66,7 +75,7 @@ class ResourceHandler:
                 for k, v in value.items():
                     d = {"resource": key, "id": k, "label": v.get("display_label")}
                     output.append(d)
-            return {"status_code": 0, "result": output}
+            return {"result": output}
         else:
             return {
                 "errors": [{"code": r.get("status_code"), "msg": r.get("status_msg")}]
