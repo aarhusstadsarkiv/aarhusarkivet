@@ -12,7 +12,6 @@ def login_required(f):
         if settings.SESSION_KEY not in session:
             return redirect("/login")
         return f(*args, **kwargs)
-
     return decorated
 
 
@@ -25,7 +24,6 @@ def employee_required(f):
             return redirect("/")
         else:
             return f(*args, **kwargs)
-
     return decorated
 
 
@@ -39,7 +37,6 @@ def tester_required(f):
             return redirect("/")
         else:
             return f(*args, **kwargs)
-
     return decorated
 
 
@@ -53,5 +50,4 @@ def admin_required(f):
             return redirect("/")
         else:
             return f(*args, **kwargs)
-
     return decorated

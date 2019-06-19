@@ -14,8 +14,8 @@ class ApiHandler:
         self.params = settings.QUERY_PARAMS
         self.facets = settings.FACETS
 
-    def autosuggest(self, term, limit=10, domain=""):
-        return self.autosuggestAPI.get(term, limit, domain)
+    def autosuggest(self, term, limit=10, domain=None):
+        return self.autosuggestAPI.suggest(term, limit, domain)
 
     def search_records(self, query_params):
 
@@ -124,14 +124,12 @@ class ApiHandler:
                         )
                 # Creator and collector links and bools
                 if key in ["people", "organisations"]:
-                    api_resp = self.resourceAPI.get_resource("entities", value)
+                    api_resp = self.resourceAPI.get_resource(key, value)
                     if not api_resp.get("error"):
-                        r = api_resp.get("result")
-
-                        if r.get("is_creative_creator"):
+                        if api_resp.get("is_creative_creator"):
                             el["creator_link"] = "creators=" + value
                             el["creator"] = True
-                        if r.get("is_creator"):
+                        if api_resp.get("is_creator"):
                             el["creator_link"] = "collectors=" + value
                             el["collector"] = True
 
@@ -257,29 +255,30 @@ class ApiHandler:
                 output.append(current)
             return output
 
-        # Validate params            
-        valid_request = _validate_query_params(query_params)
-        if valid_request.get("errors"):
-            return valid_request
+        # Validate params if any
+        if query_params:
+            valid_request = _validate_query_params(query_params)
+            if valid_request.get("errors"):
+                return valid_request
 
         # Make api-call
         api_resp = self.searchAPI.search_records(query_params)
-        
-        # For debugging
-        # return api_resp
 
         # If api-error
         if api_resp.get("errors"):
             return api_resp
 
         # If SAM-request, no need for further processing
-        # api_resp includes: status_code, result, next_cursor 
+        # api_resp on SAM-request includes: status_code, result, next_cursor 
         if "ids" in query_params.getlist("view"):
             return api_resp
 
         # Else process and convert response
-        # api_resp includes: sort, direction, size, date_from, date_to, _query_string
-        # total, start, server_facets, filters, query, result
+        # api_resp on normal request includes: sort, direction, size, date_from,
+        # date_to, _query_string, total, start, server_facets, filters, query, result,
+        # view_list, sort_list, size_list, view, non_query_params
+
+        # return api_resp
         resp = {}
 
         # convert multidict to list of tuples
@@ -344,7 +343,22 @@ class ApiHandler:
         resp["sort"] = api_resp.get("sort")
         resp["_query_string"] = api_resp.get("_query_string")
         resp["result"] = api_resp.get("result")
+
         return resp
+
+    def list_facets(self):
+        facets = self.searchAPI.list_facets()
+        result = {}
+        for facet in facets:
+            out = {}
+            for b in facets[facet].get("buckets"):
+                b["add_link"] = urlencode([(facet, b.get("value"))])
+                out[b.get("value")] = b
+            result[facet] = out
+        return {"total_facets": self.facets, "active_facets": result}
+
+    def get_multi_records(self, id_list=None):
+        return self.resourceAPI.multi_get_records(id_list)
 
     def get_resource(self, collection, resource):
         # Formater record-dict

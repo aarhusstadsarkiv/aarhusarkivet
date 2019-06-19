@@ -50,21 +50,21 @@ class Client:
     #     except ValueError as e:
     #         return {"status_code": 5, "error": e}
 
-    def list_facets_v2(self):
-        def encode(key, val):
-            utf8_param = [(key, val)]
-            return urlencode(utf8_param)
+    # def list_facets_v2(self):
+    #     def encode(key, val):
+    #         utf8_param = [(key, val)]
+    #         return urlencode(utf8_param)
 
-        facets = self.service.list_facets()
-        result = {}
+    #     facets = self.service.list_facets()
+    #     result = {}
 
-        for facet in facets:
-            out = {}
-            for b in facets[facet].get("buckets"):
-                b["add_link"] = encode(facet, b.get("value"))
-                out[b.get("value")] = b
-            result[facet] = out
-        return {"total_facets": self.facets, "active_facets": result}
+    #     for facet in facets:
+    #         out = {}
+    #         for b in facets[facet].get("buckets"):
+    #             b["add_link"] = encode(facet, b.get("value"))
+    #             out[b.get("value")] = b
+    #         result[facet] = out
+    #     return {"total_facets": self.facets, "active_facets": result}
 
     # def _generate_new_link(self, key, value=None):
     #     """Takes one dict of key(s) and value(s) OR two strings"""

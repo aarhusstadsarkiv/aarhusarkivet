@@ -8,7 +8,7 @@ from flask import request
 from flask import render_template
 from flask import send_from_directory
 from flask import jsonify
-from flask import abort
+# from flask import abort
 from flask import redirect
 from flask import session
 from flask import flash
@@ -19,12 +19,10 @@ from flask.views import View, MethodView
 import session as ses
 import db
 import settings
-from decorators import login_required, employee_required
-import clientInterface
-import autocompleteInterface
-
-# import resourceInterface
 import api_client
+from decorators import login_required, employee_required
+# import clientInterface
+# import autosuggestInterface
 
 IP_WHITELIST = ["193.33.148.24"]
 
@@ -38,19 +36,19 @@ class GUIView(View):
         ip = request.headers.get("X-Forwarded-For")
         self.context["readingroom"] = ip in IP_WHITELIST
         self.context["host"] = request.host
-        self.client = clientInterface.Client()
-        # self.resourceAPI = resourceInterface.ResourceHandler()
         self.api = api_client.ApiHandler()
-        facet_dicts = self.client.list_facets_v2()
+        # self.client = clientInterface.Client()
+        # facet_dicts = self.client.list_facets_v2()
+        facet_dicts = self.api.list_facets()
         self.context["active_facets"] = facet_dicts.get("active_facets")
         self.context["total_facets"] = facet_dicts.get("total_facets")
         ses.set_current_url(request)
 
     def error_response(self, errors):
-        # if error.get("code") == 404:
-        #     abort(404)
-        # else:
-        return render_template("errorpages/error.html", errors=errors)
+        if request.args.get("fmt", "") == "json":
+            return jsonify(resp)
+        else:
+            return render_template("errorpages/error.html", errors=errors)
 
 
 class FileView(View):
@@ -150,7 +148,7 @@ class CallbackView(View):
         db_user = db.sync_or_create_user(userinfo)
 
         if db_user.get("error"):
-            flash(u"Error syncing user with local db: " + db_user.get("msg"))
+            flash("Error syncing user with local db: " + db_user.get("msg"))
         else:
             # Populate the session
             session["profile"] = {
@@ -203,74 +201,70 @@ class AppView(GUIView):
 class SearchView(GUIView):
     def dispatch_request(self):
         # api_resp = self.client.list_resources(request.args)
-        api_resp = self.api.search_records(request.args)
+        resp = self.api.search_records(request.args)
+        # return jsonify(resp)
         
-        # Debugging
-        # return jsonify(api_resp)
-        
-        if api_resp.get("errors"):
-            if request.args.get("fmt", "") == "json":
-                return jsonify(api_resp)
-            else:
-                return self.error_response(api_resp.get("errors"))
+        if resp.get("errors"):
+            return self.error_response(resp.get("errors"))
 
         # update latest search
         ses.set_latest_search(request)
 
         # SAM (and Sejrssedler.dk) only wants id-lists
         if "ids" in request.args.getlist("view"):
-            return jsonify(api_resp)
+            return jsonify(resp)
 
         # This is also used by Aarhus Teater? Is it?
         # Todo or enhance
         elif request.args.get("fmt", "") == "json":
-            resp = {}
-            resp["status_code"] = api_resp.get("status_code")
-            resp["result"] = api_resp.get("result")
-            resp["filters"] = api_resp.get("filters")
-            resp["next"] = api_resp.get("next")
-            resp["previous"] = api_resp.get("previous")
-            return jsonify(resp)
+            result = {}
+            result["status_code"] = resp.get("status_code")
+            result["result"] = resp.get("result")
+            result["filters"] = resp.get("filters")
+            result["next"] = resp.get("next")
+            result["previous"] = resp.get("previous")
+            return jsonify(result)
 
+        # Else standard request
         else:
             self.context["page"] = "searchpage"
-            self.context.update(api_resp)
+            self.context.update(resp)
             return render_template("search.html", **self.context)
             # return jsonify(self.context)
 
 
 class ResourceView(GUIView):
     def dispatch_request(self, collection, _id):
-        # _id is routed as int, just to eliminate obvious errors
         # response = self.client.get_resource(collection, resource=str(_id), fmt=fmt)
         # response = self.resourceAPI.get_resource(collection, resource=str(_id))
-        api_resp = self.api.get_resource(collection, str(_id))
+        resp = self.api.get_resource(collection, str(_id))
 
-        if api_resp.get("errors"):
-            return self.error_response(api_resp.get("errors"))
+        if resp.get("errors"):
+            return self.error_response(resp.get("errors"))
 
         if request.args.get("fmt") == "json":
             # If request does not come from aarhusteaterarkiv-web or employee
             # then remove asset-links
+            # TODO: Insecure, fix!
             if request.args.get("curators", "") == "4":
-                return jsonify(api_resp)
+                return jsonify(resp)
             elif ses.get_user() and "employee" in ses.get_user_roles():
-                return jsonify(api_resp)
+                return jsonify(resp)
             else:
-                api_resp.pop("thumbnail", None)
-                api_resp.pop("portrait", None)
-                api_resp.pop("representations", None)
-                api_resp.pop("resources", None)
-                return jsonify(api_resp)
+                resp.pop("thumbnail", None)
+                resp.pop("portrait", None)
+                resp.pop("representations", None)
+                resp.pop("resources", None)
+                return jsonify(resp)
 
         elif request.is_xhr:
             # If ajax-requested on the results-page it returns an html-blob
-            self.context["resource"] = api_resp
+            self.context["resource"] = resp
             self.context["page"] = "searchpage"
             return render_template("components/record.html", **self.context)
 
         else:
-            self.context["resource"] = api_resp
+            self.context["resource"] = resp
             self.context["collection"] = collection
             self.context["page"] = "resourcepage"
             return render_template("resource.html", **self.context)
@@ -284,7 +278,7 @@ class VocabularyView(GUIView):
         self.context["collection"] = collection
 
         if collection in ["usability", "availability"] and _id not in [1, 2, 3, 4]:
-            abort(404)
+            return self.error_response({"code": 404, "msg": "No such resource"})
 
         return render_template("vocabulary.html", **self.context)
 
@@ -296,7 +290,9 @@ class ProfileView(GUIView):
         if page == "cart":
             self.context["subpage"] = "cart"
             # Fetch full records from remote api
-            cart = self.client.batch_records(ses.get_cart())
+            # cart = self.client.batch_records(ses.get_cart())
+            cart = self.api.get_multi_records(ses.get_cart())
+
             self.context["cart"] = cart
 
         elif page == "orders":
@@ -306,7 +302,8 @@ class ProfileView(GUIView):
             # Fetch resources
             if orders:
                 id_list = [i.get("resource_id") for i in orders]
-                resources = self.client.batch_records(id_list)
+                # resources = self.client.batch_records(id_list)
+                resources = self.api.get_multi_records(id_list)
                 # Map orders and full resources
                 for i, v in enumerate(orders):
                     v["resource"] = resources[i]
@@ -315,7 +312,8 @@ class ProfileView(GUIView):
         elif page == "bookmarks":
             self.context["subpage"] = "bookmarks"
             # Fetch full records from remote api
-            full_bookmarks = self.client.batch_records(ses.get_bookmarks())
+            # full_bookmarks = self.client.batch_records(ses.get_bookmarks())
+            full_bookmarks = self.api.get_multi_records(ses.get_bookmarks())
             self.context["bookmarks"] = full_bookmarks
 
         elif page == "searches":
@@ -331,7 +329,7 @@ class ProfileView(GUIView):
             self.context["subpage"] = "session"
 
         else:
-            abort(404)
+            return self.error_response({"code": 404, "msg": "No such resource"})
 
         self.context["page"] = "userpage"
         return render_template("profile.html", **self.context)
@@ -360,7 +358,8 @@ class AdminView(GUIView):
 class CartView(GUIView):
     def dispatch_request(self):
         cart = ses.get_cart()
-        self.context["cart"] = self.client.batch_records(cart)
+        # self.context["cart"] = self.client.batch_records(cart)
+        self.context["cart"] = self.api.get_multi_records(cart)
         self.context["page"] = "cart"
         return render_template("cart.html", **self.context)
 
@@ -381,13 +380,13 @@ class TestView(GUIView):
 #############
 class AutosuggestAPI(MethodView):
     def get(self):
-        self.autocomplete = autocompleteInterface.AutocompleteHandler()
+        self.api = api_client.ApiHandler()
         key_args = {}
         key_args["term"] = request.args.get("q")
         key_args["limit"] = request.args.get("limit", 10)
         key_args["domain"] = request.args.get("domain")
         if key_args["term"]:
-            return jsonify(self.autocomplete.get(**key_args))
+            return jsonify(self.api.autosuggest(**key_args))
         else:
             return jsonify([])
 

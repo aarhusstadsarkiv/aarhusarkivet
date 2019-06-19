@@ -1,19 +1,13 @@
 import os
 import json
 
-import requests
 import boto3
 
 import settings
 
-# import resourceInterface
-
 
 class SearchHandler:
     def __init__(self):
-        # self.OAWS_API_KEY = os.environ.get('OAWS_API_KEY')
-        # self.OAWS_BASE_URL = "https://openaws.appspot.com"
-        # self.resourceAPI = resourceInterface.ResourceHandler()
         self.filters = settings.QUERY_PARAMS
         self.search_engine = boto3.client(
             "cloudsearchdomain",
@@ -22,6 +16,25 @@ class SearchHandler:
             region_name=os.environ.get("AWS_REGION_NAME"),
             endpoint_url=os.environ.get("AWS_CLOUDSEARCH_ENDPOINT"),
         )
+
+    def list_facets(self):
+        # lists all facet-values from the searchengine
+        facet_options = {
+            "availability": {},
+            "usability": {},
+            "content_types": {"size": 100},
+            "subjects": {"size": 100},
+        }
+
+        key_args = {}
+        key_args["facet"] = json.dumps(facet_options)
+        key_args["returnFields"] = "_no_fields"
+        key_args["size"] = 1
+        key_args["queryParser"] = "structured"
+        key_args["query"] = "matchall"
+
+        resp = self.search_engine.search(**key_args)
+        return resp.get("facets")
 
     def list_collection_facets(self, collection_id):
         # lists all series and collection_tags of a given collection
@@ -39,8 +52,8 @@ class SearchHandler:
         key_args["query"] = "matchall"
         key_args["filterQuery"] = "collection:'" + str(collection_id) + "'"
 
-        api_response = self.search_engine.search(**key_args)
-        return api_response.get("facets")
+        resp = self.search_engine.search(**key_args)
+        return resp.get("facets")
 
     def search_records(self, query_params):
         # 'query_params' is a Immutable MultiDict

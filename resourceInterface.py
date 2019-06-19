@@ -35,7 +35,6 @@ class ResourceHandler:
     def get_resource(self, collection, resource):
         r = self._api_request("/".join([self.endpoints.get(collection), resource]))
 
-        # Generate r
         if r.get("status_code") == 0:
             return r.get("result")
 
@@ -61,10 +60,22 @@ class ResourceHandler:
             }
 
     # 'batch_records' from ClientInterface reformatted
-    def multi_get_records(self, id_list):
-        data = {"view": "record", "oasid": json.dumps(id_list)}
-        return _api_request(path="resolve_records_v2", method="post", data=data)
+    def multi_get_records(self, id_list=None):
+        if not id_list:
+            return []
 
+        data = {"view": "record", "oasid": json.dumps(id_list)}
+        r = self._api_request(path="resolve_records_v2", method="post", data=data)
+
+        if r.get("status_code") == 0:
+            return r.get("result")
+
+        else:
+            return {
+                "errors": [{"code": r.get("status_code"), "msg": r.get("status_msg")}]
+            }
+
+    # 'resolve_params'
     def get_entity_labels(self, resource_list):
         # resource_list: [('collection', '4'), ('availability', '2')]
         r = self._api_request("resolve_params", params=resource_list)
