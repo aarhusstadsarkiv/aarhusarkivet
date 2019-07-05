@@ -82,7 +82,7 @@ app.add_url_rule(
     view_func=views.FileView.as_view("serve_static_rootfile"),
 )
 
-# Static DOM files (css, images...)
+# Static application files (css, images...)
 app.add_url_rule(
     "/static/<path:filepath>", view_func=views.FileView.as_view("serve_static_file")
 )

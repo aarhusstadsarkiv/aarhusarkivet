@@ -18,26 +18,27 @@ class ApiHandler:
         return self.autosuggestAPI.suggest(term, limit, domain)
 
     def search_records(self, query_params):
-
         def _validate_query_params(query_params):
             errors = []
             stripped_keys = []
+
             for key in query_params:
                 negated = key[0] == "-"
                 stripped_key = key[1:] if negated else key
 
                 if stripped_key not in self.params:
                     errors.append({"param": key, "msg": "Invalid query-param"})
+                    continue  # no further tests needed
 
                 if negated and not self.params[stripped_key].get("negatable"):
                     errors.append({"param": key, "msg": "Param not negatable"})
 
                 # 'query_params' is a Immutable MultiDict, so we can check if a non-repeatable
                 # key is repeatet
-                if len(query_params.getlist(key)) > 1 and not self.params[stripped_key].get(
-                    "repeatable"
-                ):
-                    errors.append({"param": key, "msg": "Param not repeatable"})
+                # elif len(query_params.getlist(key)) > 1 and not self.params[
+                #     stripped_key
+                # ].get("repeatable"):
+                #     errors.append({"param": key, "msg": "Param not repeatable"})
 
                 # Check if non-repeatable stripped_key already exists
                 # eg. when using "-usability" and "usability"
@@ -45,8 +46,17 @@ class ApiHandler:
                     "repeatable"
                 ):
                     errors.append({"param": key, "msg": "Param not repeatable"})
+
                 stripped_keys.append(stripped_key)
-                
+
+            # When all stripped_keys are iterated, test for series without collections.
+            if "series" in stripped_keys and "collection" not in stripped_keys:
+                errors.append(
+                    {
+                        "param": "series",
+                        "msg": "'Series'-key requires a 'collection'-key",
+                    }
+                )
 
             return {"errors": errors}
 
@@ -71,7 +81,7 @@ class ApiHandler:
 
                 # get label if unresolved
                 if f.get("unresolved"):
-                    r = self.resourceAPI.get_entity_labels( [(key, value)] )
+                    r = self.resourceAPI.get_entity_labels([(key, value)])
                     if not r.get("errors"):
                         el["label"] = r["result"][0].get("label")
 
@@ -139,7 +149,7 @@ class ApiHandler:
                 out.append(el)
 
             return out
-        
+
         def _generate_facets(facets, params=None):
             # TODO: Does not work when excisting negative filter is set
             # and you click a positive facet: '-usability=4' is set, you click 'usability=2'
@@ -158,7 +168,7 @@ class ApiHandler:
                     out[b.get("value")] = b
                 result[facet] = out
             return result
-        
+
         def _generate_views(params, view):
             output = []
             views = [
@@ -255,11 +265,11 @@ class ApiHandler:
                 output.append(current)
             return output
 
-        # Validate params if any
+        # Validate params
         if query_params:
-            valid_request = _validate_query_params(query_params)
-            if valid_request.get("errors"):
-                return valid_request
+            validated_request = _validate_query_params(query_params)
+            if validated_request.get("errors"):
+                return validated_request
 
         # Make api-call
         api_resp = self.searchAPI.search_records(query_params)
@@ -269,7 +279,7 @@ class ApiHandler:
             return api_resp
 
         # If SAM-request, no need for further processing
-        # api_resp on SAM-request includes: status_code, result, next_cursor 
+        # api_resp on request with "view=ids"-param includes: status_code, result, next_cursor
         if "ids" in query_params.getlist("view"):
             return api_resp
 
@@ -277,8 +287,6 @@ class ApiHandler:
         # api_resp on normal request includes: sort, direction, size, date_from,
         # date_to, _query_string, total, start, server_facets, filters, query, result,
         # view_list, sort_list, size_list, view, non_query_params
-
-        # return api_resp
         resp = {}
 
         # convert multidict to list of tuples
@@ -293,7 +301,7 @@ class ApiHandler:
         # If filters, generate links and possibly labels
         if api_resp.get("filters"):
             resp["filters"] = _generate_filters(api_resp["filters"], params)
-        
+
         # if facets, generate links
         if api_resp.get("facets"):
             resp["active_facets"] = _generate_facets(api_resp["facets"], params)
@@ -334,7 +342,9 @@ class ApiHandler:
 
         # Proces size, sort, direction and view
         resp["size_list"] = _generate_sizes(params, api_resp["size"])
-        resp["sort_list"] = _generate_sorts(params, api_resp["sort"], api_resp["direction"])
+        resp["sort_list"] = _generate_sorts(
+            params, api_resp["sort"], api_resp["direction"]
+        )
         resp["view_list"] = _generate_views(params, query_params.get("view", "list"))
         resp["view"] = query_params.get("view", "list")
         resp["total"] = api_resp.get("total")
