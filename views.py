@@ -1,6 +1,8 @@
 import os
 import json
-from six.moves.urllib.parse import urlencode
+
+# from six.moves.urllib.parse import urlencode
+from urllib.parse import urlencode
 
 # Third party
 import requests
@@ -8,6 +10,7 @@ from flask import request
 from flask import render_template
 from flask import send_from_directory
 from flask import jsonify
+
 # from flask import abort
 from flask import redirect
 from flask import session
@@ -21,6 +24,7 @@ import db
 import settings
 import api_client
 from decorators import login_required, employee_required
+
 # import clientInterface
 # import autosuggestInterface
 
@@ -46,7 +50,7 @@ class GUIView(View):
 
     def error_response(self, errors):
         if request.args.get("fmt", "") == "json":
-            return jsonify(resp)
+            return jsonify(errors)
         else:
             return render_template("errorpages/error.html", errors=errors)
 
@@ -203,7 +207,7 @@ class SearchView(GUIView):
         # api_resp = self.client.list_resources(request.args)
         resp = self.api.search_records(request.args)
         # return jsonify(resp)
-        
+
         if resp.get("errors"):
             return self.error_response(resp.get("errors"))
 

@@ -1,4 +1,5 @@
-from six.moves.urllib.parse import urlencode
+# from six.moves.urllib.parse import urlencode
+from urllib.parse import urlencode
 
 import searchInterface
 import resourceInterface
