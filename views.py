@@ -214,7 +214,7 @@ class SearchView(GUIView):
         # update latest search
         ses.set_latest_search(request)
 
-        # SAM (and Sejrssedler.dk) only wants id-lists
+        # SAM only wants id-lists
         if "ids" in request.args.getlist("view"):
             return jsonify(resp)
 

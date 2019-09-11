@@ -34,13 +34,6 @@ class ApiHandler:
                 if negated and not self.params[stripped_key].get("negatable"):
                     errors.append({"param": key, "msg": "Param not negatable"})
 
-                # 'query_params' is a Immutable MultiDict, so we can check if a non-repeatable
-                # key is repeatet
-                # elif len(query_params.getlist(key)) > 1 and not self.params[
-                #     stripped_key
-                # ].get("repeatable"):
-                #     errors.append({"param": key, "msg": "Param not repeatable"})
-
                 # Check if non-repeatable stripped_key already exists
                 # eg. when using "-usability" and "usability"
                 if stripped_key in stripped_keys and not self.params[stripped_key].get(
@@ -280,7 +273,7 @@ class ApiHandler:
             return api_resp
 
         # If SAM-request, no need for further processing
-        # api_resp on request with "view=ids"-param includes: status_code, result, next_cursor
+        # api_resp on request with "view=ids"-param includes three keys: status_code, result, next_cursor (optional)
         if "ids" in query_params.getlist("view"):
             return api_resp
 
@@ -295,7 +288,8 @@ class ApiHandler:
 
         # Keys used for generating searchviews and facets
         resp["params"] = params
-
+        resp["query"] = api_resp.get("query", None)
+        
         # Hint for GUI
         resp["collection_search"] = query_params.get("collection", False)
 
@@ -309,12 +303,12 @@ class ApiHandler:
 
         # 'non_query_params' is used to generate a remove_link for the q-param
         # on the zero-hits page
-        if api_resp.get("query"):
+        if not api_resp.get("result") and api_resp.get("query"):
             other_params = [i for i in params if i != ("q", api_resp.get("query"))]
             resp["non_query_params"] = urlencode(other_params)
 
-        # Just testing - remove?
-        resp["total_facets"] = self.facets
+        # Commented out. Probably not in use
+        # resp["total_facets"] = self.facets
 
         # Pagination
         if api_resp.get("result"):
@@ -352,8 +346,9 @@ class ApiHandler:
         resp["start"] = api_resp.get("start")
         resp["size"] = api_resp.get("size")
         resp["sort"] = api_resp.get("sort")
-        resp["_query_string"] = api_resp.get("_query_string")
         resp["result"] = api_resp.get("result")
+        # Commented out. Probably not in use
+        # resp["_query_string"] = api_resp.get("_query_string")
 
         return resp
 

@@ -185,6 +185,10 @@ class SearchHandler:
             stripped_key = key[1:] if key.startswith("-") else key
             filter_type = self.filters[stripped_key].get("type")
 
+            # q-param already processed
+            if stripped_key == "q":
+                continue
+
             # Leave out non-searchfilters from filterQuery, eg. "size", "direction", "start"
             if not self.filters[stripped_key].get("search_filter"):
                 continue

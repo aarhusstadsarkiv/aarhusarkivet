@@ -1003,6 +1003,13 @@ QUERY_PARAMS = {
         'type': 'integer',
         "search_filter": False
     },
+    "q": {
+        "label": "Fritekstsøgning",
+        "repeatable": False,
+        "type": "string",
+        "negatable": False,
+        "search_filter": False
+    },
     "creators": {
         "label": "Ophavsretsholder",
         "repeatable": True,
