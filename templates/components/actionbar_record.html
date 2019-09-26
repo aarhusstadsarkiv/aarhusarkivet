@@ -1,11 +1,11 @@
 <div class="actionbar_record hide-for-print">
     <!-- cart-handlers -->
-    <button data-resource-id="{{r.id}}" class="button small cart-handler {% if r.id in session.get('cart', []) %}hide{% endif %}" data-action="add-to-cart">
+    <!-- <button data-resource-id="{{r.id}}" class="button small cart-handler {% if r.id in session.get('cart', []) %}hide{% endif %}" data-action="add-to-cart">
         <span class="fas fa-shopping-cart icon-left"></span><span>Føj til kurv</span>
     </button>
     <button data-resource-id="{{r.id}}" class="button small secondary cart-handler {% if r.id not in session.get('cart', []) %}hide{% endif %}" data-action="remove-from-cart">
         <span class="fas fa-times icon-left"></span><span>Fjern fra kurv</span>
-    </button>
+    </button> -->
     {% if session.get('profile') %}
         <!-- bookmark-handlers -->
         <button data-resource-id="{{r.id}}" class="button small bookmark-handler {% if r.id in session.get('bookmarks', []) %}hide{% endif %}" data-action="create-bookmark">

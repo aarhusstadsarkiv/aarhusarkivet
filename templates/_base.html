@@ -107,7 +107,7 @@
                     {% if session.get('profile') %}
                         <li class="menu-text">{{session['profile'].get('name')}}</li>
                         <li><a href="/users/me">Min profil</a></li>
-                        <li><a href="/users/me/cart">Min kurv</a></li>
+                        <!-- <li><a href="/users/me/cart">Min kurv</a></li> -->
                         <!-- <li><a href="/users/me/orders">Mine bestillinger</a></li> -->
                         <li><a href="/users/me/bookmarks">Mine bogmærker</a></li>
                         <li><a href="/users/me/searches">Mine søgninger</a></li>
@@ -160,13 +160,13 @@
                             {% endif %}
 
                             <!-- Basket-icon. Always show -->
-                            <li class="global-header-item">
+                            <!-- <li class="global-header-item">
                                 <a class="global-header-link cart-link" href="{% if session.get('profile') %}/users/me/cart{% else %}/cart{% endif %}" style="position:relative;">
                                     <span class="show-for-mlarge" style="padding-right:.2em;">Kurv</span>
                                     <span class="fas fa-shopping-basket"></span>
                                     <span class="cart-badge badge {% if not session.get('cart', [])%}hide{% endif %}">{{session.get('cart', [])|length}}</span>
                                 </a>                    
-                            </li>
+                            </li> -->
 
                             <li class="global-header-item show-for-medium is-dropdown-submenu-parent">
                                 <a class="global-header-link">Vejledninger</a>
@@ -194,7 +194,7 @@
                                     </a>
                                     <ul class="vertical menu align-right">
                                         <li><a href="/users/me">Min profil</a></li>
-                                        <li><a href="/users/me/cart">Min kurv</a></li>
+                                        <!-- <li><a href="/users/me/cart">Min kurv</a></li> -->
                                         <!-- <li><a href="/users/me/orders">Mine bestillinger</a></li> -->
                                         <li><a href="/users/me/bookmarks">Mine bogmærker</a></li>
                                         <li><a href="/users/me/searches">Mine søgninger</a></li>
