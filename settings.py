@@ -1136,6 +1136,13 @@ QUERY_PARAMS = {
         "negatable": False,
         "search_filter": True
     },
+    "cursor": {
+        "label": "Næste resultat",
+        "repeatable": False,
+        "type": "string",
+        "negatable": False,
+        "search_filter": False
+    }
 }
 
 # SEARCH_FILTERS = {
