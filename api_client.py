@@ -148,6 +148,7 @@ class ApiHandler:
             # TODO: Does not work when excisting negative filter is set
             # and you click a positive facet: '-usability=4' is set, you click 'usability=2'
             result = {}
+            params = [x for x in params if x[0] != "start"]  # remove 'start'-param from facet-links
             for facet in facets:
                 out = {}
                 for b in facets[facet].get("buckets"):
