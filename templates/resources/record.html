@@ -452,6 +452,11 @@
         </div>
     </div>
 
+    {% if r.rights_notes %}
+        <h5 id="judicial_status">Rettighedsnoter</h5>
+        <p>{{r.rights_notes}}</p>
+    {% endif %}
+
     <h5 id="judicial_status">Anden juridisk beskyttelse</h5>
     <div class="media-object stack-for-small">
         <div class="media-object-section app_keylabel">Aftaleforhold</div>
