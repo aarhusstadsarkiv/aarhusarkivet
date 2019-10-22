@@ -214,19 +214,20 @@ class SearchView(GUIView):
         # update latest search
         ses.set_latest_search(request)
 
-        # SAM only wants id-lists
+        # If SAM-request. It only wants id-lists
         if "ids" in request.args.getlist("view"):
             return jsonify(resp)
 
-        # This is also used by Aarhus Teater? Is it?
-        # Todo or enhance
+        # Elif json-request OR Aarhus Teater
         elif request.args.get("fmt", "") == "json":
             result = {}
-            result["status_code"] = resp.get("status_code")
             result["result"] = resp.get("result")
             result["filters"] = resp.get("filters")
             result["next"] = resp.get("next")
             result["previous"] = resp.get("previous")
+            if request.args.get("curators", "") == "4":
+                result["size_list"] = resp.get("size_list")
+                result["status_code"] = resp.get("status_code")
             return jsonify(result)
 
         # Else standard request
