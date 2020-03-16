@@ -10,8 +10,6 @@ from flask import request
 from flask import render_template
 from flask import send_from_directory
 from flask import jsonify
-
-# from flask import abort
 from flask import redirect
 from flask import session
 from flask import flash
@@ -262,7 +260,8 @@ class ResourceView(GUIView):
                 resp.pop("resources", None)
                 return jsonify(resp)
 
-        elif request.is_xhr:
+        # elif request.is_xhr:
+        elif request.is_json:
             # If ajax-requested on the results-page it returns an html-blob
             self.context["resource"] = resp
             self.context["page"] = "searchpage"
