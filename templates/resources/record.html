@@ -1,7 +1,7 @@
 {# View and vars - specific for records #}
 
 {# jinja2 construct to update set variables #}
-{% set vars = { 'storage_id': False, 'subjects': {} } %}
+{% set vars = { 'storage_id': False, 'barcode': False, 'subjects': {} } %}
 
 {# static settings #}
 {% set icon = ICONS[r.content_types[0][0].get('id')|string] %}
@@ -17,8 +17,9 @@
 {% for _dict in r.get('resources', []) %}
     {% if _dict.get('storage_id') %}
         {% if vars.update({'storage_id': _dict['storage_id'][0]}) %}{% endif %}
-    {% elif _dict.get('barcode') %}
-        {% if vars.update({'storage_id': _dict['barcode']}) %}{% endif %}
+    {% endif %}
+    {% if _dict.get('barcode') %}
+        {% if vars.update({'barcode': _dict['barcode']}) %}{% endif %}
     {% endif %}
 {% endfor %}
 
@@ -407,12 +408,12 @@
                 </div>
             {% elif copyright_id == 2 %}
                 <div style="padding-top: 5px;">
-                    <span>Det ophavsretsbeskyttede materiale er i offentlig eje, da ophavsretten er udløbet.</span>
+                    <span>Materialet er i offentlig eje, da ophavsretten er udløbet.</span>
                     <span> Der er dermed heller ingen ophavsretslige begrænsninger på gengivelse og publicering af dette materiale.</span>
                 </div>
             {% elif copyright_id == 3 %}
                 <div style="padding-top: 5px;">
-                    <span>Det ophavsretsbeskyttede materiale er frigivet af alle ophavsretsholdere til offentlig eje.</span>
+                    <span>Materialet er frigivet af alle ophavsretsholdere til offentlig eje.</span>
                     <span> Der er dermed heller ingen ophavsretslige begrænsninger på gengivelse og publicering af dette materiale.</span>
                 </div>
             {% elif copyright_id == 4 %}
@@ -473,8 +474,20 @@
                 <span>Materialet må kun ses på læsesalen. Ifølge aftale.</span>
             </div>
         {% elif contractual_id == 4 %}
+            {% set creators = {'pp': False} %}
+            {% if r.creators %}
+                {% for i in r.creators %}
+                    {% if i.id == 108691 %}
+                        {% if creators.update({'pp': True}) %}{% endif %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
             <div class="media-object-section main-section">
+            {% if creators.pp %}
+                <span>Materialet må kun offentliggøres på Aarhus Stadsarkivs hjemmesider. Ifølge aftale.</span>
+            {% else %}
                 <span>Materialet må offentliggøres på internettet. Ifølge aftale.</span>
+            {% endif %}
             </div>
         {% else %}
             <div class="media-object-section main-section">
@@ -602,16 +615,19 @@
         {% if r.resources %}
             <h5>Ressourcer</h5>
 
-                <!-- <div class="media-object-section app_keylabel">Placering</div>
-                <div class="media-object-section main-section">
-                    {% for res in r.resources %}
-                        {% if res.get('storage_id') %}
-                            <p class="app_keylabel">EnhedsID</p><p>{{res['storage_id'][0]}}</p>
-                        {% elif res.get('barcode') %}
-                            <p class="app_keylabel">Stregkode</p><p>{{res['barcode']}}</p>
-                        {% endif %}
-                    {% endfor %}
-                </div> -->
+            {#
+            <div class="media-object-section app_keylabel">Placering</div>
+            <div class="media-object-section main-section">
+                {% for res in r.resources %}
+                    {% if res.get('storage_id') %}
+                        <p class="app_keylabel">EnhedsID</p><p>{{res['storage_id'][0]}}</p>
+                    {% endif %}
+                    {% if res.get('barcode') %}
+                        <p class="app_keylabel">Stregkode</p><p>{{res['barcode']}}</p>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            #}
 
             {% for res in r.resources %}
                 <div class="media-object stack-for-small">
