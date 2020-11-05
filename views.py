@@ -28,25 +28,19 @@ from decorators import login_required, employee_required
 
 IP_WHITELIST = ["193.33.148.24"]
 
-def illegal_params(params):
-    illigals = ["fbid"]
-    for i in illigals:
-        if i in params.keys():
-            return True
-    return False
-
 #############
 # BASEVIEWS #
 #############
 class GUIView(View):
     def __init__(self):
         self.context = {}
-        # redirect if tracking-params
+        # fetch tracking-params
+        self.stripped_url = False
         illigals = ["fbclid"]
         for el in illigals:
             if el in request.args.keys():
                 new_params = [(t[0], t[1]) for t in request.args.items() if t[0] not in illigals]
-                redirect("?".join([request.path, urlencode(new_params)]))
+                self.stripped_url =  "?".join([request.path, urlencode(new_params)])
 
         ip = request.headers.get("X-Forwarded-For")
         self.context["readingroom"] = ip in IP_WHITELIST
@@ -204,7 +198,8 @@ class AppView(GUIView):
     def dispatch_request(self, page):
         self.context["subpage"] = page
         self.context["page"] = "homepage" if page == "index" else "app-page"
-
+        if self.stripped_url:
+            return redirect(self.stripped_url, 302)
         if page in settings.GUIDE_PAGES:
             return render_template("guides.html", **self.context)
         elif page in settings.ABOUT_PAGES:
@@ -215,6 +210,8 @@ class AppView(GUIView):
 
 class SearchView(GUIView):
     def dispatch_request(self):
+        if self.stripped_url:
+            return redirect(self.stripped_url, 302)
         # api_resp = self.client.list_resources(request.args)
         resp = self.api.search_records(request.args)
         # return jsonify(resp)
@@ -251,6 +248,8 @@ class SearchView(GUIView):
 
 class ResourceView(GUIView):
     def dispatch_request(self, collection, _id):
+        if self.stripped_url:
+            return redirect(self.stripped_url, 302)
         # response = self.client.get_resource(collection, resource=str(_id), fmt=fmt)
         # response = self.resourceAPI.get_resource(collection, resource=str(_id))
         resp = self.api.get_resource(collection, str(_id))
