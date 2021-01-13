@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from flask import Flask
 from flask import request
 from flask import redirect
+from flask import abort
 
 import settings
 import views
@@ -30,6 +31,11 @@ app.jinja_env.globals["ICONS"] = settings.ICONS
 @app.before_request
 def before_request():
     # Copied from https://github.com/kennethreitz/flask-sslify
+    ip_banned = ["135.181.113.250"]
+    ip = request.headers.get("X-Forwarded-For")
+    if ip in ip_banned:
+        abort(403)
+
     criteria = [
         request.is_secure,
         app.debug,
