@@ -1,38 +1,29 @@
 ---
 name: Bug report
-about: Create a report to help us improve
-title: ''
-labels: ''
-assignees: ''
+about: Udfyld grundigt for at hjælpe os med fejlfindingen
 
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+**Beskriv fejlen**
+En præcis beskrivelse af fejlen...
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+**Hvordan kan man se fejlen?**
+Trin til at reproducere fejlen:
+1. Gå til '...'
+2. Klik på '....'
+3. Scroll ned til '....'
+4. Fejlen ses...
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+**Forventet adfærd**
+Hvad forventede du, at der skete?
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+**Skærmbilleder**
+Tilføj gerne skærmbilleder, hvis det hjælper med at forklare fejlen.
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+**Computer:**
+ - OS: [eks. Windows eller MacOS]
+ - Browser [eks. Chrome, Safari]
 
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
-
-**Additional context**
-Add any other context about the problem here.
+**Smartphone:**
+ - Telefon: [eks. iPhone 7]
+ - Browser [eks. safari]
