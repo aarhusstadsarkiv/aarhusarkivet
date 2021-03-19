@@ -1,20 +1,15 @@
 ---
-name: Feature request
-about: Suggest an idea for this project
-title: ''
-labels: ''
-assignees: ''
+name: Udviklingsønske
+about: Idéer til udvikling af hjemmesiden
+labels: 'feature request'
 
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+**Er dit udviklingsønske relateret til et eksisterende problem?**
+En tydelig beskrivelse af, hvori problemet består. Eks. Jeg er altid frustreret, når [...]
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+**Beskriv dit ønske**
+En tydelig beskrivelse af, hvad du ønsker udviklet.
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
-
-**Additional context**
-Add any other context or screenshots about the feature request here.
+**Beskriv alternative løsninger**
+Beskriv eventuelle alternative løsninger, som du har overvejet.
