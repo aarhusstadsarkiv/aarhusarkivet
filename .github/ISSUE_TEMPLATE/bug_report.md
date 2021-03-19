@@ -1,6 +1,7 @@
 ---
 name: Fejl
 about: Indberet en fejl med hjemmesiden
+labels: bug
 
 ---
 
