@@ -1,6 +1,6 @@
 ---
-name: Bug report
-about: Udfyld grundigt for at hjælpe os med fejlfindingen
+name: Fejl
+about: Indberet en fejl med hjemmesiden
 
 ---
 
