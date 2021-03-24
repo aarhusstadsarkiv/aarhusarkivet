@@ -1,6 +1,7 @@
 ---
-title: Spørgsmål
-description: Spørgsmål til funktionalitet, registreringer, søgeresultater m.m.
+name: Spørgsmål
+about: Spørgsmål til funktionalitet, registreringer, søgeresultater m.m.
+labels: question
 
 ---
 
