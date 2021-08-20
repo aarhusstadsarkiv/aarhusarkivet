@@ -33,14 +33,22 @@
                 {% if r.portrait and legal_id == 1 and contractual_id > 2 %}
                     {% if availability_id == 4 or readingroom or session.get('is_employee') %}
                         {% if r.representations and record_type == 'video' %}
-                            <div id="single-video" style="position: relative;">
-                                <a href="https://vimeo.com/{{r.representations.get('vimeo_id')}}">
-                                    <img class="resource-portrait" src="{{r.portrait}}"/>
-                                    <div class="play-icon">
-                                        <span class="far fa-play-circle fa-2x"></span>
-                                    </div>
-                                </a>
-                            </div>
+                            {% if r.representations.get("vimeo_id") %}
+                                <div id="single-video" style="position: relative;">
+                                    <a href="https://vimeo.com/{{r.representations.get('vimeo_id')}}">
+                                        <img class="resource-portrait" src="{{r.portrait}}"/>
+                                        <div class="play-icon">
+                                            <span class="far fa-play-circle fa-2x"></span>
+                                        </div>
+                                    </a>
+                                </div>
+                            {% else %}
+                                <div id="single-video" style="position: relative;">
+                                    <video controls src="{{r.representations.get("record_file")}}" type="video/mp4">
+                                        <p>This browser doesn't support video tag.</p>
+                                    </video>
+                                </div>
+                            {% endif %}
                         {% elif r.representations and record_type == 'image' %}
                             <div id="single-image" style="position: relative;">
                                 <a href="{{r.representations.get('large_image')}}">
