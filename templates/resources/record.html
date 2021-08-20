@@ -44,7 +44,8 @@
                                 </div>
                             {% else %}
                                 <div id="single-video" style="position: relative;">
-                                    <video controls src="{{r.representations.get("record_file")}}" type="video/mp4">
+                                    <video controls="" width="100%">
+                                        <source src="{{ r.representations.get("record_file") }}" type="video/mp4">
                                         <p>This browser doesn't support video tag.</p>
                                     </video>
                                 </div>
