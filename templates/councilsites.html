@@ -1,0 +1,51 @@
+{% extends '_base.html' %}
+{% set title = "Aarhus Byråds arkiv" %}
+
+{% block content %}
+<div>
+    <img class="show-for-large" src="/static/img/Billder-fra-Aarhus_AA_header_1920px.jpg">
+</div>
+
+<div class="grid-x grid-padding-x grid-padding-y homepage-list" style="margin-top:2rem;font-size:90%">
+
+    <div class="cell smedium-6 large-4">
+        <div class="cart">
+            <a href="/search?content_types=61&availability=4&direction=asc&size=50&sort=date_from&view=gallery">
+                <img data-interchange="[static\img\Billder-fra-Aarhus_aarhusarkivet_420px.jpg, small], [static\img\Billder-fra-Aarhus_aarhusarkivet_420px.jpg, large]">
+            </a>
+            <div class="" style="padding-top:1em;">
+                <p>Den ældste del af Aarhus Byråds arkiv (1867-1940) består af referater fra byrådets forhandlinger vedr. alle sager, som har været på byrådets dagsorden</p>
+                <p>Både den åbne og den lukkede del af byrådsarkivet er digitaliseret af Aarhus Stadsarkiv og er i udgangspunktet frit tilgængelig.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="cell smedium-6 large-4">
+        <div class="cart">
+            <a href="https://aarhusbilleder.dk" target="blank">
+                <img data-interchange="[static\img\Billder-fra-Aarhus_aarhusbilleder_420px.jpg, small], [static\img\Billder-fra-Aarhus_aarhusbilleder_420px.jpg, large]">
+            </a>
+            <div class="" style="padding-top:1em;">
+                <p>Aarhus Byråds arkiv fra 1941 til 1996 er endnu ikke tilgængeligt digitalt.</p>
+                <p>Ønsker du at bruge byrådsarkivet for denne periode, kræver det fysisk fremmøde på Stadsarkivets læsesal. Her er byrådets forhandlinger tilgængelige i Stadsarkivets bibliotek.</p>
+                <p>Man skal ansøge om tilladelse til at se sager behandlet på den lukkede dagsorden (b-møder), da de typisk indeholder oplysninger, som ikke er umiddelbart tilgængelige. </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="cell smedium-6 large-4">
+        <div class="cart">
+            <a href="https://arkiv.dk" target="blank">
+                <img data-interchange="[static\img\Billder-fra-Aarhus_arkiv-dk_420px.jpg, small], [static\img\Billder-fra-Aarhus_arkiv-dk_420px.jpg, large]">
+            </a>
+            <div class="" style="padding-top:1em;">
+                <p>Fra 1997 og frem indeholder byrådsarkivet mødereferater og sagsmateriale vedr. sager, der har været behandlet på møder i Aarhus Byråd, Magistraten og de politiske udvalg.</p>
+                <p>I øjeblikket går det tilbage til 1997, hvor beslutningsdokumenterne og sagsbehandlingen blev digital.</p>
+                <p></p>Har du spørgsmål til indholdet i arkivet kan du skrive til <a href="mailto:byraadsservice@ba.aarhus.dk">byraadsservice@ba.aarhus.dk</a></p>
+            </div>
+        </div>          
+    </div>
+
+</div>
+
+{% endblock content %}

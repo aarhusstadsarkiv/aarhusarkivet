@@ -101,6 +101,13 @@ app.add_url_rule(
     view_func=views.AppView.as_view("show_imagesites"),
 )
 
+# Imagesites-page
+app.add_url_rule(
+    "/city-council",
+    defaults={"page": "councilsites"},
+    view_func=views.AppView.as_view("show_councilsites"),
+)
+
 # Guide-pages (subpaged)
 app.add_url_rule(
     "/guides/<any(" + ", ".join(settings.GUIDE_PAGES) + "):page>",
