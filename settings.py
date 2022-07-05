@@ -25,7 +25,7 @@ ABOUT_PAGES = [
     "collections",
     "availability",
     "usability",
-    "cookies",
+    # "cookies",
     "privacy",
     "archival_availability",
 ]
