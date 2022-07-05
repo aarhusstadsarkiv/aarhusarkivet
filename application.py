@@ -62,7 +62,7 @@ def after_request(response):
         response.headers["X-Frame-Options"] = "DENY"
         response.headers["X-XSS-Protection"] = "1; mode=block"
         response.headers["Access-Control-Allow-Origin"] = "*"
-        response.headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self' plausible.io; connect-src 'self' plausible.io"
+        # response.headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self' plausible.io; connect-src 'self' plausible.io"
 
     return response
 
