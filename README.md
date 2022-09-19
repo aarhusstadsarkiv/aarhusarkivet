@@ -1,7 +1,7 @@
 ## AarhusArkivet
 ### Set up
 - .env files are in OneDrive. Copy aarhusarkivet-dev.env to .env and place it in the root of the repository.
-- Current Heroku runtime is 3.9.9. Pipfile only specifies version "3"
+- Current Heroku runtime is 3.9.9.
 
 ### Local dev
 - run "python application.py" from root. Runs on port 3000.
