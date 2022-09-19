@@ -324,7 +324,7 @@ def _insert_order(user_id, resource_id, unit_id):
     # If existing orders on the unit, place in queue
     else:
         order["status"] = "waiting"
-        msg = unicode(
+        msg = (
             "Materialet er bestilt. Du er nummer "
             + str(len(existing_orders))
             + " i køen."
@@ -332,7 +332,7 @@ def _insert_order(user_id, resource_id, unit_id):
 
     # Insert order
     if _put_item("orders", order):
-        send_mail("order_created", user.get("email"))
+        # send_mail("order_created", user.get("email"))
         return {"msg": msg}
     else:
         return {"error": True, "msg": "Ukendt serverfejl. Bestillingen ikke gemt."}
@@ -359,8 +359,8 @@ def delete_order(user_id, resource_id):
             nxt[0]["expires"] = str(datetime.date.today() + datetime.timedelta(days=14))
             if _put_item("orders", nxt[0], action="update"):
                 # If order is updated, send availability-mail
-                send_mail("order_available", nxt[0]["email"])
-
+                # send_mail("order_available", nxt[0]["email"])
+                pass
     return {"msg": "Bestillingen er nu slettet.", "id": resource_id}
 
 
