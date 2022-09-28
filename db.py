@@ -284,8 +284,7 @@ def list_orders(key, value, ids_only=False, limit=None):
 
 
 def _insert_order(user_id, resource_id, unit_id):
-    """
-    """
+    """ """
     # Fetch entities
     unit = get_storage_unit(unit_id)
     if unit.get("error"):
@@ -339,8 +338,7 @@ def _insert_order(user_id, resource_id, unit_id):
 
 
 def delete_order(user_id, resource_id):
-    """ Cancelled or finished or force-deleted by employee
-    """
+    """Cancelled or finished or force-deleted by employee"""
     deleted_order = _delete_item(
         "orders", {"user_id": user_id, "resource_id": resource_id}, return_item=True
     )

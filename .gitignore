@@ -1,5 +1,7 @@
 .vscode
 .venv
+.prod.env
+.dev.env
 .env
 *.pyc
 .sass-cache

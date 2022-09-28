@@ -203,7 +203,12 @@ class SearchHandler:
                         filter_str = "(not " + filter_str + ")"
                     filters_to_query.append(filter_str)
                     filters_to_output.append(
-                        {"key": stripped_key, "value": value, "negated": stripped_key != key, "unresolved": True}
+                        {
+                            "key": stripped_key,
+                            "value": value,
+                            "negated": stripped_key != key,
+                            "unresolved": True,
+                        }
                     )
 
                 elif filter_type in ["string", "integer"]:
@@ -212,7 +217,13 @@ class SearchHandler:
                     if stripped_key != key:
                         filter_str = "(not " + filter_str + ")"
                     filters_to_query.append(filter_str)
-                    filters_to_output.append({"key": stripped_key, "value": value, "negated": stripped_key != key})
+                    filters_to_output.append(
+                        {
+                            "key": stripped_key,
+                            "value": value,
+                            "negated": stripped_key != key,
+                        }
+                    )
 
                 elif key == "date_from":
                     filters_to_query.append("date_from:[" + value + ",}")
@@ -240,7 +251,7 @@ class SearchHandler:
             # Make request to Cloudsearch
             api_response = self.search_engine.search(**key_args)
 
-            # Build simple response 
+            # Build simple response
             out = {}
             out["status_code"] = 0  # Needed for SAM
             out["result"] = []
@@ -340,4 +351,3 @@ class SearchHandler:
             out["filters"] = filters_to_output or None
 
             return out
-

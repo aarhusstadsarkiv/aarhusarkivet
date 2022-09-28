@@ -1,24 +1,8 @@
-version: '3.9'
 services:
   webapp:
-    # Here you can specify an env-file with variables
-    # that can be used in the docker-container,
-    # BUT these variables can not be used here in the
-    # docker-compose using ${...} UNLESS it is a file named
-    # ".env". This file (in the same directory) is always
-    # loaded into the docker-compose, but not into the 
-    # docker-containers unless the variables are mapped in the 
-    # environment option below or using the env_file option here.
+    # container_name: aarhusarkivet
+    build: .
+    ports:
+      - "3000:3000"
+    command: python application.py
     env_file: .env
-    container_name: aarhusarkivet-frontend
-    build:
-      context: .
-      dockerfile: Dockerfile
-    environment: # specify the env-variables here
-      # secret ones in .env file or system
-      # MY_SECRET_VARIABLE: ${MY_SECRET_VARIABLE}
-      # and public ones can be hardcoded
-      # MY_PUBLIC_VARIABLE: Hello world
-      # sometimes the console won't show print messages,
-      # using PYTHONUNBUFFERED: 1 can fix this
-      PYTHONUNBUFFERED: 1

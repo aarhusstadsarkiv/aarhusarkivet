@@ -39,8 +39,10 @@ class GUIView(View):
         illigals = ["fbclid"]
         for el in illigals:
             if el in request.args.keys():
-                new_params = [(t[0], t[1]) for t in request.args.items() if t[0] not in illigals]
-                self.stripped_url =  "?".join([request.path, urlencode(new_params)])
+                new_params = [
+                    (t[0], t[1]) for t in request.args.items() if t[0] not in illigals
+                ]
+                self.stripped_url = "?".join([request.path, urlencode(new_params)])
 
         ip = request.headers.get("X-Forwarded-For")
         self.context["readingroom"] = ip in IP_WHITELIST

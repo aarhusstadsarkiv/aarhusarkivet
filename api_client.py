@@ -148,7 +148,9 @@ class ApiHandler:
             # TODO: Does not work when excisting negative filter is set
             # and you click a positive facet: '-usability=4' is set, you click 'usability=2'
             result = {}
-            params = [x for x in params if x[0] != "start"]  # remove 'start'-param from facet-links
+            params = [
+                x for x in params if x[0] != "start"
+            ]  # remove 'start'-param from facet-links
             for facet in facets:
                 out = {}
                 for b in facets[facet].get("buckets"):
@@ -290,7 +292,7 @@ class ApiHandler:
         # Keys used for generating searchviews and facets
         resp["params"] = params
         resp["query"] = api_resp.get("query", None)
-        
+
         # Hint for GUI
         resp["collection_search"] = query_params.get("collection", False)
 

@@ -1,9 +1,11 @@
 {# This template uses 'urlencode'-filter! #}
 
 <ul class="series menu vertical accordion-menu" data-accordion-menu data-multi-open="false">
+{% set vars = {'count': 1} %}
     {% for item in r.series recursive %}
         {% if item.children %}
-            <li class="facet-trigger">
+            {% if vars.update({'count': vars.count + 1}) %}{% endif %}
+            <li data-id="series-{{vars.count}}" class="facet-trigger">
                 <a href="#">
                     <div class="media-object">
                         <div class="media-object-section main-section">{{item.label}}</div>

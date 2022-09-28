@@ -23,9 +23,45 @@ function notify(resp) {
     $(notice).prependTo( $('#notificationlist') ).fadeOut(3500);
 }
 
+const scrollIntoViewWithOffset = (el, offset) => {
+    window.scrollTo({
+        top:
+            document.querySelector(selector).getBoundingClientRect().top - document.body.getBoundingClientRect().top - offset,
+            // el.getBoundingClientRect().top - document.body.getBoundingClientRect().top - offset,
+    })
+}
+  
+window.addEventListener('load', function () {
+    if (window.location.hash == '') {
+        return false;
+    }
+    console.log(window.location.hash);
+    // var el = document.querySelector("[data-id='" + window.location.hash.slice(1) + "']");
+    // var el = document.querySelector(window.location.hash);
+    scrollIntoViewWithOffset("[data-id='" + window.location.hash.slice(1) + "']", 300);
+    // if (el !== null) {
+    //     console.log("element is found");
+    //     var topint = el.getBoundingClientRect().top - document.body.getBoundingClientRect().top - 60
+    //     console.log("top is: " + topint);
+    //     window.scrollTo({top: topint});
+    //     // el.scrollIntoView({ behavior: 'smooth' });
+    // } else {
+    //     console.log()
+    // }
+}, false);
 
 // Catchall-doc for small or global stuff
 $(document).ready(function() {
+
+    // if (window.location.hash) {
+    //     scroll(0, 0);
+    //     // setTimeout(scroll(0, 0), 1); // void some browsers issue
+    //     var anchorLink = $(window.location.hash);
+    //     // var offsetSize = $("#navigation").innerHeight() + 5;
+    //     $(anchorLink).scrollTop( 100 );
+    //     // $("html, body").delay(400).animate({scrollTop: anchorLink.offset().top - 180}, 700);
+    //     anchorLink.focus();
+    // }
 
     $('.global-search-field').on( "keyup", function(e) {
         if ($(this).val().length > 1) {

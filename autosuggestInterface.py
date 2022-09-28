@@ -19,7 +19,9 @@ class AutosuggestHandler:
             resp = json.loads(response.content)
             if resp.get("errors"):
                 return {
-                    "errors": [{"code": resp.get("status_code"), "msg": resp.get("status_msg")}]
+                    "errors": [
+                        {"code": resp.get("status_code"), "msg": resp.get("status_msg")}
+                    ]
                 }
             return resp.get("result")
         except ValueError as e:
