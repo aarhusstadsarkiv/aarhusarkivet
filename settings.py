@@ -981,6 +981,27 @@ QUERY_PARAMS = {
         "negatable": False,
         "search_filter": False,
     },
+    "utm_source": {
+        # "label": "Næste resultat",
+        "repeatable": False,
+        "type": "string",
+        "negatable": False,
+        "search_filter": False,
+    },
+    "utm_campaign": {
+        # "label": "Næste resultat",
+        "repeatable": False,
+        "type": "string",
+        "negatable": False,
+        "search_filter": False,
+    },
+    "utm_medium": {
+        # "label": "Næste resultat",
+        "repeatable": False,
+        "type": "string",
+        "negatable": False,
+        "search_filter": False,
+    }
 }
 
 # SEARCH_FILTERS = {

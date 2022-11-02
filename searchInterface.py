@@ -185,6 +185,10 @@ class SearchHandler:
             stripped_key = key[1:] if key.startswith("-") else key
             filter_type = self.filters[stripped_key].get("type")
 
+            # ignore utm-params
+            if stripped_key.startswith("utm_"):
+                continue
+
             # q-param already processed
             if stripped_key == "q":
                 continue
