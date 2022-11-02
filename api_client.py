@@ -68,6 +68,10 @@ class ApiHandler:
             out = []
 
             for f in filters:
+                # remove utm-params from filter links
+                if f["key"].startswith("utm_"):
+                    continue
+
                 el = {}
                 key = f.get("key")
                 value = f.get("value")
@@ -152,6 +156,11 @@ class ApiHandler:
                 x for x in params if x[0] != "start"
             ]  # remove 'start'-param from facet-links
             for facet in facets:
+
+                # remove utm-params from filter links
+                # if facet["key"].startswith("utm_"):
+                #     continue
+
                 out = {}
                 for b in facets[facet].get("buckets"):
                     active = (facet, b.get("value"))
@@ -267,7 +276,7 @@ class ApiHandler:
             validated_request = _validate_query_params(query_params)
             if validated_request.get("errors"):
                 return validated_request
-
+        
         # Make api-call
         api_resp = self.searchAPI.search_records(query_params)
 
@@ -287,7 +296,8 @@ class ApiHandler:
         resp = {}
 
         # convert multidict to list of tuples
-        params = [tup for tup in query_params.items(multi=True)]
+        # params = [tup for tup in query_params.items(multi=True)]
+        params = [tup for tup in query_params.items(multi=True) if not str(tup[0]).startswith("utm")]
 
         # Keys used for generating searchviews and facets
         resp["params"] = params
