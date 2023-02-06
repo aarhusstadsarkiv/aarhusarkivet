@@ -33,7 +33,7 @@
                 {% if r.portrait and legal_id == 1 and contractual_id > 2 %}
                     {% if availability_id == 4 or readingroom or session.get('is_employee') %}
                         {% if r.representations and record_type == 'video' %}
-                            {#
+                            {# COMMENT
                             {% if r.representations.get("vimeo_id") %}
                                 <div id="single-video" style="position: relative;">
                                     <a href="https://vimeo.com/{{r.representations.get('vimeo_id')}}">
@@ -47,7 +47,7 @@
                             #}
                             <div style="position: relative;">
                                 <video controls="" width="100%" poster="{{ r.representations.get("record_image") }}" preload="metadata">
-                                    <source src="{{ r.representations.get("record_file") }}" type="video/mp4">
+                                    <source src="{{ r.representations.get("record_file") }}?sp=r&st=2023-02-03T12:19:05Z&se=2030-04-01T19:19:05Z&spr=https&sv=2021-06-08&sr=c&sig=QK9mOWt0oZ%2FtiY5biruFo0eGPirtjHYEQ061tPuZYHU%3D" type="video/mp4">
                                     <p>This browser doesn't support video tag.</p>
                                 </video>
                             </div>
