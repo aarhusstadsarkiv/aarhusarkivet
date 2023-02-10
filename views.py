@@ -14,6 +14,7 @@ from flask import redirect
 from flask import session
 from flask import flash
 from flask import url_for
+from flask import abort
 from flask.views import View, MethodView
 
 # Application
@@ -391,6 +392,115 @@ class TestView(GUIView):
         # self.context["json_data"] = desktop.get_local_file()
         # return jsonify(self.context)
         return render_template("test.html", **self.context)
+
+from fastapi_client import FastAPIClient 
+class FastapiView(GUIView):
+
+    def in_session(self):
+        if "access_token" in session and "token_type" in session:
+            return True
+        else:
+            return False
+
+    def clear_session(self):
+        session.pop("access_token")
+        session.pop("token_type")
+
+    def dispatch_request(self, api_call=None):
+
+        if request.method == 'POST':
+
+            if api_call == 'register':
+                api_client = FastAPIClient()
+                response = api_client.register(request.form.to_dict())   
+                return response
+
+            if api_call == 'forgot_password':
+                api_client = FastAPIClient()
+                response = api_client.forgot_password(request.form["email"])
+                return response
+
+            if api_call == 'reset_password':
+                api_client = FastAPIClient()
+                response = api_client.reset_password(request.form["token"], request.form["password"])
+                return response
+
+            if api_call == 'login_cookie':
+                api_client = FastAPIClient()
+                response = api_client.login_cookie(request.form['username'], request.form['password'])
+                return response
+
+            if api_call == 'login_jwt':
+                api_client = FastAPIClient()
+                response = api_client.login_jwt(request.form['username'], request.form['password'])
+                session["access_token"] = response["access_token"]
+                session["token_type"] = response["token_type"]
+                return response
+        
+        if request.method == 'GET':
+            
+            if api_call == 'home':
+                self.context["title"] = "Home"
+                return render_template("fastapi/home.html", **self.context)
+
+            if api_call == 'register':
+                self.context["title"] = "Register"
+                self.context["post_url"] = request.url
+                return render_template("fastapi/register.html", **self.context)
+
+            if api_call == 'forgot_password':
+                self.context["title"] = "Forgot password"
+                self.context["post_url"] = request.url
+                return render_template("fastapi/forgot_password.html", **self.context)
+                
+
+            if api_call == 'login_cookie':
+                self.context["title"] = "Login cookie"
+                self.context["post_url"] = request.url
+                return render_template("fastapi/login.html", **self.context)
+            
+            if api_call == 'login_jwt':
+                self.context["title"] = "Login JWT"
+                self.context["post_url"] = request.url
+                return render_template("fastapi/login.html", **self.context)
+
+            if api_call == 'me':
+
+                self.context["title"] = "Me"
+                if self.in_session():
+                    api_client = FastAPIClient()
+                    response = api_client.me(session["access_token"], session["token_type"])
+                    self.context["response"] = json.dumps(response, indent=4)
+                else:
+                    self.context["response"] = "Not logged in"
+                
+                return render_template("fastapi/me.html", **self.context)
+
+            if api_call == 'logout_jwt':
+
+                if self.in_session():
+                    api_client = FastAPIClient()
+                    response = api_client.logout_jwt(session["access_token"], session["token_type"])
+                    self.clear_session()
+                    self.context["response"] = json.dumps(response, indent=4)
+                else:
+                    self.context["response"] = "Not logged in"
+
+                self.context["title"] = "Logout JWT"
+                
+                return render_template("fastapi/me.html", **self.context)
+
+            
+            if api_call == 'reset_password':
+                self.context["title"] = "Reset password"
+                self.context["post_url"] = request.url
+                return render_template("fastapi/reset_password.html", **self.context)
+
+        if not api_call:
+            self.context["title"] = "Home"
+            return render_template("fastapi/me.html", **self.context)   
+        
+        abort(404, description="Resource not found")
 
 
 #############
