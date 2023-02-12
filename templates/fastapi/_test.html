@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>FastAPI</title>
+</head>
+
+<body>
+    <div class="menu">
+        <a href="/fastapi/register">Register</a> |
+        <a href="/fastapi/forgot_password">Forgot Password</a> |
+        <a href="/fastapi/reset_password">Reset Password</a> |
+        <a href="/fastapi/login_cookie">Login cookie</a> |
+        <a href="/fastapi/login_jwt">Login JWT</a> |
+        <a href="/fastapi/logout_jwt">Logout JWT</a> |
+        <a href="/fastapi/me">Me</a>
+    </div>
+
+    <div class="content">
+        {% block content %}{% endblock content %}
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,28 @@
+{% extends 'fastapi/_test.html' %}
+{% block content %}
+<h3>{{ title }}</h3>
+
+{#
+
+{
+  "email": "user@example.com",
+  "password": "string",
+  "is_active": true, -> and mail is sent
+  "is_superuser": false,
+  "is_verified": false,
+  "flags": 2
+}
+
+#}
+
+<form action="{{ post_url }}" method="post">
+    <input type="username" name="email" placeholder="Email"><br >
+    <input type="password" name="password" placeholder="Password"><br>
+    Active <input type="checkbox" name="is_active" value="true" checked><br>
+    Super <input type="checkbox" name="is_superuser" value="true" checked><br>
+    Verified <input type="checkbox" name="is_verified" value="true" checked><br>
+    Flags<br />
+    <input type="number" name="flags" value="2"><br>
+    <input type="submit" value="Submit"><br />
+</form>
+{% endblock content %}

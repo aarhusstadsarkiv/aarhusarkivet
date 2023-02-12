@@ -155,6 +155,12 @@ app.add_url_rule(
 # Testpage
 app.add_url_rule("/testpage", view_func=views.TestView.as_view("test"), methods=["GET"])
 
+# FastApi Testpage
+app.add_url_rule("/fastapi/<api_call>", view_func=views.FastapiView.as_view("fastapi"), methods=["GET", "POST"])
+app.add_url_rule("/fastapi/", view_func=views.FastapiView.as_view("fastapi_home"), methods=["GET"])
+
+
+
 ##############
 # API-ROUTES #
 ##############
