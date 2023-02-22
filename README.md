@@ -7,7 +7,7 @@
 - Current Heroku runtime is 3.9.9.
 
 ### Local dev
-- run "python application.py" from root. Runs on port 3000.
+- run "poetry run python application.py" from root. Runs on port 3000.
 
 ### Decisions
 

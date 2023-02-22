@@ -30,30 +30,25 @@
             {% include 'resources/record_extension--sejrssedler.html' %}
         {% else %}
             <div class="cell {{breakpoints_image}} resource-representation text-center">
-                {% if r.portrait and legal_id == 1 and contractual_id > 2 %}
+                {% if legal_id == 1 and contractual_id > 2 %}
                     {% if availability_id == 4 or readingroom or session.get('is_employee') %}
                         {% if r.representations and record_type == 'video' %}
-                            {# COMMENT
-                            {% if r.representations.get("vimeo_id") %}
-                                <div id="single-video" style="position: relative;">
-                                    <a href="https://vimeo.com/{{r.representations.get('vimeo_id')}}">
-                                        <img class="resource-portrait" src="{{r.portrait}}"/>
-                                        <div class="play-icon">
-                                            <span class="far fa-play-circle fa-2x"></span>
-                                        </div>
-                                    </a>
-                                </div>
-                            {% else %}
-                            #}
                             <div style="position: relative;">
-                                <video controls="" width="100%" poster="{{ r.representations.get("record_image") }}" preload="metadata">
-                                    <source src="{{ r.representations.get("record_file") }}?sp=r&st=2023-02-03T12:19:05Z&se=2030-04-01T19:19:05Z&spr=https&sv=2021-06-08&sr=c&sig=QK9mOWt0oZ%2FtiY5biruFo0eGPirtjHYEQ061tPuZYHU%3D" type="video/mp4">
+                                <video controls="" style="width:100%;" poster="{{ r.representations.get("record_image") }}" preload="metadata">
+                                    <source src="{{ r.representations.get("record_file") }}?sp=r&st=2023-02-03T12:19:05Z&se=2030-04-01T19:19:05Z&spr=https&sv=2021-06-08&sr=c&sig=QK9mOWt0oZ%2FtiY5biruFo0eGPirtjHYEQ061tPuZYHU%3D" type="video/mp4" />
                                     <p>This browser doesn't support video tag.</p>
                                 </video>
                             </div>
-                            {#
-                            {% endif %}
-                            #}
+                        {% elif r.representations and record_type == 'audio' %}
+                            <div style="position: relative;">
+                                <figure>
+                                    <figcaption style="text-align:left;padding:2px 0;">Klik for at lytte til lydfilen</figcaption>
+                                    <audio style="width:100%;" controls="" preload="metadata">
+                                        <source src="{{ r.representations.get("record_file") }}?sp=r&st=2023-02-03T12:19:05Z&se=2030-04-01T19:19:05Z&spr=https&sv=2021-06-08&sr=c&sig=QK9mOWt0oZ%2FtiY5biruFo0eGPirtjHYEQ061tPuZYHU%3D" type="audio/mpeg" />
+                                        <p>This browser doesn't support the audio tag.</p>
+                                    </audio>
+                                </figure>
+                            </div>
                         {% elif r.representations and record_type == 'image' %}
                             <div id="single-image" style="position: relative;">
                                 <a href="{{r.representations.get('large_image')}}">
