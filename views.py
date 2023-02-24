@@ -396,15 +396,25 @@ class TestView(GUIView):
 from fastapi_client import FastAPIClient 
 class FastapiView(GUIView):
 
-    def in_session(self):
+    def in_jwt_session(self):
         if "access_token" in session and "token_type" in session:
             return True
         else:
             return False
 
-    def clear_session(self):
+    def in_cookie_session(self):
+        if "_auth" in session:
+            return True
+        else:
+            return False
+
+    def clear_jwt_session(self):
         session.pop("access_token")
         session.pop("token_type")
+
+    def clear_cookie_session(self):
+        session.pop("_auth")
+        
 
     def dispatch_request(self, api_call=None):
 
@@ -428,6 +438,7 @@ class FastapiView(GUIView):
             if api_call == 'login_cookie':
                 api_client = FastAPIClient()
                 response = api_client.login_cookie(request.form['username'], request.form['password'])
+                session["_auth"] = response["_auth"]
                 return response
 
             if api_call == 'login_jwt':
@@ -451,8 +462,7 @@ class FastapiView(GUIView):
             if api_call == 'forgot_password':
                 self.context["title"] = "Forgot password"
                 self.context["post_url"] = request.url
-                return render_template("fastapi/forgot_password.html", **self.context)
-                
+                return render_template("fastapi/forgot_password.html", **self.context) 
 
             if api_call == 'login_cookie':
                 self.context["title"] = "Login cookie"
@@ -467,9 +477,13 @@ class FastapiView(GUIView):
             if api_call == 'me':
 
                 self.context["title"] = "Me"
-                if self.in_session():
+                if self.in_jwt_session():
                     api_client = FastAPIClient()
-                    response = api_client.me(session["access_token"], session["token_type"])
+                    response = api_client.me(access_token=session["access_token"], token_type=session["token_type"])
+                    self.context["response"] = json.dumps(response, indent=4)
+                elif self.in_cookie_session():
+                    api_client = FastAPIClient()
+                    response = api_client.me(cookie=session["_auth"])
                     self.context["response"] = json.dumps(response, indent=4)
                 else:
                     self.context["response"] = "Not logged in"
@@ -478,15 +492,29 @@ class FastapiView(GUIView):
 
             if api_call == 'logout_jwt':
 
-                if self.in_session():
+                if self.in_jwt_session():
                     api_client = FastAPIClient()
                     response = api_client.logout_jwt(session["access_token"], session["token_type"])
-                    self.clear_session()
+                    self.clear_jwt_session()
                     self.context["response"] = json.dumps(response, indent=4)
                 else:
                     self.context["response"] = "Not logged in"
 
                 self.context["title"] = "Logout JWT"
+                
+                return render_template("fastapi/me.html", **self.context)
+
+            if api_call == 'logout_cookie':
+
+                if self.in_cookie_session():
+                    api_client = FastAPIClient()
+                    response = api_client.logout_cookie(session["_auth"])
+                    self.clear_cookie_session()
+                    self.context["response"] = json.dumps(response, indent=4)
+                else:
+                    self.context["response"] = "Not logged in"
+
+                self.context["title"] = "Logout Cookie"
                 
                 return render_template("fastapi/me.html", **self.context)
 
@@ -498,7 +526,7 @@ class FastapiView(GUIView):
 
         if not api_call:
             self.context["title"] = "Home"
-            return render_template("fastapi/me.html", **self.context)   
+            return render_template("fastapi/me.html", **self.context)
         
         abort(404, description="Resource not found")
 
