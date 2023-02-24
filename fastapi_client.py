@@ -16,7 +16,7 @@ class FastAPIClient:
 
     def register(self, form_dict: dict) -> str:
 
-        self.url += '/v1/register'
+        self.url += '/v1/auth/register'
 
         def request ():
             form_dict["flags"] = int(form_dict["flags"])
@@ -34,7 +34,7 @@ class FastAPIClient:
 
     def forgot_password(self, email: str) -> str:
 
-        self.url += '/v1/forgot-password'
+        self.url += '/v1/auth/forgot-password'
         form_dict = { "email": email }
 
         self.logger.debug(f"Forgot password: {form_dict}")
@@ -53,7 +53,7 @@ class FastAPIClient:
 
     def reset_password(self, token: str, password: str) -> str:
             
-            self.url += '/v1/reset-password'
+            self.url += '/v1/auth/reset-password'
             form_dict = { "token": token, "password": password }
     
             self.logger.debug(f"Reset password: {form_dict}")
@@ -72,10 +72,11 @@ class FastAPIClient:
 
     def login_cookie(self, username: str, password: str) -> str:
 
-        self.url += '/v1/login'
+        self.url += '/v1/auth/login'
+        session = requests.Session()
 
-        def request ():
-            return requests.post(
+        def request ():    
+            return session.post(
                 self.url,
                 data={"username": username, "password": password}, timeout=self.timeout)
 
@@ -83,14 +84,36 @@ class FastAPIClient:
 
         if response.status_code == 200:
             # 'null' as string if correct
-            return response.content
+            cookie = session.cookies.get_dict()['_auth']
+            return {'_auth': cookie}
         else:
             raise FastAPIException("No user info", response.status_code, response.text)
+
+    def logout_cookie(self, cookie: str) -> str:
+            
+            self.url += '/v1/auth/logout'
+            session = requests.Session()
+            session.cookies.set('_auth', cookie)
+    
+            def request ():    
+                return session.post(
+                    self.url,
+                    json={}, timeout=self.timeout)
+    
+            response = self._call(request)
+
+            self.logger.debug(response.content)
+    
+            if response.status_code == 200:
+                # 'null' as string if correct
+                return json.loads(response.content)
+            else:
+                raise FastAPIException("Logout cookie failed", response.status_code, response.text)
 
 
     def login_jwt(self, username: str, password: str) -> str:
 
-        self.url += '/v1/jwt/login'
+        self.url += '/v1/auth/jwt/login'
 
         def request () -> requests.Response:
             return requests.post(
@@ -104,23 +127,8 @@ class FastAPIClient:
         else:
             raise FastAPIException("Login failed", response.status_code, response.text)
 
-    def me(self, token: str, token_type: str = 'Bearer') -> dict:
-        self.url += '/v1/me'
-
-        headers = { 'Authorization': f'{token_type} {token}' }
-
-        def request () -> requests.Response:
-            return requests.get(self.url, timeout=self.timeout, headers=headers)
-
-        response = self._call(request)
-
-        if response.status_code == 200:
-            return json.loads(response.content)
-        else:
-            raise FastAPIException("Me failed", response.status_code, response.text)
-
     def logout_jwt(self, token: str, token_type: str = 'Bearer') -> dict:
-        self.url += '/v1/jwt/logout'
+        self.url += '/v1/auth/jwt/logout'
 
         headers = { 'Authorization': f'{token_type} {token}' }
 
@@ -133,6 +141,22 @@ class FastAPIClient:
             return json.loads(response.content)
         else:
             raise FastAPIException("Logout JWT failed", response.status_code, response.text)
+
+    def me(self, access_token: str = None, token_type: str = None, cookie: str = None) -> dict:
+        self.url += '/v1/users/me'
+
+        headers = { 'Authorization': f'{token_type} {access_token}' } if access_token else None
+        cookies = { '_auth': cookie } if cookie else None
+
+        def request () -> requests.Response:
+            return requests.get(self.url, timeout=self.timeout, headers=headers, cookies=cookies)
+
+        response = self._call(request)
+
+        if response.status_code == 200:
+            return json.loads(response.content)
+        else:
+            raise FastAPIException("Me failed", response.status_code, response.text)
 
     def _get_logger(self) -> logging.Logger:
 

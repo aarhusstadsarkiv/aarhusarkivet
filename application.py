@@ -224,4 +224,4 @@ app.add_url_rule(
 # RUN APP #
 ###########
 if __name__ == "__main__":
-    app.run(host=os.environ.get("HOST", "0.0.0.0"), port=os.environ.get("PORT", 3000))
+    app.run(host=os.environ.get("HOST", "0.0.0.0"), port=os.environ.get("PORT", 5555))
