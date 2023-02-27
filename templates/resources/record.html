@@ -34,8 +34,8 @@
                     {% if availability_id == 4 or readingroom or session.get('is_employee') %}
                         {% if r.representations and record_type == 'video' %}
                             <div style="position: relative;">
-                                <video controls="" style="width:100%;" poster="{{ r.representations.get("record_image") }}" preload="metadata">
-                                    <source src="{{ r.representations.get("record_file") }}?sp=r&st=2023-02-03T12:19:05Z&se=2030-04-01T19:19:05Z&spr=https&sv=2021-06-08&sr=c&sig=QK9mOWt0oZ%2FtiY5biruFo0eGPirtjHYEQ061tPuZYHU%3D" type="video/mp4" />
+                                <video controls="" style="width:100%;" poster="{{ r.representations.get('record_image') }}" preload="metadata">
+                                    <source src="{{ r.representations.get('record_file') }}?sp=r&st=2023-02-03T12:19:05Z&se=2030-04-01T19:19:05Z&spr=https&sv=2021-06-08&sr=c&sig=QK9mOWt0oZ%2FtiY5biruFo0eGPirtjHYEQ061tPuZYHU%3D" type="video/mp4" />
                                     <p>This browser doesn't support video tag.</p>
                                 </video>
                             </div>
@@ -44,7 +44,7 @@
                                 <figure>
                                     <figcaption style="text-align:left;padding:2px 0;">Klik for at lytte til lydfilen</figcaption>
                                     <audio style="width:100%;" controls="" preload="metadata">
-                                        <source src="{{ r.representations.get("record_file") }}?sp=r&st=2023-02-03T12:19:05Z&se=2030-04-01T19:19:05Z&spr=https&sv=2021-06-08&sr=c&sig=QK9mOWt0oZ%2FtiY5biruFo0eGPirtjHYEQ061tPuZYHU%3D" type="audio/mpeg" />
+                                        <source src="{{ r.representations.get('record_file') }}?sp=r&st=2023-02-03T12:19:05Z&se=2030-04-01T19:19:05Z&spr=https&sv=2021-06-08&sr=c&sig=QK9mOWt0oZ%2FtiY5biruFo0eGPirtjHYEQ061tPuZYHU%3D" type="audio/mpeg" />
                                         <p>This browser doesn't support the audio tag.</p>
                                     </audio>
                                 </figure>
@@ -69,11 +69,16 @@
                             </div>
                             <span style="display:inline-block;padding-top:15px;font-size:90%;color:#111;">Klik på billedet for at hente pdf-dokumentet.</span>
                         {% endif %}
-                    {% else %}
+                    {% elif availability_id == 3 %}
                         <div class="align-center" style="display:flex;padding-top:1rem;">
                             <i class="fas fa-lock fa-9x" style="opacity:.7;"></i>
                         </div>
                         <span style="display:inline-block;padding-top:15px;font-size:90%;color:#111;">Materialet kan ses på læsesalen.</span>
+                    {% elif availability_id == 2 %}
+                        <div class="align-center" style="display:flex;padding-top:1rem;">
+                            <i class="fas fa-lock fa-9x" style="opacity:.7;"></i>
+                        </div>
+                        <span style="display:inline-block;padding-top:15px;font-size:90%;color:#111;">Materialet kan bestilles hjem til gennemsyn på læsesalen.</span>
                     {% endif %}
                 {% else %}
                     <i class="resource-icon {{icon.get('icon')}} fa-9x"></i>

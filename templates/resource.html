@@ -35,7 +35,7 @@
 
 {# Determine layout #}
 {% if page and page == 'resourcepage' %}
-    {% if r.thumbnail %}
+    {% if r.thumbnail or (r.representations and r.representations.get('record_type', '') == "audio") %}
         {% set breakpoints_image = 'medium-6' %}
         {% set breakpoints_core = 'medium-6' %}
     {% else %}
