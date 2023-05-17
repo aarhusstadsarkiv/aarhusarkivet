@@ -21,10 +21,13 @@ except IOError:
 ##################
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY")
-app.debug = os.environ.get("DEBUG", False)
+app.debug = os.environ.get("DEBUG", True)
 app.config["SESSION_COOKIE_SECURE"] = os.environ.get("SESSION_COOKIE_SECURE", False)
 
-# app.jinja_env.auto_reload = True
+if app.debug:
+    app.reload = True
+
+app.jinja_env.auto_reload = True
 app.url_map.strict_slashes = False
 app.jinja_env.globals["ICONS"] = settings.ICONS
 
@@ -157,6 +160,10 @@ app.add_url_rule("/testpage", view_func=views.TestView.as_view("test"), methods=
 
 # FastApi Testpage
 app.add_url_rule("/fastapi/<api_call>", view_func=views.FastapiView.as_view("fastapi"), methods=["GET", "POST"])
+
+# alter above url to accept an optional <token> parameter
+app.add_url_rule("/fastapi/<api_call>/<token>", view_func=views.FastapiView.as_view("fastapi_token"), methods=["GET", "POST"])
+
 app.add_url_rule("/fastapi/", view_func=views.FastapiView.as_view("fastapi_home"), methods=["GET"])
 
 
