@@ -145,18 +145,23 @@ def login_jwt(request: request):
 
     if isinstance(bearer_response, HTTPValidationError):
         raise OpenAwsException(
-            422,
-            "Bruger eksisterer allerede. Prøv at logge ind i stedet.",
+            400,
+            "API fejl. Prøv igen senere. ",
         )
+        
 
     if isinstance(bearer_response, ErrorModel):
+        
         raise OpenAwsException(
-            400,
-            "Bruger eksisterer ikke",
+            422,
+            "Ingen sådan kombination mellem email og password.",
         )
 
 
 def user_create(request: request):
+
+    _validate_passwords(request)
+
     email = str(request.form.get("email"))
     password = str(request.form.get("password"))
 
@@ -169,17 +174,17 @@ def user_create(request: request):
     log.debug(user_read)
     if isinstance(user_read, HTTPValidationError):
         raise OpenAwsException(
-            422,
-            "Email skal være korrekt. Password skal mindst have 8 tegn.",
+            400,
+            "API System fejl. Prøv igen senere.",
             "Unauthorized",
         )
 
     if isinstance(user_read, ErrorModel):
         raise OpenAwsException(
-            400,
-            "Bruger med denne email eksisterer allerede. Prøv at logge ind.",
+            422,
+            "Email skal være korrekt. Password skal mindst have 8 tegn. E-mail må ikke være registreret før. ",
             "Unauthorized",
-        )
+        )        
 
     if not isinstance(user_read, UserRead):
         raise OpenAwsException(500, "System fejl. Prøv igen senere.", "Unauthorized")
@@ -224,10 +229,16 @@ def user_verify(request: request):
 def me_read(request: request) -> dict:
 
     client: AuthenticatedClient = get_auth_client(request)
+
+    if hasattr(request, "me"):
+        log.debug("Me cached")
+        return request.me
+    
     me = users_me_get.sync(client=client)
 
     if isinstance(me, UserRead):
         me_dict = me.to_dict()
+        setattr(request, "me", me_dict)
         return me_dict
     
     # Clear jwt session
@@ -237,6 +248,23 @@ def me_read(request: request) -> dict:
         422,
         "For at se denne side skal du være logget ind.",
     )
+
+
+def is_logged_in(request: request) -> bool:
+    try:
+        me_read(request)
+        return True
+    except Exception:
+        return False
+
+
+async def permissions_as_list(permissions: dict) -> list[str]:
+    """{'guest': True, 'basic': True, 'employee': True, 'admin': True}"""
+    permissions_list = []
+    for permission, value in permissions.items():
+        if value:
+            permissions_list.append(permission)
+    return permissions_list
 
 
 def user_request_verify(request: request):
@@ -253,3 +281,63 @@ def user_request_verify(request: request):
         422,
         "Systemet kunne ikke afsende en verificerings e-mail. Prøv igen senere.",
     )
+
+
+def forgot_password(request: request) -> None:
+    email = request.form.get("email")
+    client: Client = get_client()
+
+    src_dict = {"email": email}
+    forgot_password_post: ForgotPasswordPost = ForgotPasswordPost.from_dict(src_dict=src_dict)
+    forgot_password_response = auth_forgot_password_post.sync(client=client, json_body=forgot_password_post)
+
+    if isinstance(forgot_password_response, HTTPValidationError):
+        raise OpenAwsException(
+            422,
+            "Denne email eksisterer ikke.",
+        )
+
+
+def reset_password(request: request) -> None:
+
+    _validate_passwords(request)
+
+    token = request.view_args['token']
+
+    client: Client = get_client()
+    src_dict = {"token": token, "password": request.form.get("password")}
+
+    log.debug(src_dict)
+
+    reset_password_post: ResetPasswordPost = ResetPasswordPost.from_dict(src_dict=src_dict)
+    reset_password_response = auth_reset_password_post.sync(client=client, json_body=reset_password_post)
+
+    if isinstance(reset_password_response, HTTPValidationError):
+        raise OpenAwsException(
+            422,
+            "Password kunne ikke opdateres. Bestil en ny token.",
+        )
+
+    if isinstance(reset_password_response, ErrorModel):
+        raise OpenAwsException(
+            400,
+            "Password kunne ikke opdateres. Bestil en ny token.",
+        )
+
+
+def _validate_passwords(request):
+
+    password_1 = request.form.get("password")
+    password_2 = request.form.get("password_2")
+
+    if password_1 != password_2:
+        raise OpenAwsException(
+            400,
+            "Password er ikke ens i de to felter.",
+        )
+
+    if len(password_1) < 8:
+        raise OpenAwsException(
+            400,
+            "Password skal mindst være 8 tegn langt.",
+        )

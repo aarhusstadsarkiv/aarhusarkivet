@@ -393,42 +393,67 @@ class TestView(GUIView):
         # return jsonify(self.context)
         return render_template("test.html", **self.context)
 
-from api_openaws import OpenAwsException, login_jwt, user_create, user_verify, me_read, user_request_verify
+from api_openaws import (
+    OpenAwsException,
+    OpenAwsSession, 
+    login_jwt, 
+    user_create, 
+    user_verify, 
+    me_read, 
+    user_request_verify, 
+    forgot_password, 
+    reset_password,
+    is_logged_in,
+)
 from app_log import log
-from flask.helpers import get_flashed_messages
 
 
 class FastapiView(GUIView):
 
     def dispatch_request(self, api_call=None, token=None):
+
+        menu = [
+            {"name": "register", "url": "/fastapi/register", "title": "Register"},
+            {"name": "forgotten_pasword", "url": "/fastapi/forgot_password", "title": "Glemt password"},
+            {"name": "login", "url": "/fastapi/login", "title": "Login"},
+            {"name": "logout", "url": "/fastapi/logout", "title": "Log ud"},
+            {"name": "profile", "url": "/fastapi/me", "title": "Profil"},
+        ]
+
+        logged_in = is_logged_in(request)
+        if logged_in:
+            menu = [item for item in menu if item["name"] not in ["login", "register", "forgotten_pasword"]]
+        else:
+            menu = [item for item in menu if item["name"] not in ["logout", "profile"]]
+
+        self.context["openaws_menu"] = menu
+
             
         if request.method == 'POST':
 
-            if api_call == 'login_jwt':
+            if api_call == 'login':
 
                 try:
-                    response = login_jwt(request)
+                    login_jwt(request)
                     flash("Du er logget ind")
                 except OpenAwsException as e:
+                    log.exception(e)
                     flash(e.message)
-                    log.debug(e.message)
 
                 except Exception as e:
                     log.exception(e)
                     flash("System fejl. Prøv igen senere. ")
 
-                return redirect("/fastapi/login_jwt")
+                return redirect("/fastapi/login")
 
             if api_call == 'register':
 
                 try:
-
-                    response = user_create(request)
+                    user_create(request)
                     flash("Bruger er oprettet. Tjek din email for at aktivere brugeren.")
                 except OpenAwsException as e:
                     log.exception(e)
                     flash(e.message)
-                    log.debug(e.message)
 
                 except Exception as e:
                     log.exception(e)
@@ -437,10 +462,35 @@ class FastapiView(GUIView):
                 return redirect("/fastapi/register")
 
             if api_call == 'forgot_password':
-                pass
+
+                try:
+                    forgot_password(request)
+                    flash("Vi har afsendt en mail med oplysninger om hvordan du opretter et ny password. ")
+                except OpenAwsException as e:
+                    log.exception(e)
+                    flash(e.message)
+
+                except Exception as e:
+                    log.exception(e)
+                    flash("System fejl. Prøv igen senere. ")
+
+                return redirect("/fastapi/forgot_password")
 
             if api_call == 'reset_password':
-                pass
+
+                try:
+                    reset_password(request)
+                    flash("Dit password er blevet opdateret.")
+                    return redirect("/fastapi/login")
+                except OpenAwsException as e:
+                    log.exception(e)
+                    flash(e.message)
+
+                except Exception as e:
+                    log.exception(e)
+                    flash("System fejl. Prøv igen senere. ")
+
+                return redirect("/fastapi/reset_password/" + token)
 
             if api_call == 'login_cookie':
                 pass
@@ -459,102 +509,70 @@ class FastapiView(GUIView):
                     log.exception(e)
                     flash("Klient system fejl. Under din profil kan du bestille en ny nøgle for at verificere din e-mail.")
 
-                return "TOKEN"
-                # return "DOH"
-                # return redirect("/fastapi/verify_email/" + token)
+
+                return redirect("/fastapi")
 
             if api_call == 'send_verify_email':
+                
+                self.context["message"] = "Not implemented yet in web service"
+                return render_template("fastapi/basic.html", **self.context)
+                # try:
+                #     response = user_request_verify(request)
+                #     flash("E-mail er verificeret.")
+                # except OpenAwsException as e:
+                #     log.exception(e)
+                #     flash(e.message)
 
-                try:
-                    response = user_request_verify(request)
-                    flash("E-mail er verificeret.")
-                except OpenAwsException as e:
-                    log.exception(e)
-                    flash(e.message)
+                # except Exception as e:
+                #     log.exception(e)
+                #     flash("System fejl. En ny verificerings-nøgle kunne ikke sendes.")
 
-                except Exception as e:
-                    log.exception(e)
-                    flash("System fejl. En ny verificerings-nøgle kunne ikke sendes.")
+            if api_call == 'reset_password':
+                self.context["title"] = "Reset password"
+                self.context["post_url"] = request.url
+                return render_template("fastapi/reset_password.html", **self.context)
 
-                return "TOKEN"
             if api_call == 'home':
-                self.context["title"] = "Home"
+                self.context["title"] = "Hjem"
                 return render_template("fastapi/simple.html", **self.context)
 
             if api_call == 'register':
-                self.context["title"] = "Register"
+                self.context["title"] = "Opret bruger"
                 self.context["post_url"] = request.url
                 return render_template("fastapi/register.html", **self.context)
             
-
-                
-
             if api_call == 'forgot_password':
-                self.context["title"] = "Forgot password"
+                self.context["title"] = "Glemt password"
                 self.context["post_url"] = request.url
                 return render_template("fastapi/forgot_password.html", **self.context) 
 
-            if api_call == 'login_cookie':
-                self.context["title"] = "Login cookie"
+            if api_call == 'login':
+                self.context["title"] = "Login"
                 self.context["post_url"] = request.url
-                return render_template("fastapi/login.html", **self.context)
-
-            if api_call == 'login_jwt':
-                self.context["title"] = "Login JWT"
-                self.context["post_url"] = request.url
-                self.context["messages"] = get_flashed_messages()
-
                 return render_template("fastapi/login.html", **self.context)
 
             if api_call == 'me':
 
-                self.context["title"] = "Me"
+                self.context["title"] = "Din profil"
                 try:
                     self.context["me"] = me_read(request)
                 except OpenAwsException as e:
-                    log.exception(e)
                     flash(e.message)
                 
                 except Exception as e:
                     log.exception(e)
                     flash("System fejl")
                 
-                
                 return render_template("fastapi/me.html", **self.context)
 
-            if api_call == 'logout_jwt':
+            if api_call == 'logout':
 
-                if self.in_jwt_session():
-                    api_client = OpenAwsClient()
-                    response = api_client.logout_jwt(session["access_token"], session["token_type"])
-                    self.clear_jwt_session()
-                    self.context["response"] = json.dumps(response, indent=4)
-                else:
-                    self.context["response"] = "Not logged in"
+                if is_logged_in(request):
+                    OpenAwsSession.clear_jwt_session()
 
-                self.context["title"] = "Logout JWT"
+                flash("Du er nu logget ud.")    
                 
-                return render_template("fastapi/me.html", **self.context)
-
-            if api_call == 'logout_cookie':
-
-                if self.in_cookie_session():
-                    api_client = OpenAwsClient()
-                    response = api_client.logout_cookie(session["_auth"])
-                    self.clear_cookie_session()
-                    self.context["response"] = json.dumps(response, indent=4)
-                else:
-                    self.context["response"] = "Not logged in"
-
-                self.context["title"] = "Logout Cookie"
-                
-                return render_template("fastapi/me.html", **self.context)
-
-            
-            if api_call == 'reset_password':
-                self.context["title"] = "Reset password"
-                self.context["post_url"] = request.url
-                return render_template("fastapi/reset_password.html", **self.context)
+                return redirect("/fastapi/login")
 
         if not api_call:
             self.context["title"] = "Home"

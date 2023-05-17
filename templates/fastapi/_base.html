@@ -8,14 +8,11 @@
 
 <body>
     <div class="menu">
-        <a href="/fastapi/register">Register</a> |
-        <a href="/fastapi/forgot_password">Forgot Password</a> |
-        <a href="/fastapi/reset_password">Reset Password</a> |
-        <a href="/fastapi/login_cookie">Login cookie</a> |
-        <a href="/fastapi/logout_cookie">Logout cookie</a> |
-        <a href="/fastapi/login_jwt">Login JWT</a> |
-        <a href="/fastapi/logout_jwt">Logout JWT</a> |
-        <a href="/fastapi/me">Me</a>
+        {% for item in openaws_menu %}
+        <a href="{{ item.url }}">{{ item.title }}</a>
+        {% if not loop.last %} | {% endif %}        
+        {% endfor %}
+    
     </div>
 
     <div class="content">
