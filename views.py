@@ -395,29 +395,29 @@ class TestView(GUIView):
 
 from api_openaws import (
     OpenAwsException,
-    OpenAwsSession, 
-    login_jwt, 
-    user_create, 
-    user_verify, 
-    me_read, 
-    user_request_verify, 
-    forgot_password, 
+    OpenAwsSession,
+    login_jwt,
+    user_create,
+    user_verify,
+    me_read,
+    user_request_verify,
+    forgot_password,
     reset_password,
     is_logged_in,
 )
 from app_log import log
 
 
-class FastapiView(GUIView):
+class AuthView(GUIView):
 
     def dispatch_request(self, api_call=None, token=None):
 
         menu = [
-            {"name": "register", "url": "/fastapi/register", "title": "Register"},
-            {"name": "forgotten_pasword", "url": "/fastapi/forgot_password", "title": "Glemt password"},
-            {"name": "login", "url": "/fastapi/login", "title": "Login"},
-            {"name": "logout", "url": "/fastapi/logout", "title": "Log ud"},
-            {"name": "profile", "url": "/fastapi/me", "title": "Profil"},
+            {"name": "register", "url": "/auth/register", "title": "Register"},
+            {"name": "forgotten_pasword", "url": "/auth/forgot_password", "title": "Glemt password"},
+            {"name": "login", "url": "/auth/login", "title": "Login"},
+            {"name": "logout", "url": "/auth/logout", "title": "Log ud"},
+            {"name": "profile", "url": "/auth/me", "title": "Profil"},
         ]
 
         logged_in = is_logged_in(request)
@@ -428,7 +428,6 @@ class FastapiView(GUIView):
 
         self.context["openaws_menu"] = menu
 
-            
         if request.method == 'POST':
 
             if api_call == 'login':
@@ -444,7 +443,7 @@ class FastapiView(GUIView):
                     log.exception(e)
                     flash("System fejl. Prøv igen senere. ")
 
-                return redirect("/fastapi/login")
+                return redirect("/auth/login")
 
             if api_call == 'register':
 
@@ -459,7 +458,7 @@ class FastapiView(GUIView):
                     log.exception(e)
                     flash("System fejl. Prøv igen senere. ")
 
-                return redirect("/fastapi/register")
+                return redirect("/auth/register")
 
             if api_call == 'forgot_password':
 
@@ -474,14 +473,14 @@ class FastapiView(GUIView):
                     log.exception(e)
                     flash("System fejl. Prøv igen senere. ")
 
-                return redirect("/fastapi/forgot_password")
+                return redirect("/auth/forgot_password")
 
             if api_call == 'reset_password':
 
                 try:
                     reset_password(request)
                     flash("Dit password er blevet opdateret.")
-                    return redirect("/fastapi/login")
+                    return redirect("/auth/login")
                 except OpenAwsException as e:
                     log.exception(e)
                     flash(e.message)
@@ -490,7 +489,7 @@ class FastapiView(GUIView):
                     log.exception(e)
                     flash("System fejl. Prøv igen senere. ")
 
-                return redirect("/fastapi/reset_password/" + token)
+                return redirect("/auth/reset_password/" + token)
 
             if api_call == 'login_cookie':
                 pass
@@ -510,12 +509,12 @@ class FastapiView(GUIView):
                     flash("Klient system fejl. Under din profil kan du bestille en ny nøgle for at verificere din e-mail.")
 
 
-                return redirect("/fastapi")
+                return redirect("/auth")
 
             if api_call == 'send_verify_email':
                 
                 self.context["message"] = "Not implemented yet in web service"
-                return render_template("fastapi/basic.html", **self.context)
+                return render_template("auth/basic.html", **self.context)
                 # try:
                 #     response = user_request_verify(request)
                 #     flash("E-mail er verificeret.")
@@ -530,26 +529,26 @@ class FastapiView(GUIView):
             if api_call == 'reset_password':
                 self.context["title"] = "Reset password"
                 self.context["post_url"] = request.url
-                return render_template("fastapi/reset_password.html", **self.context)
+                return render_template("auth/reset_password.html", **self.context)
 
             if api_call == 'home':
                 self.context["title"] = "Hjem"
-                return render_template("fastapi/simple.html", **self.context)
+                return render_template("auth/simple.html", **self.context)
 
             if api_call == 'register':
                 self.context["title"] = "Opret bruger"
                 self.context["post_url"] = request.url
-                return render_template("fastapi/register.html", **self.context)
+                return render_template("auth/register.html", **self.context)
             
             if api_call == 'forgot_password':
                 self.context["title"] = "Glemt password"
                 self.context["post_url"] = request.url
-                return render_template("fastapi/forgot_password.html", **self.context) 
+                return render_template("auth/forgot_password.html", **self.context) 
 
             if api_call == 'login':
                 self.context["title"] = "Login"
                 self.context["post_url"] = request.url
-                return render_template("fastapi/login.html", **self.context)
+                return render_template("auth/login.html", **self.context)
 
             if api_call == 'me':
 
@@ -563,7 +562,7 @@ class FastapiView(GUIView):
                     log.exception(e)
                     flash("System fejl")
                 
-                return render_template("fastapi/me.html", **self.context)
+                return render_template("auth/me.html", **self.context)
 
             if api_call == 'logout':
 
@@ -572,11 +571,11 @@ class FastapiView(GUIView):
 
                 flash("Du er nu logget ud.")    
                 
-                return redirect("/fastapi/login")
+                return redirect("/auth/login")
 
         if not api_call:
             self.context["title"] = "Home"
-            return render_template("fastapi/me.html", **self.context)
+            return render_template("auth/me.html", **self.context)
         
         abort(404, description="Resource not found")
 

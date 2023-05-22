@@ -112,11 +112,9 @@ def get_client() -> Client:
 
 
 def get_auth_client(request: request) -> AuthenticatedClient:
-
     if not OpenAwsSession.in_jwt_session():
         raise OpenAwsException(401, "Du skal være logget ind for at se denne side.")
 
-    
     token = session["access_token"]
     auth_client = AuthenticatedClient(
         raise_on_unexpected_status=False,
@@ -125,7 +123,7 @@ def get_auth_client(request: request) -> AuthenticatedClient:
         timeout=timeout,
         verify_ssl=verify_ssl,
     )
-    
+
     return auth_client
 
 
@@ -148,10 +146,8 @@ def login_jwt(request: request):
             400,
             "API fejl. Prøv igen senere. ",
         )
-        
 
     if isinstance(bearer_response, ErrorModel):
-        
         raise OpenAwsException(
             422,
             "Ingen sådan kombination mellem email og password.",
@@ -159,7 +155,6 @@ def login_jwt(request: request):
 
 
 def user_create(request: request):
-
     _validate_passwords(request)
 
     email = str(request.form.get("email"))
@@ -184,17 +179,16 @@ def user_create(request: request):
             422,
             "Email skal være korrekt. Password skal mindst have 8 tegn. E-mail må ikke være registreret før. ",
             "Unauthorized",
-        )        
+        )
 
     if not isinstance(user_read, UserRead):
         raise OpenAwsException(500, "System fejl. Prøv igen senere.", "Unauthorized")
 
 
 def user_verify(request: request):
-    
-    token = request.view_args['token'] 
+    token = request.view_args["token"]
     log.debug(token)
-    
+
     client: Client = get_client()
 
     src_dict = {"token": token}
@@ -209,11 +203,10 @@ def user_verify(request: request):
         )
 
     if isinstance(user_read, ErrorModel):
-
         detail = user_read.detail
-        if (detail == 'VERIFY_USER_BAD_TOKEN'):
+        if detail == "VERIFY_USER_BAD_TOKEN":
             message = "Nøglen i URLen eksisterer ikke i systemet. Du må logge ind igen for at få tilsendt en ny nøgle."
-        if (detail == 'VERIFY_USER_ALREADY_VERIFIED'):
+        if detail == "VERIFY_USER_ALREADY_VERIFIED":
             message = "Bruger er allerede verificeret."
 
         raise OpenAwsException(
@@ -227,20 +220,19 @@ def user_verify(request: request):
 
 
 def me_read(request: request) -> dict:
-
     client: AuthenticatedClient = get_auth_client(request)
 
     if hasattr(request, "me"):
         log.debug("Me cached")
         return request.me
-    
+
     me = users_me_get.sync(client=client)
 
     if isinstance(me, UserRead):
         me_dict = me.to_dict()
         setattr(request, "me", me_dict)
         return me_dict
-    
+
     # Clear jwt session
     OpenAwsSession.clear_jwt_session()
 
@@ -278,9 +270,9 @@ def user_request_verify(request: request):
     response = auth_request_verify_post.sync(client=client, json_body=json_body)
     if not isinstance(response, str):
         raise OpenAwsException(
-        422,
-        "Systemet kunne ikke afsende en verificerings e-mail. Prøv igen senere.",
-    )
+            422,
+            "Systemet kunne ikke afsende en verificerings e-mail. Prøv igen senere.",
+        )
 
 
 def forgot_password(request: request) -> None:
@@ -288,8 +280,13 @@ def forgot_password(request: request) -> None:
     client: Client = get_client()
 
     src_dict = {"email": email}
-    forgot_password_post: ForgotPasswordPost = ForgotPasswordPost.from_dict(src_dict=src_dict)
-    forgot_password_response = auth_forgot_password_post.sync(client=client, json_body=forgot_password_post)
+    forgot_password_post: ForgotPasswordPost = ForgotPasswordPost.from_dict(
+        src_dict=src_dict
+    )
+
+    forgot_password_response = auth_forgot_password_post.sync(
+        client=client, json_body=forgot_password_post
+    )
 
     if isinstance(forgot_password_response, HTTPValidationError):
         raise OpenAwsException(
@@ -299,18 +296,19 @@ def forgot_password(request: request) -> None:
 
 
 def reset_password(request: request) -> None:
-
     _validate_passwords(request)
 
-    token = request.view_args['token']
+    token = request.view_args["token"]
 
     client: Client = get_client()
     src_dict = {"token": token, "password": request.form.get("password")}
 
-    log.debug(src_dict)
-
-    reset_password_post: ResetPasswordPost = ResetPasswordPost.from_dict(src_dict=src_dict)
-    reset_password_response = auth_reset_password_post.sync(client=client, json_body=reset_password_post)
+    reset_password_post: ResetPasswordPost = ResetPasswordPost.from_dict(
+        src_dict=src_dict
+    )
+    reset_password_response = auth_reset_password_post.sync(
+        client=client, json_body=reset_password_post
+    )
 
     if isinstance(reset_password_response, HTTPValidationError):
         raise OpenAwsException(
@@ -326,7 +324,6 @@ def reset_password(request: request) -> None:
 
 
 def _validate_passwords(request):
-
     password_1 = request.form.get("password")
     password_2 = request.form.get("password_2")
 

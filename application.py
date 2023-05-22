@@ -159,12 +159,12 @@ app.add_url_rule(
 app.add_url_rule("/testpage", view_func=views.TestView.as_view("test"), methods=["GET"])
 
 # FastApi Testpage
-app.add_url_rule("/fastapi/<api_call>", view_func=views.FastapiView.as_view("fastapi"), methods=["GET", "POST"])
+app.add_url_rule("/auth/<api_call>", view_func=views.AuthView.as_view("auth"), methods=["GET", "POST"])
 
 # alter above url to accept an optional <token> parameter
-app.add_url_rule("/fastapi/<api_call>/<token>", view_func=views.FastapiView.as_view("fastapi_token"), methods=["GET", "POST"])
+app.add_url_rule("/auth/<api_call>/<token>", view_func=views.AuthView.as_view("auth_token"), methods=["GET", "POST"])
 
-app.add_url_rule("/fastapi/", view_func=views.FastapiView.as_view("fastapi_home"), methods=["GET"])
+app.add_url_rule("/auth/", view_func=views.AuthView.as_view("auth_home"), methods=["GET"])
 
 
 
