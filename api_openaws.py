@@ -52,6 +52,7 @@ from openaws import (
 from openaws_client.models import UserPermissions
 from flask import request, session
 from app_log import log
+import settings
 
 
 class OpenAwsSession:
@@ -95,8 +96,7 @@ class OpenAwsException(Exception):
         return self.message
 
 
-base_url = "https://dev.openaws.dk"
-base_url = "http://localhost:8000"
+base_url = settings.WEBSERVICE_URL
 timeout = 10
 verify_ssl = True
 
@@ -164,9 +164,8 @@ def user_create(request: request):
 
     src_dict = {"email": email, "password": password}
     json_body = UserCreate.from_dict(src_dict=src_dict)
-
     user_read = auth_register_post.sync(client=client, json_body=json_body)
-    log.debug(user_read)
+
     if isinstance(user_read, HTTPValidationError):
         raise OpenAwsException(
             400,
@@ -187,7 +186,6 @@ def user_create(request: request):
 
 def user_verify(request: request):
     token = request.view_args["token"]
-    log.debug(token)
 
     client: Client = get_client()
 
@@ -223,7 +221,6 @@ def me_read(request: request) -> dict:
     client: AuthenticatedClient = get_auth_client(request)
 
     if hasattr(request, "me"):
-        log.debug("Me cached")
         return request.me
 
     me = users_me_get.sync(client=client)
