@@ -10,5 +10,3 @@ if not len(logger.handlers):
 
 
 log = logger
-
-__ALL__ = ['log']
