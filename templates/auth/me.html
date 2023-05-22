@@ -1,4 +1,4 @@
-{% extends 'fastapi/_base.html' %}
+{% extends 'auth/_base.html' %}
 {% block content %}
 <h3>{{ title }}</h3>
 
@@ -46,7 +46,7 @@
 
 {% if me["is_verified"] == false%}
 <p>
-    <a href="/fastapi/send_verify_email">Verficer din email</a>
+    <a href="/auth/send_verify_email">Verficer din email</a>
 </p>
 {% endif %}
 

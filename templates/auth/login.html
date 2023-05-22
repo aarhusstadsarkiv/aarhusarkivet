@@ -1,13 +1,15 @@
-{% extends 'fastapi/_base.html' %}
+{% extends 'auth/_base.html' %}
 {% block content %}
 <h3>{{ title }}</h3>
 <form action="{{ post_url }}" method="post">
     <p>
-        <input type="username" name="email" placeholder="Email">
+        <input type="username" name="username" placeholder="Email">
+    </p>
+    <p>
+        <input type="password" name="password" placeholder="Password">
     </p>
     <p>
         <input type="submit" value="Submit">
     </p>
-    
 </form>
 {% endblock content %}
