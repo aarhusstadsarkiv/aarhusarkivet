@@ -132,9 +132,12 @@ def login_jwt(request: request):
     password = request.form.get("password")
 
     client: Client = get_client()
-    form_data: AuthJwtLoginPost = AuthJwtLoginPost(username=username, password=password)
+    login_dict = {"username": username, "password": password}
+    form_data: AuthJwtLoginPost = AuthJwtLoginPost.from_dict(login_dict)
 
-    bearer_response = auth_jwt_login_post.sync(client=client, form_data=form_data)
+    bearer_response = auth_jwt_login_post.sync(
+        client=client,
+        form_data=form_data)
 
     if isinstance(bearer_response, BearerResponse):
         access_token: str = bearer_response.access_token
