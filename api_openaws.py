@@ -49,7 +49,7 @@ from openaws import (
     AuthenticatedClient,
     Client,
 )
-from openaws_client.models import UserPermissions
+
 from flask import request, session
 from app_log import log
 import settings
@@ -260,18 +260,30 @@ async def permissions_as_list(permissions: dict) -> list[str]:
 
 
 def user_request_verify(request: request):
-    """request for at token send by email. function used in order to verify email."""
-    client: Client = get_client()
+    """request for at token sent by email.
+    function used in order to verify email."""
+    client: Client = get_auth_client(request)
 
-    me = me_read(request)
-    email = me["id"]
-
-    json_body = RequestVerifyPost.from_dict({"email": email})
-    response = auth_request_verify_post.sync(client=client, json_body=json_body)
-    if not isinstance(response, str):
+    try:
+        me = me_read(request)
+        email = me["email"]
+    except Exception as e:
+        log.debug(e)
         raise OpenAwsException(
             422,
-            "Systemet kunne ikke afsende en verificerings e-mail. Prøv igen senere.",
+            "User information could not be found.",
+        )
+
+    json_body = RequestVerifyPost.from_dict({"email": email})
+    response = auth_request_verify_post.sync(
+        client=client,
+        json_body=json_body)
+    log.debug(response)
+    if response:
+        raise OpenAwsException(
+            422,
+            """Systemet kunne ikke afsende en verificerings e-mail.
+            Prøv igen senere.""",
         )
 
 

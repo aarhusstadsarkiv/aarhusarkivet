@@ -449,7 +449,7 @@ class AuthView(GUIView):
 
                 try:
                     user_create(request)
-                    flash("Bruger er oprettet. Tjek din email for at aktivere brugeren.")
+                    flash("Bruger er oprettet. Tjek din email for at verificere din email.")
                 except OpenAwsException as e:
                     log.exception(e)
                     flash(e.message)
@@ -508,23 +508,22 @@ class AuthView(GUIView):
                     log.exception(e)
                     flash("Klient system fejl. Under din profil kan du bestille en ny nøgle for at verificere din e-mail.")
 
-
                 return redirect("/auth")
 
             if api_call == 'send_verify_email':
-                
-                self.context["message"] = "Not implemented yet in web service"
-                return render_template("auth/basic.html", **self.context)
-                # try:
-                #     response = user_request_verify(request)
-                #     flash("E-mail er verificeret.")
-                # except OpenAwsException as e:
-                #     log.exception(e)
-                #     flash(e.message)
 
-                # except Exception as e:
-                #     log.exception(e)
-                #     flash("System fejl. En ny verificerings-nøgle kunne ikke sendes.")
+                try:
+                    user_request_verify(request)
+                    flash("En email er afsendt til din e-mail adresse. Klik på linket i mailen for at verificere din e-mail.")
+                except OpenAwsException as e:
+                    log.exception(e)
+                    flash(e.message)
+
+                except Exception as e:
+                    log.exception(e)
+                    flash("System fejl. En ny verificerings-nøgle kunne ikke sendes.")
+
+                return redirect("/auth/me")
 
             if api_call == 'reset_password':
                 self.context["title"] = "Reset password"
@@ -539,7 +538,7 @@ class AuthView(GUIView):
                 self.context["title"] = "Opret bruger"
                 self.context["post_url"] = request.url
                 return render_template("auth/register.html", **self.context)
-            
+
             if api_call == 'forgot_password':
                 self.context["title"] = "Glemt password"
                 self.context["post_url"] = request.url
@@ -557,11 +556,12 @@ class AuthView(GUIView):
                     self.context["me"] = me_read(request)
                 except OpenAwsException as e:
                     flash(e.message)
-                
+                    log.exception(e)
+
                 except Exception as e:
                     log.exception(e)
                     flash("System fejl")
-                
+
                 return render_template("auth/me.html", **self.context)
 
             if api_call == 'logout':
@@ -570,13 +570,13 @@ class AuthView(GUIView):
                     OpenAwsSession.clear_jwt_session()
 
                 flash("Du er nu logget ud.")    
-                
+
                 return redirect("/auth/login")
 
         if not api_call:
             self.context["title"] = "Home"
             return render_template("auth/me.html", **self.context)
-        
+
         abort(404, description="Resource not found")
 
 
