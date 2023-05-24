@@ -186,7 +186,7 @@ def forgot_password_post(request: request) -> None:
 
     if isinstance(forgot_password_response, HTTPValidationError):
         raise OpenAwsException(
-            422,
+            400,
             "Denne email eksisterer ikke i vores system.",
         )
 
@@ -261,7 +261,7 @@ def request_verify_post(request: request):
 
     if response:
         raise OpenAwsException(
-            422,
+            400,
             """Systemet kunne ikke afsende en verificerings e-mail.
             Prøv igen senere.""",
         )
