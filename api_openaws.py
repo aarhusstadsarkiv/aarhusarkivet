@@ -103,7 +103,7 @@ def get_client() -> Client:
 
 def get_auth_client(request: request) -> AuthenticatedClient:
     if not OpenAwsSession.in_jwt_session():
-        raise OpenAwsException(401, "Du skal være logget ind for at se denne side.")
+        raise OpenAwsException(403, "Du skal være logget ind for at se denne side.")
 
     token = session["access_token"]
     auth_client = AuthenticatedClient(
@@ -225,7 +225,7 @@ def me_get(request: request) -> dict:
     OpenAwsSession.clear_jwt_session()
 
     raise OpenAwsException(
-        401,
+        403,
         "For at se denne side skal du være logget ind.",
     )
 
