@@ -136,8 +136,7 @@ def login_jwt(request: request):
     form_data: AuthJwtLoginPost = AuthJwtLoginPost.from_dict(login_dict)
 
     bearer_response = auth_jwt_login_post.sync(
-        client=client,
-        form_data=form_data)
+        client=client, form_data=form_data)
 
     if isinstance(bearer_response, BearerResponse):
         access_token: str = bearer_response.access_token
@@ -267,8 +266,7 @@ def user_request_verify(request: request):
     try:
         me = me_read(request)
         email = me["email"]
-    except Exception as e:
-        log.debug(e)
+    except Exception:
         raise OpenAwsException(
             422,
             "User information could not be found.",
@@ -276,9 +274,8 @@ def user_request_verify(request: request):
 
     json_body = RequestVerifyPost.from_dict({"email": email})
     response = auth_request_verify_post.sync(
-        client=client,
-        json_body=json_body)
-    log.debug(response)
+        client=client, json_body=json_body)
+
     if response:
         raise OpenAwsException(
             422,
