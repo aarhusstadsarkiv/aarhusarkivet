@@ -393,141 +393,190 @@ class TestView(GUIView):
         # return jsonify(self.context)
         return render_template("test.html", **self.context)
 
-from fastapi_client import FastAPIClient 
-class FastapiView(GUIView):
+from api_openaws import (
+    OpenAwsSession,
+    jwt_login_post,
+    register_post,
+    verify_post,
+    me_get,
+    request_verify_post,
+    forgot_password_post,
+    reset_password_post,
+    is_logged_in,
+)
+from api_openaws_error import OpenAwsException
+from app_log import log
 
-    def in_jwt_session(self):
-        if "access_token" in session and "token_type" in session:
-            return True
+
+class AuthView(GUIView):
+
+    def dispatch_request(self, api_call=None, token=None):
+
+        menu = [
+            {"name": "register", "url": "/auth/register", "title": "Register"},
+            {"name": "forgotten_pasword", "url": "/auth/forgot_password", "title": "Glemt password"},
+            {"name": "login", "url": "/auth/login", "title": "Login"},
+            {"name": "logout", "url": "/auth/logout", "title": "Log ud"},
+            {"name": "profile", "url": "/auth/me", "title": "Profil"},
+        ]
+
+        logged_in = is_logged_in(request)
+        if logged_in:
+            menu = [item for item in menu if item["name"] not in ["login", "register", "forgotten_pasword"]]
         else:
-            return False
+            menu = [item for item in menu if item["name"] not in ["logout", "profile"]]
 
-    def in_cookie_session(self):
-        if "_auth" in session:
-            return True
-        else:
-            return False
-
-    def clear_jwt_session(self):
-        session.pop("access_token")
-        session.pop("token_type")
-
-    def clear_cookie_session(self):
-        session.pop("_auth")
-        
-
-    def dispatch_request(self, api_call=None):
+        self.context["openaws_menu"] = menu
 
         if request.method == 'POST':
 
+            if api_call == 'login':
+
+                try:
+                    jwt_login_post(request)
+                    flash("Du er logget ind")
+                except OpenAwsException as e:
+                    log.exception(e)
+                    flash(e.message)
+
+                except Exception as e:
+                    log.exception(e)
+                    flash("System fejl. Prøv igen senere. ")
+
+                return redirect("/auth")
+
             if api_call == 'register':
-                api_client = FastAPIClient()
-                response = api_client.register(request.form.to_dict())   
-                return response
+
+                try:
+                    register_post(request)
+                    flash("Bruger er oprettet. Tjek din email for at verificere din email.")
+                except OpenAwsException as e:
+                    log.exception(e)
+                    flash(e.message)
+
+                except Exception as e:
+                    log.exception(e)
+                    flash("System fejl. Prøv igen senere. ")
+
+                return redirect("/auth/register")
 
             if api_call == 'forgot_password':
-                api_client = FastAPIClient()
-                response = api_client.forgot_password(request.form["email"])
-                return response
+
+                try:
+                    forgot_password_post(request)
+                    flash("Vi har afsendt en mail med oplysninger om hvordan du opretter et ny password. ")
+                except OpenAwsException as e:
+                    log.exception(e)
+                    flash(e.message)
+
+                except Exception as e:
+                    log.exception(e)
+                    flash("System fejl. Prøv igen senere. ")
+
+                return redirect("/auth/forgot_password")
 
             if api_call == 'reset_password':
-                api_client = FastAPIClient()
-                response = api_client.reset_password(request.form["token"], request.form["password"])
-                return response
+
+                try:
+                    reset_password_post(request)
+                    flash("Dit password er blevet opdateret.")
+                    return redirect("/auth/login")
+                except OpenAwsException as e:
+                    log.exception(e)
+                    flash(e.message)
+
+                except Exception as e:
+                    log.exception(e)
+                    flash("System fejl. Prøv igen senere. ")
+
+                return redirect("/auth/reset_password/" + token)
 
             if api_call == 'login_cookie':
-                api_client = FastAPIClient()
-                response = api_client.login_cookie(request.form['username'], request.form['password'])
-                session["_auth"] = response["_auth"]
-                return response
+                pass
 
-            if api_call == 'login_jwt':
-                api_client = FastAPIClient()
-                response = api_client.login_jwt(request.form['username'], request.form['password'])
-                session["access_token"] = response["access_token"]
-                session["token_type"] = response["token_type"]
-                return response
-        
         if request.method == 'GET':
-            
-            if api_call == 'home':
-                self.context["title"] = "Home"
-                return render_template("fastapi/home.html", **self.context)
 
-            if api_call == 'register':
-                self.context["title"] = "Register"
-                self.context["post_url"] = request.url
-                return render_template("fastapi/register.html", **self.context)
+            if api_call == 'verify_email':
+                try:
+                    verify_post(request)
+                    flash("E-mail er verificeret.")
+                except OpenAwsException as e:
+                    log.exception(e)
+                    flash(e.message)
 
-            if api_call == 'forgot_password':
-                self.context["title"] = "Forgot password"
-                self.context["post_url"] = request.url
-                return render_template("fastapi/forgot_password.html", **self.context) 
+                except Exception as e:
+                    log.exception(e)
+                    flash("System fejl. Prøv igen senere. ")
 
-            if api_call == 'login_cookie':
-                self.context["title"] = "Login cookie"
-                self.context["post_url"] = request.url
-                return render_template("fastapi/login.html", **self.context)
-            
-            if api_call == 'login_jwt':
-                self.context["title"] = "Login JWT"
-                self.context["post_url"] = request.url
-                return render_template("fastapi/login.html", **self.context)
+                return redirect("/auth")
 
-            if api_call == 'me':
+            if api_call == 'send_verify_email':
 
-                self.context["title"] = "Me"
-                if self.in_jwt_session():
-                    api_client = FastAPIClient()
-                    response = api_client.me(access_token=session["access_token"], token_type=session["token_type"])
-                    self.context["response"] = json.dumps(response, indent=4)
-                elif self.in_cookie_session():
-                    api_client = FastAPIClient()
-                    response = api_client.me(cookie=session["_auth"])
-                    self.context["response"] = json.dumps(response, indent=4)
-                else:
-                    self.context["response"] = "Not logged in"
-                
-                return render_template("fastapi/me.html", **self.context)
+                try:
+                    request_verify_post(request)
+                    flash("En email er afsendt til din e-mail adresse. Klik på linket i mailen for at verificere din e-mail.")
+                except OpenAwsException as e:
+                    log.exception(e)
+                    flash(e.message)
 
-            if api_call == 'logout_jwt':
+                except Exception as e:
+                    log.exception(e)
+                    flash("System fejl. Prøv igen senere. ")
 
-                if self.in_jwt_session():
-                    api_client = FastAPIClient()
-                    response = api_client.logout_jwt(session["access_token"], session["token_type"])
-                    self.clear_jwt_session()
-                    self.context["response"] = json.dumps(response, indent=4)
-                else:
-                    self.context["response"] = "Not logged in"
+                return redirect("/auth")
 
-                self.context["title"] = "Logout JWT"
-                
-                return render_template("fastapi/me.html", **self.context)
-
-            if api_call == 'logout_cookie':
-
-                if self.in_cookie_session():
-                    api_client = FastAPIClient()
-                    response = api_client.logout_cookie(session["_auth"])
-                    self.clear_cookie_session()
-                    self.context["response"] = json.dumps(response, indent=4)
-                else:
-                    self.context["response"] = "Not logged in"
-
-                self.context["title"] = "Logout Cookie"
-                
-                return render_template("fastapi/me.html", **self.context)
-
-            
             if api_call == 'reset_password':
                 self.context["title"] = "Reset password"
                 self.context["post_url"] = request.url
-                return render_template("fastapi/reset_password.html", **self.context)
+                return render_template("auth/reset_password.html", **self.context)
+
+            if api_call == 'home':
+                self.context["title"] = "Hjem"
+                return render_template("auth/simple.html", **self.context)
+
+            if api_call == 'register':
+                self.context["title"] = "Opret bruger"
+                self.context["post_url"] = request.url
+                return render_template("auth/register.html", **self.context)
+
+            if api_call == 'forgot_password':
+                self.context["title"] = "Glemt password"
+                self.context["post_url"] = request.url
+                return render_template("auth/forgot_password.html", **self.context) 
+
+            if api_call == 'login':
+                self.context["title"] = "Login"
+                self.context["post_url"] = request.url
+                return render_template("auth/login.html", **self.context)
+
+            if api_call == 'me':
+
+                self.context["title"] = "Din profil"
+                try:
+                    self.context["me"] = me_get(request)
+                except OpenAwsException as e:
+                    flash(e.message)
+                    log.exception(e)
+
+                except Exception as e:
+                    log.exception(e)
+                    flash("System fejl. Prøv igen senere. ")
+
+                return render_template("auth/me.html", **self.context)
+
+            if api_call == 'logout':
+
+                if is_logged_in(request):
+                    OpenAwsSession.clear_jwt_session()
+
+                flash("Du er nu logget ud.")    
+
+                return redirect("/auth/login")
 
         if not api_call:
             self.context["title"] = "Home"
-            return render_template("fastapi/me.html", **self.context)
-        
+            return render_template("auth/me.html", **self.context)
+
         abort(404, description="Resource not found")
 
 

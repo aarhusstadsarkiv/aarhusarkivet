@@ -1,9 +1,0 @@
-{% extends 'fastapi/_base.html' %}
-{% block content %}
-<h3>{{ title }}</h3>
-<form action="{{ post_url }}" method="post">
-    <input type="username" name="username" placeholder="Email">
-    <input type="password" name="password" placeholder="Password">
-    <input type="submit" value="Submit">
-</form>
-{% endblock content %}

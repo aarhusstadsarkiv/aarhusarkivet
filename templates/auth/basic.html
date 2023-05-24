@@ -1,0 +1,9 @@
+{% extends 'auth/_base.html' %}
+{% block content %}
+<h3>{{ title }}</h3>
+
+{% if message %}
+<P> {{ message }}</P>
+{% endif %}
+
+{% endblock content %}

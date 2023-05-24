@@ -1,5 +1,8 @@
 SESSION_KEY = "profile"
 
+WEBSERVICE_URL = "https://dev.openaws.dk"
+# WEBSERVICE_URL = "http://localhost:8000"
+
 ICONS = {
     "61": {"icon": "far fa-image", "label": "Billeder"},
     "95": {"icon": "fas fa-laptop", "label": "Elektronisk materiale"},
