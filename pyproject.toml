@@ -11,7 +11,7 @@ Flask = "^2.1.2"
 boto3 = "^1.24.22"
 gunicorn = "^20.1.0"
 python-dotenv = "^0.20.0"
-openaws-client = {git = "https://github.com/aarhusstadsarkiv/openaws-client", rev = "90a7309c5565efd937329546a4da5e5c00cf6593"}
+openaws-client = {git = "https://github.com/aarhusstadsarkiv/openaws-client.git", rev = "v0.6.1-2"}
 
 [tool.poetry.dev-dependencies]
 
