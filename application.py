@@ -26,8 +26,8 @@ app.config["SESSION_COOKIE_SECURE"] = os.environ.get("SESSION_COOKIE_SECURE", Fa
 
 if app.debug:
     app.reload = True
+    app.jinja_env.auto_reload = True
 
-app.jinja_env.auto_reload = True
 app.url_map.strict_slashes = False
 app.jinja_env.globals["ICONS"] = settings.ICONS
 
