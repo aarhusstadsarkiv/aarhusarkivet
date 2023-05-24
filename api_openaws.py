@@ -127,7 +127,7 @@ def get_auth_client(request: request) -> AuthenticatedClient:
     return auth_client
 
 
-def login_jwt(request: request):
+def jwt_login_post(request: request):
     username = request.form.get("username")
     password = request.form.get("password")
 
@@ -156,7 +156,7 @@ def login_jwt(request: request):
         )
 
 
-def user_create(request: request):
+def register_post(request: request):
     _validate_passwords(request)
 
     email = str(request.form.get("email"))
@@ -186,7 +186,7 @@ def user_create(request: request):
         raise OpenAwsException(500, "System fejl. Prøv igen senere.", "Unauthorized")
 
 
-def user_verify(request: request):
+def verify_post(request: request):
     token = request.view_args["token"]
 
     client: Client = get_client()
@@ -219,7 +219,7 @@ def user_verify(request: request):
         raise OpenAwsException(500, "System fejl. Prøv igen senere.", "Unauthorized")
 
 
-def me_read(request: request) -> dict:
+def me_get(request: request) -> dict:
     client: AuthenticatedClient = get_auth_client(request)
 
     if hasattr(request, "me"):
@@ -243,7 +243,7 @@ def me_read(request: request) -> dict:
 
 def is_logged_in(request: request) -> bool:
     try:
-        me_read(request)
+        me_get(request)
         return True
     except Exception:
         return False
@@ -264,7 +264,7 @@ def user_request_verify(request: request):
     client: Client = get_auth_client(request)
 
     try:
-        me = me_read(request)
+        me = me_get(request)
         email = me["email"]
     except Exception:
         raise OpenAwsException(
@@ -284,7 +284,7 @@ def user_request_verify(request: request):
         )
 
 
-def forgot_password(request: request) -> None:
+def forgot_password_post(request: request) -> None:
     email = request.form.get("email")
     client: Client = get_client()
 
@@ -304,7 +304,7 @@ def forgot_password(request: request) -> None:
         )
 
 
-def reset_password(request: request) -> None:
+def reset_password_post(request: request) -> None:
     _validate_passwords(request)
 
     token = request.view_args["token"]

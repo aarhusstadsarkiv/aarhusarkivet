@@ -396,13 +396,13 @@ class TestView(GUIView):
 from api_openaws import (
     OpenAwsException,
     OpenAwsSession,
-    login_jwt,
-    user_create,
-    user_verify,
-    me_read,
+    jwt_login_post,
+    register_post,
+    verify_post,
+    me_get,
     user_request_verify,
-    forgot_password,
-    reset_password,
+    forgot_password_post,
+    reset_password_post,
     is_logged_in,
 )
 from app_log import log
@@ -433,7 +433,7 @@ class AuthView(GUIView):
             if api_call == 'login':
 
                 try:
-                    login_jwt(request)
+                    jwt_login_post(request)
                     flash("Du er logget ind")
                 except OpenAwsException as e:
                     log.exception(e)
@@ -443,12 +443,12 @@ class AuthView(GUIView):
                     log.exception(e)
                     flash("System fejl. Prøv igen senere. ")
 
-                return redirect("/auth/login")
+                return redirect("/auth")
 
             if api_call == 'register':
 
                 try:
-                    user_create(request)
+                    register_post(request)
                     flash("Bruger er oprettet. Tjek din email for at verificere din email.")
                 except OpenAwsException as e:
                     log.exception(e)
@@ -463,7 +463,7 @@ class AuthView(GUIView):
             if api_call == 'forgot_password':
 
                 try:
-                    forgot_password(request)
+                    forgot_password_post(request)
                     flash("Vi har afsendt en mail med oplysninger om hvordan du opretter et ny password. ")
                 except OpenAwsException as e:
                     log.exception(e)
@@ -478,7 +478,7 @@ class AuthView(GUIView):
             if api_call == 'reset_password':
 
                 try:
-                    reset_password(request)
+                    reset_password_post(request)
                     flash("Dit password er blevet opdateret.")
                     return redirect("/auth/login")
                 except OpenAwsException as e:
@@ -498,7 +498,7 @@ class AuthView(GUIView):
 
             if api_call == 'verify_email':
                 try:
-                    user_verify(request)
+                    verify_post(request)
                     flash("E-mail er verificeret.")
                 except OpenAwsException as e:
                     log.exception(e)
@@ -553,7 +553,7 @@ class AuthView(GUIView):
 
                 self.context["title"] = "Din profil"
                 try:
-                    self.context["me"] = me_read(request)
+                    self.context["me"] = me_get(request)
                 except OpenAwsException as e:
                     flash(e.message)
                     log.exception(e)
