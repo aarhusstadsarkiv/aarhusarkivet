@@ -394,17 +394,17 @@ class TestView(GUIView):
         return render_template("test.html", **self.context)
 
 from api_openaws import (
-    OpenAwsException,
     OpenAwsSession,
     jwt_login_post,
     register_post,
     verify_post,
     me_get,
-    user_request_verify,
+    request_verify_post,
     forgot_password_post,
     reset_password_post,
     is_logged_in,
 )
+from api_openaws_error import OpenAwsException
 from app_log import log
 
 
@@ -506,14 +506,14 @@ class AuthView(GUIView):
 
                 except Exception as e:
                     log.exception(e)
-                    flash("Klient system fejl. Under din profil kan du bestille en ny nøgle for at verificere din e-mail.")
+                    flash("System fejl. Prøv igen senere. ")
 
                 return redirect("/auth")
 
             if api_call == 'send_verify_email':
 
                 try:
-                    user_request_verify(request)
+                    request_verify_post(request)
                     flash("En email er afsendt til din e-mail adresse. Klik på linket i mailen for at verificere din e-mail.")
                 except OpenAwsException as e:
                     log.exception(e)
@@ -521,7 +521,7 @@ class AuthView(GUIView):
 
                 except Exception as e:
                     log.exception(e)
-                    flash("System fejl. En ny verificerings-nøgle kunne ikke sendes.")
+                    flash("System fejl. Prøv igen senere. ")
 
                 return redirect("/auth")
 
@@ -560,7 +560,7 @@ class AuthView(GUIView):
 
                 except Exception as e:
                     log.exception(e)
-                    flash("System fejl")
+                    flash("System fejl. Prøv igen senere. ")
 
                 return render_template("auth/me.html", **self.context)
 
