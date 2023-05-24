@@ -523,7 +523,7 @@ class AuthView(GUIView):
                     log.exception(e)
                     flash("System fejl. En ny verificerings-nøgle kunne ikke sendes.")
 
-                return redirect("/auth/me")
+                return redirect("/auth")
 
             if api_call == 'reset_password':
                 self.context["title"] = "Reset password"
