@@ -338,17 +338,7 @@
                     return data;
                 });
                 series = data.series;
-             }
-
-            document.addEventListener('DOMContentLoaded', async function () {
-                let data = await fetch('{{collection_json}}')
-                .then(response => response.json())
-                .then(data => {
-                    return data;
-                });
-
-                series = data.series;
-             });
+            }
             
             document.addEventListener('click', async function (event) {
 
