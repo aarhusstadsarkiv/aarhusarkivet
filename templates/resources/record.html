@@ -289,20 +289,12 @@
         <script>
             
             /**
-            * 
-            * @param {array} json 
-            * @param {array} searchTerms
-            * example http://localhost:3000/records/000275736
-            *
-            * This function will return the siblings of an array of searchTerms
-            * It will return the children of the last search term
-            *  
-            * if no search terms the function will fetch the top level labels and paths, the same level as 'Danmark, negativsamlingen 1930-1970' 
-            * if ['Danmark, negativsamlingen 1930-1970'] is specified it will fetch the same level as  'Undervisning'
-            * if ['Danmark, negativsamlingen 1930-1970', 'Undervisning'] is specified we will fetch the same level as 'Handel'
-            *
-            */
+             * This function will return the siblings of an array of searchTerms
+             * E.g. ['Danmark, negativsamlingen 1930-1970'] will return all siblings of 'Danmark, negativsamlingen 1930-1970'
+             * ['Danmark, negativsamlingen 1930-1970', 'Undervisning'] will return all siblings of 'Undervisning' in 'Danmark, negativsamlingen 1930-1970'
+             */
             function findSiblings(json, searchTerms) {
+
                 // Get and remove last element
                 let lastElem = searchTerms.pop();
                 for (let i = 0; i < searchTerms.length; i++) {
