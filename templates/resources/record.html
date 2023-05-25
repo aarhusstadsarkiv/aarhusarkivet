@@ -242,6 +242,9 @@
     {% endif %}
 
     {% if r.collection %}
+    <pre>
+        {{r.collection}}
+    </pre>
         <div class="media-object stack-for-small">
             <div class="media-object-section app_keylabel">Samling</div>
             <div class="media-object-section main-section">
@@ -251,6 +254,18 @@
     {% endif %}
 
     {% if r.series %}
+        {# check if there is a r.collection id #}
+        {% if r.collection %}
+            {% set collection_id = r.collection.get('id')|string %}
+        {% else %}
+            {% set collection_id = None %}
+        {% endif %}
+
+        {% set collection_json = '/collections/' + collection_id + '?fmt=json' %}
+        <pre>
+            {{collection_json}}
+        </pre>
+
         <div class="media-object stack-for-small">
             <div class="media-object-section app_keylabel">Serie</div>
             <div class="media-object-section main-section">
@@ -266,6 +281,51 @@
             {% endfor %}
             </div>
         </div>
+        <script>
+            
+            /**
+            * 
+            * @param {array} json 
+            * @param {array} searchTerms
+            * example http://localhost:3000/records/000275736
+            *
+            * This function will return the children of the searchTerms
+            * It will return the children of the last search term
+            *  
+            * if no search terms the function will fetch the top level labels and paths, the same level as 'Danmark, negativsamlingen 1930-1970' 
+            * if ['Danmark, negativsamlingen 1930-1970'] is specified it will fetch the same level as  'Undervisning'
+            * if ['Danmark, negativsamlingen 1930-1970', 'Undervisning'] is specified we will fetch the same level as 'Handel'
+            *
+            */
+            function findSiblings(json, searchTerms) {
+                
+                for (let i = 0; i < searchTerms.length; i++) {
+                    const searchTerm = searchTerms[i];
+                    let result = json.filter(item => item.label === searchTerm);
+                    if (result.length > 0) {
+                        json = result[0].children;
+                    }
+                }
+                return json;
+            }
+                
+             
+             document.addEventListener('DOMContentLoaded', async function () {
+                let data = await fetch('{{collection_json}}')
+                .then(response => response.json())
+                .then(data => {
+                    return data;
+                });
+
+                series = data.series;
+                let test = findSiblings(series, ['Danmark, negativsamlingen 1930-1970', 'Undervisning'])
+                console.log(test)
+             });
+            
+            
+            
+
+        </script>
     {% endif %}
 
     {% if r.collection_tags and r.collection %}
