@@ -242,9 +242,6 @@
     {% endif %}
 
     {% if r.collection %}
-    <pre>
-        {{r.collection}}
-    </pre>
         <div class="media-object stack-for-small">
             <div class="media-object-section app_keylabel">Samling</div>
             <div class="media-object-section main-section">
@@ -254,29 +251,37 @@
     {% endif %}
 
     {% if r.series %}
-        {# check if there is a r.collection id #}
+        
         {% if r.collection %}
             {% set collection_id = r.collection.get('id')|string %}
         {% else %}
             {% set collection_id = None %}
         {% endif %}
 
+        {# don't think the above check is needed #}
+        {% set collection_id = r.collection.get('id')|string %}
         {% set collection_json = '/collections/' + collection_id + '?fmt=json' %}
-        <pre>
-            {{collection_json}}
-        </pre>
 
         <div class="media-object stack-for-small">
             <div class="media-object-section app_keylabel">Serie</div>
             <div class="media-object-section main-section">
             {% for item in r.series %}
-                <div>
-                    <a class="resource-link" href="/search?{{item.new_link}}" style="margin-left:{{loop.index0 * 6}}px;">
+                <div style="margin-left:{{loop.index0 * 6}}px;">
+                    <a class="resource-link" href="/search?{{item.new_link}}" >
                     {% if not loop.first %}
                         <span class="fas fa-arrow-right fa-sm"></span>
                     {% endif %}
                         {{item.label}}
                     </a>
+                    <span class="toogle" title="Udfold samme kategori niveau">
+                        <i data-search="{{ item.new_link }}" class="far fa-folder" open="true"></i>
+                    </span>
+                    
+                    {% if loop.first %}
+                        <div class="siblings"></div>
+                    {% else %}
+                        <div class="siblings" style="padding-left: 16px"></div>
+                    {% endif %}
                 </div>
             {% endfor %}
             </div>
@@ -289,7 +294,7 @@
             * @param {array} searchTerms
             * example http://localhost:3000/records/000275736
             *
-            * This function will return the children of the searchTerms
+            * This function will return the siblings of an array of searchTerms
             * It will return the children of the last search term
             *  
             * if no search terms the function will fetch the top level labels and paths, the same level as 'Danmark, negativsamlingen 1930-1970' 
@@ -298,19 +303,52 @@
             *
             */
             function findSiblings(json, searchTerms) {
-                
+                // Get and remove last element
+                let lastElem = searchTerms.pop();
                 for (let i = 0; i < searchTerms.length; i++) {
                     const searchTerm = searchTerms[i];
-                    let result = json.filter(item => item.label === searchTerm);
+                    let result = json.filter(item => item.label === searchTerm);                    
                     if (result.length > 0) {
                         json = result[0].children;
                     }
                 }
+
+                // If last element is in json then remove it
+                json = json.filter(item => item.label !== lastElem);
                 return json;
             }
+
+            function getSeriesArray(event) {
+                let search = event.target.dataset.search;
+                let urlParams = new URLSearchParams(search); 
+                let seriesValue = urlParams.get('series');
+                let seriesArray = seriesValue.split('/');
                 
-             
-             document.addEventListener('DOMContentLoaded', async function () {
+                return seriesArray;
+            }
+
+            function getSiblingsHTML(siblings) {
+                let html = '';
+                for (let i = 0; i < siblings.length; i++) {
+                    const sibling = siblings[i];
+                    let encodedPath = encodeURIComponent(sibling.path);
+                    let link = '/search?collection={{ collection_id }}&series=' + encodedPath;
+                    html += '<div><a href="' + link + '">' + sibling.label + '</a></div>';
+                }
+                return html;
+            }
+
+            let series = null;
+            async function loadSeries () {
+                let data = await fetch('{{collection_json}}')
+                .then(response => response.json())
+                .then(data => {
+                    return data;
+                });
+                series = data.series;
+             }
+
+            document.addEventListener('DOMContentLoaded', async function () {
                 let data = await fetch('{{collection_json}}')
                 .then(response => response.json())
                 .then(data => {
@@ -318,13 +356,33 @@
                 });
 
                 series = data.series;
-                let test = findSiblings(series, ['Danmark, negativsamlingen 1930-1970', 'Undervisning'])
-                console.log(test)
              });
             
-            
-            
+            document.addEventListener('click', async function (event) {
 
+                if (!series) {
+                    await loadSeries();
+                }
+                
+                if (event.target.matches('.toogle i')) {
+                    event.preventDefault();
+
+                    event.target.classList.toggle('fa-folder-open');
+                    let siblingsDiv = event.target.parentElement.parentElement.querySelector('.siblings');
+                    if (event.target.classList.contains('fa-folder-open')) {
+                        let search = getSeriesArray(event)
+                        let siblings = findSiblings(series, search);
+                        
+                        let html = getSiblingsHTML(siblings);
+                        if (html === '') {
+                            html = '<div>Der er ingen søskende</div>';
+                        }
+                        siblingsDiv.innerHTML = html;
+                    } else {
+                        siblingsDiv.innerHTML = '';
+                    }
+                }
+            }, false);
         </script>
     {% endif %}
 
