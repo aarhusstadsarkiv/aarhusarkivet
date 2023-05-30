@@ -16,50 +16,6 @@ const readFromCache = function (url) {
     }
 };
 
-/**
- * This function will return the siblings of an array of searchTerms
- * `json` : /collections/2?fmt=json
- * `SearchTerms`: 
- * ['Danmark, negativsamlingen 1930-1970'] will return all siblings of 'Danmark, negativsamlingen 1930-1970'
- * ['Danmark, negativsamlingen 1930-1970', 'Undervisning'] will return all siblings of 'Undervisning' in 'Danmark, negativsamlingen 1930-1970'
- */
-function findSiblings(json, searchTerms) {
-
-    // Get and remove last element
-    // let lastElem = searchTerms.pop();
-    for (let i = 0; i < searchTerms.length; i++) {
-        const searchTerm = searchTerms[i];
-        let result = json.filter(item => item.label === searchTerm);
-        if (result.length > 0) {
-            json = result[0].children;
-        }
-    }
-
-    // If last element is in json then remove it
-    // json = json.filter(item => item.label !== lastElem);
-    return json;
-}
-
-function getSeriesArray(event) {
-    let search = event.target.dataset.search;
-    let urlParams = new URLSearchParams(search);
-    let seriesValue = urlParams.get('series');
-    let seriesArray = seriesValue.split('/');
-
-    return seriesArray;
-}
-
-function getSiblingsHTML(siblings) {
-    let html = '';
-    for (let i = 0; i < siblings.length; i++) {
-        const sibling = siblings[i];
-        let encodedPath = encodeURIComponent(sibling.path);
-        let link = `/search?collection=${collectionId}&series=${encodedPath}`;
-        html += `<div><a class="resource-link" href="${link}">${sibling.label}</a></div>`;
-    }
-    return html;
-}
-
 async function loadSeries() {
 
     let json = readFromCache(collectionJsonPath);
@@ -79,31 +35,134 @@ async function loadSeries() {
     return data.series
 }
 
+function decodeSerieUrl(url) { 
+    var decodedUrl = decodeURIComponent(url.replace(/\+/g, ' '));
+    return decodedUrl
+}
+
+let id = 0;
+/**
+ * Add 'id', 'newLink', 'init', and 'active' to each item in series
+ * 
+ * 'id' is used to find the item in the tree
+ * 'newLink' is used to create the link in the tree
+ * 'init' is used is shown on page load
+ * 'active' indicates if the item is active
+ * 
+ * @param {Array} children
+ * 
+ */
+function addDataToSeries(children) {
+    for (let i = 0; i < children.length; i++) {
+        let child = children[i];
+        child.id = id++;
+        child.expanded = false;
+
+        let newLinkCompare = `collection=${collectionId}&series=${child.path}`;
+        let newLink = `/search?collection=${collectionId}&series=${encodeURIComponent(child.path)}`;
+        child.newLink = newLink;
+
+        for (let j = 0; j < seriesInit.length; j++) {
+            const seriesInitItem = seriesInit[j];
+            if (decodeSerieUrl(seriesInitItem.new_link) === newLinkCompare) {
+                child.active = true;
+                child.init = true;
+                child.expanded = false;
+                seriesInitItem.id = child.id;
+                break;
+            } else {
+                child.active = false;
+            }
+        }
+
+        if (child.children) {
+            addDataToSeries(child.children);
+        }
+    }
+}
+
+function collectionDataAsUL(collectionData) {
+    // Recursively create UL. If children then create LI and call function again
+    let html = '<ul>';
+    for (let i = 0; i < collectionData.length; i++) {
+        const item = collectionData[i];
+        
+        let initClass = '';
+        if (item.init) initClass = 'init';
+        if (!item.active && !item.init) continue;
+
+        let link = `<a class="serie-link ${initClass}" href="${item.newLink}">${item.label}</a>`;
+        if (item.children) {
+            let expandedClass = 'far fa-folder';
+            if (item.expanded) expandedClass = 'expanded far fa-folder-open ';
+            link += `<span style="padding-left:10px"><i data-id="${item.id}" class="serie-toogle ${expandedClass}"></i></span>`;
+        }
+
+        html += `<li>${link}</li>`;
+        if (item.children) {
+            html += collectionDataAsUL(item.children);
+        }
+    }
+    html += '</ul>';
+    return html; 
+}
+
+// collectionDataArray contains the app state
+const collectionDataArray = []
+const seriesApp = document.querySelector('#series-app');
+document.addEventListener('DOMContentLoaded', async function () {
+
+    let series = await loadSeries();
+    addDataToSeries(series);
+
+    let collectionData = series[collectionId]
+    collectionDataArray.push(collectionData)
+
+    let appHTML = collectionDataAsUL(collectionDataArray);
+    seriesApp.innerHTML = appHTML;
+});
+
+function findById(tree, nodeId) {
+    for (let node of tree) {
+      if (node.id === nodeId) return node
+  
+      if (node.children) {
+        let desiredNode = findById(node.children, nodeId)
+        if (desiredNode) return desiredNode
+      }
+    }
+    return false
+  }
+
 document.addEventListener('click', async function (event) {
 
+    event.preventDefault();
     try {
 
-        let series = await loadSeries();
-        if (event.target.matches('.toogle i')) {
+        if (event.target.matches('i.serie-toogle')) {
+            elem = event.target;
+            let id = event.target.dataset.id;
 
-            let elem = event.target;
-            let expandLevel = elem.dataset.level;
+            let expanded = true;
+            if (elem.classList.contains('expanded')) {
+                expanded = false;
+            }
 
-            event.preventDefault();
-            event.target.classList.toggle('fa-folder-open');
+            let node = findById(collectionDataArray, parseInt(id));
+            node.expanded = expanded;
 
-            let childrenDiv = event.target.parentElement.parentElement.querySelector('.siblings');
-            if (event.target.classList.contains('fa-folder-open')) {
-                let search = getSeriesArray(event)
-                let siblings = findSiblings(series, search);
+            if (node.children) {
+                node.children.forEach(function (child) {
+                    if (expanded) {
+                        child.active = true
+                    } else {
+                        child.active = false
+                    }
 
-                let html = getSiblingsHTML(siblings);
-                if (html === '') {
-                    html = '<div>Der er ingen søskende</div>';
-                }
-                childrenDiv.innerHTML = html;
-            } else {
-                childrenDiv.innerHTML = '';
+                })
+
+                let appHTML = collectionDataAsUL(collectionDataArray);
+                seriesApp.innerHTML = appHTML;
             }
         }
     } catch (error) {

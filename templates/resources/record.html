@@ -261,33 +261,37 @@
         {# don't think the above check is needed #}
         {% set collection_id = r.collection.get('id')|string %}
         {% set collection_json = '/collections/' + collection_id + '?fmt=json' %}
+    
 
         <div class="media-object stack-for-small">
             <div class="media-object-section app_keylabel">Serie</div>
             <div class="media-object-section main-section">
             {% for item in r.series %}
                 <div data-level="{{ loop.index0 }}" style="margin-left:{{loop.index0 * 6}}px;">
-                    <a class="resource-link" href="/search?{{item.new_link}}" >
-                    {% if not loop.first %}
-                        <span class="fas fa-arrow-right fa-sm"></span>
-                    {% endif %}
-                        {{item.label}}
-                    </a>
-                    <span class="toogle" title="Udfold samme kategori niveau">
-                        <i data-level="{{ loop.index0 + 1 }}" data-search="{{ item.new_link }}" class="far fa-folder" open="true"></i>
-                    </span>
-                    
-                    {% if loop.first %}
-                        <div class="siblings"></div>
-                    {% else %}
-                        <div class="siblings"></div>
-                    {% endif %}
+                    <div>
+                        <a class="resource-link" href="/search?{{item.new_link}}" >
+                        {% if not loop.first %}
+                            <span class="fas fa-arrow-right fa-sm"></span>
+                        {% endif %}
+                            {{item.label}}
+                        </a>
+                        <span class="toogle" title="Udfold samme kategori niveau">
+                            <i data-level="{{ loop.index0 + 1 }}" data-search="{{ item.new_link }}" class="far fa-folder" open="true"></i>
+                        </span>
+                    </div>
                 </div>
             {% endfor %}
             </div>
         </div>
 
+        <div id="series-app">
+
+        </div>
+
         <style>
+            a.init {
+                font-weight: bold;
+            }
             .fa-folder {
                 cursor: pointer;
             }
@@ -295,7 +299,9 @@
         <script>
             var collectionJsonPath = "{{ collection_json }}";
             var collectionId = "{{ collection_id }}";
+            var seriesInit = {{ r.series|tojson }};
         </script>
+        
         <script src="{{ url_for('static',filename='js/record-series.js') }}"></script>
     {% endif %}
 
