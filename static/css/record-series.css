@@ -1,0 +1,30 @@
+#series-app {
+    margin-left: 12px;
+}
+
+a.init {
+    font-weight: bold;
+}
+.fa-folder {
+    cursor: pointer;
+}
+
+.fa-folder-open {
+    cursor: pointer;
+}
+
+ul.record {
+    list-style: none;
+    margin-left: 6px;
+    padding-left: 0px;
+  }
+  
+li.record {
+    list-style: none;
+    padding-left: 1em;
+    text-indent: -1em;
+}
+
+span.first {
+    margin-left: -8px;
+}

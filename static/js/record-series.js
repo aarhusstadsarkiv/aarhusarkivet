@@ -35,12 +35,11 @@ async function loadSeries() {
     return data.series
 }
 
-function decodeSerieUrl(url) { 
+function decodeSerieUrl(url) {
     var decodedUrl = decodeURIComponent(url.replace(/\+/g, ' '));
     return decodedUrl
 }
 
-let id = 0;
 /**
  * Add 'id', 'newLink', 'init', and 'active' to each item in series
  * 
@@ -52,6 +51,8 @@ let id = 0;
  * @param {Array} children
  * 
  */
+let id = 0;
+
 function addDataToSeries(children) {
     for (let i = 0; i < children.length; i++) {
         let child = children[i];
@@ -72,6 +73,8 @@ function addDataToSeries(children) {
                 break;
             } else {
                 child.active = false;
+                child.expanded = false;
+                child.init = false;
             }
         }
 
@@ -81,30 +84,37 @@ function addDataToSeries(children) {
     }
 }
 
+let first = true;
 function collectionDataAsUL(collectionData) {
     // Recursively create UL. If children then create LI and call function again
-    let html = '<ul>';
+    let html = '<ul class="record">';
     for (let i = 0; i < collectionData.length; i++) {
         const item = collectionData[i];
-        
+
         let initClass = '';
         if (item.init) initClass = 'init';
         if (!item.active && !item.init) continue;
 
-        let link = `<a class="serie-link ${initClass}" href="${item.newLink}">${item.label}</a>`;
+        let span = `<span class="fas fa-arrow-right fa-sm"></span>`;
+        if (first) {
+            span = `<span class="first"></span>`;
+            first = false;
+        }
+        
+        let link = `<a class="serie-link ${initClass}" href="${item.newLink}">${span}${item.label}</a>`;
         if (item.children) {
             let expandedClass = 'far fa-folder';
             if (item.expanded) expandedClass = 'expanded far fa-folder-open ';
-            link += `<span style="padding-left:10px"><i data-id="${item.id}" class="serie-toogle ${expandedClass}"></i></span>`;
+            link += `<span style="padding-left:20px"><i data-id="${item.id}" class="serie-toogle ${expandedClass}"></i></span>`;
         }
 
-        html += `<li>${link}</li>`;
+        html += `<li class="record">${span}${link}</li>`;
         if (item.children) {
             html += collectionDataAsUL(item.children);
         }
     }
     html += '</ul>';
-    return html; 
+    return html;
 }
 
 // collectionDataArray contains the app state
@@ -124,43 +134,40 @@ document.addEventListener('DOMContentLoaded', async function () {
 
 function findById(tree, nodeId) {
     for (let node of tree) {
-      if (node.id === nodeId) return node
-  
-      if (node.children) {
-        let desiredNode = findById(node.children, nodeId)
-        if (desiredNode) return desiredNode
-      }
+        if (node.id === nodeId) return node
+
+        if (node.children) {
+            let desiredNode = findById(node.children, nodeId)
+            if (desiredNode) return desiredNode
+        }
     }
     return false
-  }
+}
 
 document.addEventListener('click', async function (event) {
 
-    event.preventDefault();
     try {
 
         if (event.target.matches('i.serie-toogle')) {
-            elem = event.target;
-            let id = event.target.dataset.id;
 
-            let expanded = true;
-            if (elem.classList.contains('expanded')) {
-                expanded = false;
-            }
-
+            event.preventDefault();
+            let elem = event.target;
+            let id = elem.dataset.id;
             let node = findById(collectionDataArray, parseInt(id));
-            node.expanded = expanded;
+            
+            // Switch state
+            node.expanded = !node.expanded;
 
             if (node.children) {
                 node.children.forEach(function (child) {
-                    if (expanded) {
+                    if (node.expanded) {
                         child.active = true
                     } else {
                         child.active = false
                     }
-
                 })
 
+                first = true;
                 let appHTML = collectionDataAsUL(collectionDataArray);
                 seriesApp.innerHTML = appHTML;
             }
