@@ -1,0 +1,33 @@
+#series-app {
+
+}
+
+a.init {
+    font-weight:600;
+}
+.fa-folder {
+    cursor: pointer;
+}
+
+.fa-folder-open {
+    cursor: pointer;
+}
+
+ul.record {
+    list-style: none;
+    margin-left: 6px;
+    padding-left: 0px;
+  }
+  
+li.record {
+    list-style: none;
+}
+
+span.first {
+    margin-left: -8px;
+}
+
+.serie-toogle {
+    margin-left: 20px;
+    display: inline-block;
+}
