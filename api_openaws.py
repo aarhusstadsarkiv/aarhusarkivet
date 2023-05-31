@@ -141,6 +141,8 @@ def jwt_login_post(request: request):
 
 def register_post(request: request):
 
+    _validate_passwords(request)
+
     email = str(request.form.get("email"))
     password = str(request.form.get("password"))
 
@@ -192,6 +194,8 @@ def forgot_password_post(request: request) -> None:
 
 
 def reset_password_post(request: request) -> None:
+
+    _validate_passwords(request)
 
     token = request.view_args["token"]
 
