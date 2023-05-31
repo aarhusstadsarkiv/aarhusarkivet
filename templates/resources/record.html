@@ -276,21 +276,19 @@
 
         {% if r.collection %}
             {% set collection_id = r.collection.get('id')|string %}
-        {% else %}
-            {% set collection_id = None %}
         {% endif %}
 
-        {# don't think the above check is needed #}
-        {% set collection_id = r.collection.get('id')|string %}
-        {% set collection_json = '/collections/' + collection_id + '?fmt=json' %}
-        <script>
-            var collectionJsonPath = "{{ collection_json }}";
-            var collectionId = "{{ collection_id }}";
-            var seriesInit = {{ r.series|tojson }};
-        </script>
+        {% if collection_id and request.args.get('test') %}
+            {% set collection_json = '/collections/' + collection_id + '?fmt=json' %}
+            <script>
+                var collectionJsonPath = "{{ collection_json }}";
+                var collectionId = "{{ collection_id }}";
+                var seriesInit = {{ r.series|tojson }};
+            </script>
 
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/record-series.css') }}"> 
-        <script src="{{ url_for('static',filename='js/record-series.js') }}"></script>
+            <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/record-series.css') }}"> 
+            <script src="{{ url_for('static',filename='js/record-series.js') }}"></script>
+        {% endif %}
     {% endif %}
 
     {% if r.collection_tags and r.collection %}
