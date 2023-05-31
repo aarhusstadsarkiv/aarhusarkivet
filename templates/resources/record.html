@@ -251,37 +251,29 @@
     {% endif %}
 
     {% if r.series %}
-
-        {% if not request.args.get('test') %}
-            <div class="media-object stack-for-small">
-                <div class="media-object-section app_keylabel">Serie</div>
-                <div class="media-object-section main-section">
-                {% for item in r.series %}
-                    <div>
-                        <a class="resource-link" href="/search?{{item.new_link}}" style="margin-left:{{loop.index0 * 6}}px;">
-                        {% if not loop.first %}
-                            <span class="fas fa-arrow-right fa-sm"></span>
-                        {% endif %}
-                            {{item.label}}
-                        </a>
-                    </div>
-                {% endfor %}
+        
+        <div class="media-object stack-for-small" >
+            <div class="media-object-section app_keylabel">Serie</div>
+            <div class="media-object-section main-section" id="series-app">
+            {% for item in r.series %}
+                <div>
+                    <a class="resource-link" href="/search?{{item.new_link}}" style="margin-left:{{loop.index0 * 6}}px;">
+                    {% if not loop.first %}
+                        <span class="fas fa-arrow-right fa-sm"></span>
+                    {% endif %}
+                        {{item.label}}
+                    </a>
                 </div>
+            {% endfor %}
             </div>
-        {% endif %}
-
+        </div>
+        
         {% if r.collection %}
             {% set collection_id = r.collection.get('id')|string %}
         {% endif %}
 
         {% if collection_id and request.args.get('test') %}
             {% set collection_json = '/collections/' + collection_id + '?fmt=json' %}
-
-            <div class="media-object stack-for-small">
-                <div class="media-object-section app_keylabel">Serie</div>
-                <div class="media-object-section main-section" id="series-app">
-                </div>
-            </div>
 
             <script>
                 var collectionJsonPath = "{{ collection_json }}";

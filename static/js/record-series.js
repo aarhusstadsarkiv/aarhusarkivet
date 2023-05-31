@@ -105,23 +105,25 @@ function collectionDataAsUL(collectionData) {
         if (item.init) initClass = 'init';
         if (!item.active && !item.init) continue;
 
-        let span = `<span class="fas fa-arrow-right fa-sm"></span>`;
+        let span = `<i class="fas fa-arrow-right fa-sm"></i>`;
         if (first) {
-            span = `<span class="first"></span>`;
+            span = `<i class="first"></i>`;
             first = false;
         }
         
-        let link = `<a class="serie-link ${initClass}" href="${item.newLink}">${span}${item.label}</a>`;
+        let link = `<a class="serie-link ${initClass}" href="${item.newLink}">${span} ${item.label}</a>`;
         if (item.children) {
             let expandedClass = 'far fa-folder';
             if (item.expanded) expandedClass = 'expanded far fa-folder-open ';
-            link += `<span style="padding-left:20px"><i data-id="${item.id}" class="serie-toogle ${expandedClass}"></i></span>`;
+            link += `<i data-id="${item.id}" class="serie-toogle ${expandedClass}"></i>`;
         }
 
-        html += `<li class="record">${span}${link}</li>`;
+        html += `<li class="record">${link}`;
         if (item.children) {
             html += collectionDataAsUL(item.children);
         }
+
+        html +=`</li>`
     }
     html += '</ul>';
     return html;
@@ -149,14 +151,19 @@ const collectionDataArray = []
 const seriesApp = document.querySelector('#series-app');
 document.addEventListener('DOMContentLoaded', async function () {
     
-    let series = await loadSeries();
-    addDataToSeries(series);
+    try {
+        let series = await loadSeries();
+        addDataToSeries(series);
 
-    let collectionData = series[collectionId]
-    collectionDataArray.push(collectionData)
+        let collectionData = series[collectionId]
+        collectionDataArray.push(collectionData)
 
-    let appHTML = collectionDataAsUL(collectionDataArray);
-    seriesApp.innerHTML = appHTML;
+        let appHTML = collectionDataAsUL(collectionDataArray);
+        seriesApp.innerHTML = appHTML;
+
+    } catch (error) {
+        console.log(error);
+    }
     
 });
 

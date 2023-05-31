@@ -1,9 +1,9 @@
 #series-app {
-    margin-left: 12px;
+
 }
 
 a.init {
-    font-weight: bold;
+    font-weight:600;
 }
 .fa-folder {
     cursor: pointer;
@@ -21,10 +21,13 @@ ul.record {
   
 li.record {
     list-style: none;
-    padding-left: 1em;
-    text-indent: -1em;
 }
 
 span.first {
     margin-left: -8px;
+}
+
+.serie-toogle {
+    margin-left: 20px;
+    display: inline-block;
 }
