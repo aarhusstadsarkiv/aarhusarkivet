@@ -41,6 +41,11 @@ function decodeSerieUrl(url) {
 }
 
 /**
+ * ID counter
+ */
+let id = 0;
+
+/**
  * Add 'id', 'newLink', 'init', and 'active' to each item in series
  * 
  * 'id' is used to find the item in the tree
@@ -48,10 +53,7 @@ function decodeSerieUrl(url) {
  * 'init' is used is shown on page load
  * 'active' indicates if the item is active
  * 
- * @param {Array} children
- * 
  */
-let id = 0;
 
 function addDataToSeries(children) {
     for (let i = 0; i < children.length; i++) {
@@ -84,9 +86,17 @@ function addDataToSeries(children) {
     }
 }
 
+/**
+ * Flag that checks if the first item is being created
+ * No arrow if first item
+ */
 let first = true;
+
+/**
+ * Generate the HTML from the collectionData's state
+ */
 function collectionDataAsUL(collectionData) {
-    // Recursively create UL. If children then create LI and call function again
+
     let html = '<ul class="record">';
     for (let i = 0; i < collectionData.length; i++) {
         const item = collectionData[i];
@@ -117,21 +127,9 @@ function collectionDataAsUL(collectionData) {
     return html;
 }
 
-// collectionDataArray contains the app state
-const collectionDataArray = []
-const seriesApp = document.querySelector('#series-app');
-document.addEventListener('DOMContentLoaded', async function () {
-
-    let series = await loadSeries();
-    addDataToSeries(series);
-
-    let collectionData = series[collectionId]
-    collectionDataArray.push(collectionData)
-
-    let appHTML = collectionDataAsUL(collectionDataArray);
-    seriesApp.innerHTML = appHTML;
-});
-
+/**
+ * Search for a node in the tree by id
+ */
 function findById(tree, nodeId) {
     for (let node of tree) {
         if (node.id === nodeId) return node
@@ -143,6 +141,24 @@ function findById(tree, nodeId) {
     }
     return false
 }
+
+/**
+ * Load the series data and create the HTML
+ */
+const collectionDataArray = []
+const seriesApp = document.querySelector('#series-app');
+document.addEventListener('DOMContentLoaded', async function () {
+    
+    let series = await loadSeries();
+    addDataToSeries(series);
+
+    let collectionData = series[collectionId]
+    collectionDataArray.push(collectionData)
+
+    let appHTML = collectionDataAsUL(collectionDataArray);
+    seriesApp.innerHTML = appHTML;
+    
+});
 
 document.addEventListener('click', async function (event) {
 
