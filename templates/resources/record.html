@@ -584,7 +584,7 @@
     {% if availability_id == 2 and legal_id == 1 and contractual_id > 2 %}
         <h5 id="ordering">Bestilling</h5>
         <div class="">
-            <p>Du kan bestille materialet ved at sende en mail til stadsarkiv@aarhus.dk, hvori du angiver materialets arkiv-ID, som kan ses <a href="#core">øverst på siden</a></p>
+            <p>Du kan bestille materialet ved at sende en mail til bestil.stadsarkiv@aarhus.dk, hvori du angiver materialets arkiv-ID, som kan ses <a href="#core">øverst på siden</a></p>
             {% for e in r.curators %}
                 {% if e.get('id') == 2 %}
                     <p>Hvis materialet ligger hos Rigsarkivet, skal bestillingen sendes dertil. Gå ind på <a href="https://www.sa.dk/find/">Rigsarkivets hjemmeside</a> og find materialet der. Efterfølgende kan det så bestilles hjem til en af deres læsesale.</p>
