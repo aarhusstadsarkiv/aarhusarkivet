@@ -19,14 +19,12 @@ itsdangerous==2.1.2; python_version >= "3.8"
 jinja2==3.1.2; python_version >= "3.8"
 jmespath==1.0.1; python_version >= "3.7"
 markupsafe==2.1.2; python_version >= "3.8"
-openaws-client @ git+https://github.com/aarhusstadsarkiv/openaws-client.git@0c158d60a3adf4cc775c43b8ba0a3e3e24a30d68 ; python_version >= "3.8" and python_version < "4.0"
+openaws-client @ git+https://github.com/aarhusstadsarkiv/openaws-client.git@0v0.6.1-2 ; python_version >= "3.8" and python_version < "4.0"
 python-dateutil==2.8.2; python_version >= "3.8" and python_full_version < "3.0.0" and python_version < "4.0" or python_version >= "3.8" and python_version < "4.0" and python_full_version >= "3.3.0"
 python-dotenv==0.20.0; python_version >= "3.5"
 requests==2.31.0; python_version >= "3.7"
 s3transfer==0.6.1; python_version >= "3.7"
-six==1.16.0; python_version >= "3.8" and python_full_version < "3.0.0" and python_version < "4.0" or python_version >= "3.8" and python_version < "4.0" and python_full_version >= "3.3.0" \
-    --hash=sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254 \
-    --hash=sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926
+six==1.16.0; python_version >= "3.8" and python_full_version < "3.0.0" and python_version < "4.0" or python_version >= "3.8" and python_version < "4.0" and python_full_version >= "3.3.0"
 sniffio==1.3.0; python_version >= "3.8" and python_version < "4.0"
 urllib3==1.26.16; python_version >= "3.7" and python_full_version < "3.0.0" or python_full_version >= "3.6.0" and python_version >= "3.7"
 werkzeug==2.3.4; python_version >= "3.8"
