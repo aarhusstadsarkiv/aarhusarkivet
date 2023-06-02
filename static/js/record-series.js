@@ -43,7 +43,7 @@ function decodeSerieUrl(url) {
 /**
  * ID counter
  */
-let id = 0;
+let id = 1;
 
 /**
  * Add 'id', 'newLink', 'init', and 'active' to each item in series
@@ -59,7 +59,6 @@ function addDataToSeries(children) {
     for (let i = 0; i < children.length; i++) {
         let child = children[i];
         child.id = id++;
-        child.expanded = false;
 
         let newLinkCompare = `collection=${collectionId}&series=${child.path}`;
         let newLink = `/search?collection=${collectionId}&series=${encodeURIComponent(child.path)}`;
@@ -110,7 +109,7 @@ function collectionDataAsUL(collectionData) {
             span = `<i class="first"></i>`;
             first = false;
         }
-        
+
         let link = `<a class="serie-link ${initClass}" href="${item.newLink}">${span} ${item.label}</a>`;
         if (item.children) {
             let expandedClass = 'far fa-folder';
@@ -123,7 +122,7 @@ function collectionDataAsUL(collectionData) {
             html += collectionDataAsUL(item.children);
         }
 
-        html +=`</li>`
+        html += `</li>`
     }
     html += '</ul>';
     return html;
@@ -145,17 +144,33 @@ function findById(tree, nodeId) {
 }
 
 /**
+ * Get the collection data by label
+ */
+function getCollectionDataByLabel(collectionData, label) {
+    for (let i = 0; i < collectionData.length; i++) {
+        const item = collectionData[i];
+        if (item.label === label) return item
+    }
+    return false
+}
+
+/**
  * Load the series data and create the HTML
  */
 const collectionDataArray = []
 const seriesApp = document.querySelector('#series-app');
 document.addEventListener('DOMContentLoaded', async function () {
-    
+
     try {
+
+        // Get first item in seriesInit
+        let serie = seriesInit[0];
         let series = await loadSeries();
+
         addDataToSeries(series);
 
-        let collectionData = series[collectionId]
+        // Get collection data
+        let collectionData = getCollectionDataByLabel(series, serie.label);
         collectionDataArray.push(collectionData)
 
         let appHTML = collectionDataAsUL(collectionDataArray);
@@ -164,7 +179,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     } catch (error) {
         console.log(error);
     }
-    
+
 });
 
 document.addEventListener('click', async function (event) {
@@ -177,7 +192,7 @@ document.addEventListener('click', async function (event) {
             let elem = event.target;
             let id = elem.dataset.id;
             let node = findById(collectionDataArray, parseInt(id));
-            
+
             // Switch state
             node.expanded = !node.expanded;
 
