@@ -7625,8 +7625,7 @@ a.collector-link {
 .gallery-item:hover,
 .listitem:hover {
   background-color: #fafafa; }
-.gallery-item p,
-.listitem p {
+.gallery-item p {
   margin-bottom: .4rem; }
 .gallery-item .list-thumbnail,
 .listitem .list-thumbnail {
@@ -7649,21 +7648,31 @@ a.collector-link {
 .listitem .summary {
   font-size: 85%; }
 .gallery-item .collector,
-.listitem .collector {
-  font-size: 90%;
-  color: #646464; }
+.listitem .collector,
+.gallery-item .collection,
+.listitem .collection,
+.gallery-item .series,
+.listitem .series,
 .gallery-item .date,
-.listitem .date {
-  font-size: 85%;
-  color: gray; }
+.listitem .date,
 .gallery-item .content_type,
 .listitem .content_type {
-  font-size: 85%;
-  color: gray; }
+  font-size: 90%;
+  color: #646464; }
 
 .listitem {
   padding: 0.5em;
   border-top: 1px solid #e6e6e6; }
+
+.listitem p {
+  margin-bottom: .2em;
+}
+.listitem-key {
+  color: #646464;
+  display: inline-block;
+  width: 5em;
+  font-weight: bold;
+}
 
 .gallery-item {
   padding: 0;

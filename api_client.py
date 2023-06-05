@@ -148,6 +148,15 @@ class ApiHandler:
 
             return out
 
+        def _get_collection_labels(result):
+            ids: set = {res["collection_id"] for res in result if res.get("collection_id")}
+            out = {}
+            if ids:
+                r = self.resourceAPI.get_entity_labels([("collection", i) for i in ids])
+                if r.get("result"):
+                    out = {i.get("id"): i.get("label") for i in r["result"] if i.get("label", "") != "ID missing"}
+            return out
+
         def _generate_facets(facets, params=None):
             # TODO: Does not work when excisting negative filter is set
             # and you click a positive facet: '-usability=4' is set, you click 'usability=2'
@@ -347,6 +356,9 @@ class ApiHandler:
                 resp["next"] = _urlencode(
                     params, remove=rm_tup, insert=("start", start + size)
                 )
+            resp["collection_labels"] = {"test": "entry"}
+            if query_params.get("view", "list") == "list":
+                resp["collection_labels"] = _get_collection_labels(api_resp["result"])
 
         # Proces size, sort, direction and view
         resp["size_list"] = _generate_sizes(params, api_resp["size"])

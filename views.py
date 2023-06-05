@@ -236,6 +236,7 @@ class SearchView(GUIView):
             result["filters"] = resp.get("filters")
             result["next"] = resp.get("next")
             result["previous"] = resp.get("previous")
+            # result["collection_labels"] = resp.get("collection_labels")
             if request.args.get("curators", "") == "4":
                 result["size_list"] = resp.get("size_list")
                 result["status_code"] = resp.get("status_code")
