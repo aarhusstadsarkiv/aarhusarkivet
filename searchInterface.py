@@ -40,7 +40,7 @@ class SearchHandler:
         # lists all series and collection_tags of a given collection
         facet_options = {
             "collection_tags": {"sort": "count", "size": 7000},
-            "series": {"sort": "count", "size": 2000},
+            "series": {"sort": "count", "size": 4000},
         }
 
         key_args = {}
