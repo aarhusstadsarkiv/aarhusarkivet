@@ -24,11 +24,14 @@ function notify(resp) {
 }
 
 const scrollIntoViewWithOffset = (el, offset) => {
-    window.scrollTo({
-        top:
-            document.querySelector(selector).getBoundingClientRect().top - document.body.getBoundingClientRect().top - offset,
-            // el.getBoundingClientRect().top - document.body.getBoundingClientRect().top - offset,
-    })
+    if (el && document.selector) {
+        window.scrollTo({
+            top:
+                document.querySelector(selector).getBoundingClientRect().top - document.body.getBoundingClientRect().top - offset,
+                // el.getBoundingClientRect().top - document.body.getBoundingClientRect().top - offset,
+        })
+    }
+    
 }
   
 window.addEventListener('load', function () {

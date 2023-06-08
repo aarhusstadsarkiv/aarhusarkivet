@@ -206,3 +206,22 @@
         {% include 'resources/collection_tags.html' %}
     {% endif %}
 </div>
+<script>
+    /**
+    * read hash from url and open accordion-menu
+    */
+    document.addEventListener('DOMContentLoaded', function() {
+       var hash = window.location.hash;
+       if (hash) {
+           var id = hash.replace('#', '');
+           var selector = '[data-id="' + id + '"]';
+           var element = document.querySelector(selector);
+
+           if (element) {
+                // Scroll to element using js + 40px
+                element.scrollIntoView();
+                window.scrollBy(0, -40);
+           }
+       }
+   });
+</script>
