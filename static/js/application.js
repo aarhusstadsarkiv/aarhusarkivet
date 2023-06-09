@@ -23,6 +23,8 @@ function notify(resp) {
     $(notice).prependTo( $('#notificationlist') ).fadeOut(3500);
 }
 
+// Commented out as we believe this is not used anymore
+// 
 // const scrollIntoViewWithOffset = (el, offset) => {
 //     window.scrollTo({
 //         top:
