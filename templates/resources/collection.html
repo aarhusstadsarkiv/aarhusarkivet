@@ -207,21 +207,80 @@
     {% endif %}
 </div>
 <script>
+
+    var expandElement = function (element) {
+        element.setAttribute('aria-expanded', 'true');
+        var ul = element.querySelector('ul'); // Find first 'ul' below element
+        if (ul) ul.style.display = 'block'; // And set display to block
+    }
+
+    /**
+     * Find upper most parent serie element if it exists.
+     * And also expand the parent serie element.
+     */
+    var findParentSerie = function (element) {
+
+        var parent = element.parentElement;
+        var foundParent = null; // variable to store the found parent element
+    
+        while (parent) {
+            
+            if (parent.getAttribute('role') === 'treeitem') {
+                expandElement(parent);
+                foundParent = parent;
+            }
+            parent = parent.parentElement;
+        }
+    
+        if (foundParent) {
+            return foundParent;
+        } else {
+            return element; // return the last element if no parent is found
+        }
+    }
+
     /**
     * read hash from url and open accordion-menu
     */
-    document.addEventListener('DOMContentLoaded', function() {
-       var hash = window.location.hash;
-       if (hash) {
-           var id = hash.replace('#', '');
-           var selector = '[data-id="' + id + '"]';
-           var element = document.querySelector(selector);
+    var expandSerie = function() {
+        var hash = window.location.hash;
+        if (hash) {
+         
+            var id = hash.replace('#', '');
+            var selector = '[data-id="' + id + '"]';
+            var element = document.querySelector(selector);
+ 
+            if (element) {
+ 
+                 expandElement(element)
+                 parent = findParentSerie(element);  
+                 element.scrollIntoView();
+ 
+                 
+                 if (window.innerWidth >= 640) window.scrollBy(0, -48); // Take care of diffrent viewport sizes
+            }
+        }
+    }
 
-           if (element) {
-                // Scroll to element using js + 40px
-                element.scrollIntoView();
-                window.scrollBy(0, -40);
-           }
-       }
-   });
+    document.addEventListener('DOMContentLoaded', expandSerie ); // Run expandSerie
+
 </script>
+
+{#
+
+// Notes to JS
+
+// http://localhost:3000/collections/2#series-3
+// "Danmarks,  negativ samling 1930- 1970" 
+// Scroll to "Danmarks,  negativ samling 1930- 1970"
+
+// http://localhost:3000/collections/2#series-4
+// Child serie "Danmarks,  negativ samling 1930- 1970" -> "Arkæologi"
+// Scroll to "Danmarks,  negativ samling 1930- 1970"
+
+// http://localhost:3000/collections/2#series-5
+// Child serie "Danmarks,  negativ samling 1930- 1970" -> "Arkæologi" -> "Danmark"
+// Scroll to "Danmarks,  negativ samling 1930- 1970"    
+    
+#}
+
