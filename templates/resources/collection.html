@@ -206,3 +206,64 @@
         {% include 'resources/collection_tags.html' %}
     {% endif %}
 </div>
+<script>
+
+    var expandElement = function (element) {
+        element.setAttribute('aria-expanded', 'true');
+        var ul = element.querySelector('ul'); // Find first 'ul' below element
+        if (ul) ul.style.display = 'block'; // And set display to block
+    }
+
+    /**
+     * Find upper most parent serie element if it exists.
+     * And also expand the parent serie element.
+     */
+    var findParentSerie = function (element) {
+
+        var parent = element.parentElement;
+        var foundParent = null; // variable to store the found parent element
+    
+        while (parent) {
+            
+            if (parent.getAttribute('role') === 'treeitem') {
+                expandElement(parent);
+                foundParent = parent;
+            }
+            parent = parent.parentElement;
+        }
+    
+        if (foundParent) {
+            return foundParent;
+        } else {
+            return element; // return the last element if no parent is found
+        }
+    }
+
+    /**
+    * read hash from url and open accordion-menu
+    */
+    var expandSerie = function() {
+        var hash = window.location.hash;
+        if (hash) {
+         
+            var id = hash.replace('#', '');
+            var selector = '[data-id="' + id + '"]';
+            var element = document.querySelector(selector);
+ 
+            if (element) {
+ 
+                 expandElement(element)
+                 parent = findParentSerie(element);  
+                 element.scrollIntoView();
+ 
+                 
+                 if (window.innerWidth >= 640) window.scrollBy(0, -48); // Take care of diffrent viewport sizes
+            }
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', expandSerie ); // Run expandSerie
+    // Example go to http://localhost:3000/collections/2#series-10
+</script>
+
+

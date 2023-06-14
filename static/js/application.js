@@ -23,32 +23,35 @@ function notify(resp) {
     $(notice).prependTo( $('#notificationlist') ).fadeOut(3500);
 }
 
-const scrollIntoViewWithOffset = (el, offset) => {
-    window.scrollTo({
-        top:
-            document.querySelector(selector).getBoundingClientRect().top - document.body.getBoundingClientRect().top - offset,
-            // el.getBoundingClientRect().top - document.body.getBoundingClientRect().top - offset,
-    })
-}
+// Commented out as we believe this is not used anymore
+// 
+// const scrollIntoViewWithOffset = (el, offset) => {
+//     window.scrollTo({
+//         top:
+//             document.querySelector(selector).getBoundingClientRect().top - document.body.getBoundingClientRect().top - offset,
+//             // el.getBoundingClientRect().top - document.body.getBoundingClientRect().top - offset,
+//     })
+// }
   
-window.addEventListener('load', function () {
-    if (window.location.hash == '') {
-        return false;
-    }
-    console.log(window.location.hash);
-    // var el = document.querySelector("[data-id='" + window.location.hash.slice(1) + "']");
-    // var el = document.querySelector(window.location.hash);
-    scrollIntoViewWithOffset("[data-id='" + window.location.hash.slice(1) + "']", 300);
-    // if (el !== null) {
-    //     console.log("element is found");
-    //     var topint = el.getBoundingClientRect().top - document.body.getBoundingClientRect().top - 60
-    //     console.log("top is: " + topint);
-    //     window.scrollTo({top: topint});
-    //     // el.scrollIntoView({ behavior: 'smooth' });
-    // } else {
-    //     console.log()
-    // }
-}, false);
+// window.addEventListener('load', function () {
+//     if (window.location.hash == '') {
+//         return false;
+//     }
+//     console.log(window.location.hash);
+//     console.log(window.location.hash.slice(1))
+//     // var el = document.querySelector("[data-id='" + window.location.hash.slice(1) + "']");
+//     // var el = document.querySelector(window.location.hash);
+//     scrollIntoViewWithOffset("[data-id='" + window.location.hash.slice(1) + "']", 300);
+//     // if (el !== null) {
+//     //     console.log("element is found");
+//     //     var topint = el.getBoundingClientRect().top - document.body.getBoundingClientRect().top - 60
+//     //     console.log("top is: " + topint);
+//     //     window.scrollTo({top: topint});
+//     //     // el.scrollIntoView({ behavior: 'smooth' });
+//     // } else {
+//     //     console.log()
+//     // }
+// }, false);
 
 // Catchall-doc for small or global stuff
 $(document).ready(function() {
