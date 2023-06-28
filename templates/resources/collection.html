@@ -215,10 +215,9 @@
     }
 
     /**
-     * Find upper most parent serie element if it exists.
-     * And also expand the parent serie element.
+     * Iterate through all parent elements and expand them.
      */
-    var findParentSerie = function (element) {
+    var expandElements = function (element) {
 
         var parent = element.parentElement;
         var foundParent = null; // variable to store the found parent element
@@ -231,16 +230,12 @@
             }
             parent = parent.parentElement;
         }
-    
-        if (foundParent) {
-            return foundParent;
-        } else {
-            return element; // return the last element if no parent is found
-        }
+
+        expandElement(element); // Expand the element that was clicked
     }
 
     /**
-    * read hash from url and open accordion-menu
+    * Read hash from url and expand accordion-menu
     */
     var expandSerie = function() {
         var hash = window.location.hash;
@@ -252,12 +247,17 @@
  
             if (element) {
  
-                 expandElement(element)
-                 parent = findParentSerie(element);  
-                 element.scrollIntoView();
- 
+                expandElements(element);  
+                
+                // Take care of mobile view
+                var scroolTop = $(element).offset().top;
+                if (window.innerWidth >= 640) {
+                    scroolTop = $(element).offset().top - 48;
+                } 
                  
-                 if (window.innerWidth >= 640) window.scrollBy(0, -48); // Take care of diffrent viewport sizes
+                $('html, body').animate({
+                    scrollTop: scroolTop
+                }, 2000);
             }
         }
     }
